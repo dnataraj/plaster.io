@@ -9,6 +9,7 @@
 #import "TSAppDelegate.h"
 #import "TSStack.h"
 #import "TSPasteboardPacket.h"
+#import "TSRedisController.h"
 
 @implementation TSAppDelegate {
     NSStatusItem *_plasterStatusItem;
@@ -20,6 +21,8 @@
     NSInteger _changeCount;
     dispatch_queue_t _queue;
     dispatch_source_t _timer;
+    
+    TSRedisController *_redisController;
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
@@ -41,6 +44,9 @@
     };
     
     _queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    
+    // Initialize redis controller
+    _redisController = [[TSRedisController alloc] init];
 }
 
 - (void)awakeFromNib {

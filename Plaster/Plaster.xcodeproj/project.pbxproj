@@ -19,6 +19,12 @@
 		4142E30E17425BC50091C7DF /* PlasterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4142E30D17425BC50091C7DF /* PlasterTests.m */; };
 		4142E31B174262B20091C7DF /* TSPasteboardPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 4142E31A174262B20091C7DF /* TSPasteboardPacket.m */; };
 		4142E31E174280740091C7DF /* TSStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 4142E31D174280740091C7DF /* TSStack.m */; };
+		4142E3571743C1630091C7DF /* TSRedisController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4142E3561743C1630091C7DF /* TSRedisController.m */; };
+		4142E4941743F9860091C7DF /* libhiredis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4142E4931743F9860091C7DF /* libhiredis.a */; };
+		4142E4991743FED30091C7DF /* libevent_core.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4142E4951743FED30091C7DF /* libevent_core.a */; };
+		4142E49A1743FED30091C7DF /* libevent_openssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4142E4961743FED30091C7DF /* libevent_openssl.a */; };
+		4142E49B1743FED30091C7DF /* libevent_pthreads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4142E4971743FED30091C7DF /* libevent_pthreads.a */; };
+		4142E49C1743FED30091C7DF /* libevent.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4142E4981743FED30091C7DF /* libevent.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,6 +36,19 @@
 			remoteInfo = Plaster;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4142E35C1743C73D0091C7DF /* Copy Files */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+			);
+			name = "Copy Files";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		4142E2E017425BC40091C7DF /* Plaster.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Plaster.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -55,6 +74,44 @@
 		4142E31A174262B20091C7DF /* TSPasteboardPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSPasteboardPacket.m; sourceTree = "<group>"; };
 		4142E31C174280740091C7DF /* TSStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSStack.h; sourceTree = "<group>"; };
 		4142E31D174280740091C7DF /* TSStack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSStack.m; sourceTree = "<group>"; };
+		4142E3551743C1630091C7DF /* TSRedisController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSRedisController.h; sourceTree = "<group>"; };
+		4142E3561743C1630091C7DF /* TSRedisController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSRedisController.m; sourceTree = "<group>"; };
+		4142E3581743C1950091C7DF /* TSPlasterGlobals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TSPlasterGlobals.h; sourceTree = "<group>"; };
+		4142E4731743F72A0091C7DF /* libevent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libevent.h; sourceTree = "<group>"; };
+		4142E4741743F72A0091C7DF /* async.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = async.h; sourceTree = "<group>"; };
+		4142E4751743F72A0091C7DF /* hiredis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hiredis.h; sourceTree = "<group>"; };
+		4142E4771743F7CA0091C7DF /* event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = event.h; sourceTree = "<group>"; };
+		4142E4791743F8130091C7DF /* buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = buffer.h; sourceTree = "<group>"; };
+		4142E47A1743F8130091C7DF /* buffer_compat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = buffer_compat.h; sourceTree = "<group>"; };
+		4142E47B1743F8130091C7DF /* bufferevent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bufferevent.h; sourceTree = "<group>"; };
+		4142E47C1743F8130091C7DF /* bufferevent_compat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bufferevent_compat.h; sourceTree = "<group>"; };
+		4142E47D1743F8130091C7DF /* bufferevent_ssl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bufferevent_ssl.h; sourceTree = "<group>"; };
+		4142E47E1743F8130091C7DF /* bufferevent_struct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bufferevent_struct.h; sourceTree = "<group>"; };
+		4142E47F1743F8130091C7DF /* dns.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dns.h; sourceTree = "<group>"; };
+		4142E4801743F8130091C7DF /* dns_compat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dns_compat.h; sourceTree = "<group>"; };
+		4142E4811743F8130091C7DF /* dns_struct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dns_struct.h; sourceTree = "<group>"; };
+		4142E4821743F8130091C7DF /* event-config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "event-config.h"; sourceTree = "<group>"; };
+		4142E4831743F8130091C7DF /* event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = event.h; sourceTree = "<group>"; };
+		4142E4841743F8130091C7DF /* event_compat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = event_compat.h; sourceTree = "<group>"; };
+		4142E4851743F8130091C7DF /* event_struct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = event_struct.h; sourceTree = "<group>"; };
+		4142E4861743F8130091C7DF /* http.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = http.h; sourceTree = "<group>"; };
+		4142E4871743F8130091C7DF /* http_compat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = http_compat.h; sourceTree = "<group>"; };
+		4142E4881743F8130091C7DF /* http_struct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = http_struct.h; sourceTree = "<group>"; };
+		4142E4891743F8130091C7DF /* keyvalq_struct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = keyvalq_struct.h; sourceTree = "<group>"; };
+		4142E48A1743F8130091C7DF /* listener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = listener.h; sourceTree = "<group>"; };
+		4142E48B1743F8130091C7DF /* rpc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rpc.h; sourceTree = "<group>"; };
+		4142E48C1743F8130091C7DF /* rpc_compat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rpc_compat.h; sourceTree = "<group>"; };
+		4142E48D1743F8130091C7DF /* rpc_struct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rpc_struct.h; sourceTree = "<group>"; };
+		4142E48E1743F8130091C7DF /* tag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tag.h; sourceTree = "<group>"; };
+		4142E48F1743F8130091C7DF /* tag_compat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tag_compat.h; sourceTree = "<group>"; };
+		4142E4901743F8130091C7DF /* thread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = thread.h; sourceTree = "<group>"; };
+		4142E4911743F8130091C7DF /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = util.h; sourceTree = "<group>"; };
+		4142E4921743F8130091C7DF /* evutil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = evutil.h; sourceTree = "<group>"; };
+		4142E4931743F9860091C7DF /* libhiredis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libhiredis.a; sourceTree = "<group>"; };
+		4142E4951743FED30091C7DF /* libevent_core.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libevent_core.a; sourceTree = "<group>"; };
+		4142E4961743FED30091C7DF /* libevent_openssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libevent_openssl.a; sourceTree = "<group>"; };
+		4142E4971743FED30091C7DF /* libevent_pthreads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libevent_pthreads.a; sourceTree = "<group>"; };
+		4142E4981743FED30091C7DF /* libevent.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libevent.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +120,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				4142E2E417425BC40091C7DF /* Cocoa.framework in Frameworks */,
+				4142E4941743F9860091C7DF /* libhiredis.a in Frameworks */,
+				4142E4991743FED30091C7DF /* libevent_core.a in Frameworks */,
+				4142E49A1743FED30091C7DF /* libevent_openssl.a in Frameworks */,
+				4142E49B1743FED30091C7DF /* libevent_pthreads.a in Frameworks */,
+				4142E49C1743FED30091C7DF /* libevent.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,6 +143,7 @@
 		4142E2D717425BC40091C7DF = {
 			isa = PBXGroup;
 			children = (
+				4142E31717425CDF0091C7DF /* Libraries */,
 				4142E2E917425BC40091C7DF /* Plaster */,
 				4142E30617425BC50091C7DF /* PlasterTests */,
 				4142E2E217425BC40091C7DF /* Frameworks */,
@@ -121,7 +184,6 @@
 			isa = PBXGroup;
 			children = (
 				4142E31817425CE60091C7DF /* Resources */,
-				4142E31717425CDF0091C7DF /* Libraries */,
 				4142E2F517425BC40091C7DF /* TSAppDelegate.h */,
 				4142E2F617425BC40091C7DF /* TSAppDelegate.m */,
 				4142E2F817425BC50091C7DF /* MainMenu.xib */,
@@ -130,6 +192,9 @@
 				4142E31A174262B20091C7DF /* TSPasteboardPacket.m */,
 				4142E31C174280740091C7DF /* TSStack.h */,
 				4142E31D174280740091C7DF /* TSStack.m */,
+				4142E3551743C1630091C7DF /* TSRedisController.h */,
+				4142E3561743C1630091C7DF /* TSRedisController.m */,
+				4142E3581743C1950091C7DF /* TSPlasterGlobals.h */,
 			);
 			path = Plaster;
 			sourceTree = "<group>";
@@ -168,8 +233,16 @@
 		4142E31717425CDF0091C7DF /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				4142E4951743FED30091C7DF /* libevent_core.a */,
+				4142E4961743FED30091C7DF /* libevent_openssl.a */,
+				4142E4971743FED30091C7DF /* libevent_pthreads.a */,
+				4142E4981743FED30091C7DF /* libevent.a */,
+				4142E4931743F9860091C7DF /* libhiredis.a */,
+				4142E4761743F7550091C7DF /* libevent */,
+				4142E4691743F6450091C7DF /* hiredis */,
 			);
 			name = Libraries;
+			path = Plaster;
 			sourceTree = "<group>";
 		};
 		4142E31817425CE60091C7DF /* Resources */ = {
@@ -177,6 +250,66 @@
 			children = (
 			);
 			name = Resources;
+			sourceTree = "<group>";
+		};
+		4142E4691743F6450091C7DF /* hiredis */ = {
+			isa = PBXGroup;
+			children = (
+				4142E4701743F72A0091C7DF /* adapters */,
+				4142E4741743F72A0091C7DF /* async.h */,
+				4142E4751743F72A0091C7DF /* hiredis.h */,
+			);
+			name = hiredis;
+			sourceTree = "<group>";
+		};
+		4142E4701743F72A0091C7DF /* adapters */ = {
+			isa = PBXGroup;
+			children = (
+				4142E4731743F72A0091C7DF /* libevent.h */,
+			);
+			path = adapters;
+			sourceTree = "<group>";
+		};
+		4142E4761743F7550091C7DF /* libevent */ = {
+			isa = PBXGroup;
+			children = (
+				4142E4781743F8130091C7DF /* event2 */,
+				4142E4921743F8130091C7DF /* evutil.h */,
+				4142E4771743F7CA0091C7DF /* event.h */,
+			);
+			name = libevent;
+			sourceTree = "<group>";
+		};
+		4142E4781743F8130091C7DF /* event2 */ = {
+			isa = PBXGroup;
+			children = (
+				4142E4791743F8130091C7DF /* buffer.h */,
+				4142E47A1743F8130091C7DF /* buffer_compat.h */,
+				4142E47B1743F8130091C7DF /* bufferevent.h */,
+				4142E47C1743F8130091C7DF /* bufferevent_compat.h */,
+				4142E47D1743F8130091C7DF /* bufferevent_ssl.h */,
+				4142E47E1743F8130091C7DF /* bufferevent_struct.h */,
+				4142E47F1743F8130091C7DF /* dns.h */,
+				4142E4801743F8130091C7DF /* dns_compat.h */,
+				4142E4811743F8130091C7DF /* dns_struct.h */,
+				4142E4821743F8130091C7DF /* event-config.h */,
+				4142E4831743F8130091C7DF /* event.h */,
+				4142E4841743F8130091C7DF /* event_compat.h */,
+				4142E4851743F8130091C7DF /* event_struct.h */,
+				4142E4861743F8130091C7DF /* http.h */,
+				4142E4871743F8130091C7DF /* http_compat.h */,
+				4142E4881743F8130091C7DF /* http_struct.h */,
+				4142E4891743F8130091C7DF /* keyvalq_struct.h */,
+				4142E48A1743F8130091C7DF /* listener.h */,
+				4142E48B1743F8130091C7DF /* rpc.h */,
+				4142E48C1743F8130091C7DF /* rpc_compat.h */,
+				4142E48D1743F8130091C7DF /* rpc_struct.h */,
+				4142E48E1743F8130091C7DF /* tag.h */,
+				4142E48F1743F8130091C7DF /* tag_compat.h */,
+				4142E4901743F8130091C7DF /* thread.h */,
+				4142E4911743F8130091C7DF /* util.h */,
+			);
+			path = event2;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -188,6 +321,7 @@
 			buildPhases = (
 				4142E2DC17425BC40091C7DF /* Sources */,
 				4142E2DD17425BC40091C7DF /* Frameworks */,
+				4142E35C1743C73D0091C7DF /* Copy Files */,
 				4142E2DE17425BC40091C7DF /* Resources */,
 			);
 			buildRules = (
@@ -292,6 +426,7 @@
 				4142E2F717425BC40091C7DF /* TSAppDelegate.m in Sources */,
 				4142E31B174262B20091C7DF /* TSPasteboardPacket.m in Sources */,
 				4142E31E174280740091C7DF /* TSStack.m in Sources */,
+				4142E3571743C1630091C7DF /* TSRedisController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -414,8 +549,15 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Plaster/Plaster-Prefix.pch";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)\"/**";
 				INFOPLIST_FILE = "Plaster/Plaster-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Plaster\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -426,8 +568,15 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Plaster/Plaster-Prefix.pch";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)\"/**";
 				INFOPLIST_FILE = "Plaster/Plaster-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Plaster\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -481,6 +630,7 @@
 				4142E31317425BC50091C7DF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4142E31417425BC50091C7DF /* Build configuration list for PBXNativeTarget "PlasterTests" */ = {
 			isa = XCConfigurationList;
@@ -489,6 +639,7 @@
 				4142E31617425BC50091C7DF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
