@@ -7,7 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
+@class TSEventDispatcher;
 
 @interface TSRedisController : NSObject
+
+- (id)initWithDispatcher:(TSEventDispatcher *)dispatcher;
 
 @end
