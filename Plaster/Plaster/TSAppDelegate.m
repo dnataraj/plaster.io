@@ -12,6 +12,36 @@
 #import "TSRedisController.h"
 #import "TSEventDispatcher.h"
 
+void handlePeerCopy(redisAsyncContext *c, void *reply, void *data) {
+    if (reply == NULL) {
+        return;
+    }
+    redisReply *r = reply;
+    if (r->type == REDIS_REPLY_ARRAY) {
+        for (int j = 0; j < r->elements; j++) {
+            printf("%u) %s\n", j, r->element[j]->str);
+        }
+        // Looks like #3 is our man...
+        if (r->elements > 2) {
+            char *peerPacket = r->element[2]->str;
+            if (peerPacket) {
+                char *_packet = malloc(sizeof(peerPacket));
+                strcpy(_packet, peerPacket);
+                NSString *packet = [NSString stringWithUTF8String:_packet];
+                NSLog(@"Obtained packet [%@]", packet);
+                NSPasteboard *pb = (__bridge NSPasteboard *)data;
+                if (!pb) {
+                    NSLog(@"No pasteboard available...");
+                    return;
+                }
+                NSLog(@"Pasting...");
+                [pb clearContents];
+                [pb writeObjects:[NSArray arrayWithObject:packet]];
+            }            
+        }
+    }
+}
+
 @implementation TSAppDelegate {
     NSStatusItem *_plasterStatusItem;
     TSStack *_pbStack;
@@ -20,11 +50,10 @@
     
     void (^extractLatestCopy)(void);
     NSInteger _changeCount;
-    //dispatch_queue_t _queue;
-    //dispatch_source_t _timer;
     
     TSRedisController *_redisController;
     TSEventDispatcher *_dispatcher;
+    NSMutableArray *_subscriptionList;
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
@@ -46,10 +75,12 @@
         
     };
     
-    //_queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    
     // Initialize redis controller
     _redisController = [[TSRedisController alloc] initWithDispatcher:_dispatcher];
+    // Initialize subscription
+    NSLog(@"Setting up subscriptions...");
+    _subscriptionList = [[NSMutableArray alloc] initWithObjects:@"device1", @"device2", @"device3", nil];
+    [_redisController subscribeToChannels:_subscriptionList withHandler:handlePeerCopy andContext:(void *)_generalPasteBoard];
     NSLog(@"Ready to roll...");
 }
 
@@ -62,32 +93,8 @@
     [self.stopMenuItem setEnabled:NO];
 }
 
-/*
-- (dispatch_source_t) createTimerWithInterval:(uint64_t)interval andLeeway:(uint64_t)leeway {
-    NSLog(@"Creating a dispatch timer...");
-    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, _queue);
-    if (timer) {
-        dispatch_source_set_timer(timer, dispatch_time(DISPATCH_TIME_NOW, 0), interval, leeway);
-        dispatch_source_set_event_handler(timer, extractLatestCopy);
-        dispatch_resume(timer);
-    }
-    
-    return timer;
-}
-
-- (void)stopTimer:(dispatch_source_t)aTimer {
-    dispatch_source_cancel(aTimer);
-}
- */
-
 - (IBAction)start:(id)sender {
     NSLog(@"Starting pasteboard monitoring...");
-    /*
-    _timer = [self createTimerWithInterval:(0.1 * NSEC_PER_SEC) andLeeway:(0.003 * NSEC_PER_SEC)];
-    if (!_timer) {
-        NSLog(@"Unable to create timer!");
-    }
-     */
     [_dispatcher dispatchTask:@"pbpoller" WithPeriod:(15 * NSEC_PER_MSEC) andHandler:extractLatestCopy];
     [self.startMenuItem setEnabled:NO];
     [self.stopMenuItem setEnabled:YES];
@@ -95,7 +102,6 @@
 
 - (IBAction)stop:(id)sender {
     NSLog(@"Stopping timer and cleaning up...");
-    //[self stopTimer:_timer];
     [_dispatcher stopTask:@"pbpoller"];
     [self.startMenuItem setEnabled:YES];
     [self.stopMenuItem setEnabled:NO];

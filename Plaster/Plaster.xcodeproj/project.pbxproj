@@ -38,19 +38,6 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		4142E35C1743C73D0091C7DF /* Copy Files */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 12;
-			dstPath = "";
-			dstSubfolderSpec = 6;
-			files = (
-			);
-			name = "Copy Files";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		4142E2E017425BC40091C7DF /* Plaster.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Plaster.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4142E2E317425BC40091C7DF /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -326,7 +313,6 @@
 			buildPhases = (
 				4142E2DC17425BC40091C7DF /* Sources */,
 				4142E2DD17425BC40091C7DF /* Frameworks */,
-				4142E35C1743C73D0091C7DF /* Copy Files */,
 				4142E2DE17425BC40091C7DF /* Resources */,
 			);
 			buildRules = (

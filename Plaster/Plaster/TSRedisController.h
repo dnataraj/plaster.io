@@ -7,10 +7,17 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "async.h"
+
 @class TSEventDispatcher;
+
+typedef void (*tsSubcriptionHandler)(redisAsyncContext *c, void *reply, void *privateData);
+typedef void (*tsPublishHandler)(redisAsyncContext *c, void *reply, void *privateData);
 
 @interface TSRedisController : NSObject
 
 - (id)initWithDispatcher:(TSEventDispatcher *)dispatcher;
+- (void)subscribeToChannels:(NSArray *)channels withHandler:(tsSubcriptionHandler)handler andContext:(void *)context;
+- (void)publishMessage:(NSString *)message toChannel:(NSString *)channel;
 
 @end

@@ -38,28 +38,14 @@ void disconnectCallback(const redisAsyncContext *c, int status) {
     printf("Disconnected...\n");
 }
 
-void onMessage(redisAsyncContext *c, void *reply, void *privdata) {
-    redisReply *r = reply;
-    if (reply == NULL) return;
-    
-    if (r->type == REDIS_REPLY_ARRAY) {
-        for (int j = 0; j < r->elements; j++) {
-            printf("%u) %s\n", j, r->element[j]->str);
-        }
-    }
-}
-
 @implementation TSRedisController {
     redisAsyncContext *_asyncSessionContext;
-    //TSEventDispatcher *_dispatcher;
 }
 
 - (id)initWithDispatcher:(TSEventDispatcher *)dispatcher {
     self = [super init];
     if (self) {
         if (dispatcher) {
-            //_dispatcher = dispatcher;
-            
             _asyncSessionContext = redisAsyncConnect(LOCAL_IP, REDIS_PORT);
             if (_asyncSessionContext->err) {
                 NSLog(@"Error establishing connection : %s\n", _asyncSessionContext->errstr);
@@ -67,17 +53,16 @@ void onMessage(redisAsyncContext *c, void *reply, void *privdata) {
                 NSLog(@"Established connection to %@\n", @LOCAL_IP);
             }
             
-            [dispatcher dispatchWithContext:_asyncSessionContext];
-            
-            NSLog(@"Setting async connect callback...");
-            redisAsyncSetConnectCallback(_asyncSessionContext, connectCallback);
-            NSLog(@"Setting async disconnect callback...");
-            redisAsyncSetDisconnectCallback(_asyncSessionContext, disconnectCallback);
-            
-            NSLog(@"Subscribing to channel...");
-            redisAsyncCommand(_asyncSessionContext, onMessage, NULL, "SUBSCRIBE magic");
-            
-            NSLog(@"Dispatched...");            
+            int result = [dispatcher dispatchWithContext:_asyncSessionContext];
+            if (result == REDIS_OK) {
+                NSLog(@"Setting async connect callback...");
+                redisAsyncSetConnectCallback(_asyncSessionContext, connectCallback);
+                NSLog(@"Setting async disconnect callback...");
+                redisAsyncSetDisconnectCallback(_asyncSessionContext, disconnectCallback);
+                NSLog(@"Dispatched...");
+            } else {
+                NSLog(@"Dispatching failed with code : %d", result);
+            }
         }
     }
 
@@ -86,6 +71,12 @@ void onMessage(redisAsyncContext *c, void *reply, void *privdata) {
 
 - (id)init {
     return [self initWithDispatcher:nil];
+}
+
+- (void)subscribeToChannels:(NSArray *)channels withHandler:(tsSubcriptionHandler)handler andContext:(void *)context {
+    NSMutableString *subCmd = [[NSMutableString alloc] initWithFormat:@"SUBSCRIBE %@", [channels componentsJoinedByString:@" "]];
+    NSLog(@"REDIS : Subscription command [%@]", subCmd);
+    redisAsyncCommand(_asyncSessionContext, handler, context, [subCmd UTF8String]);
 }
 
 
