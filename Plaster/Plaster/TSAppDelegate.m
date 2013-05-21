@@ -111,7 +111,10 @@ void handlePeerPaste(redisAsyncContext *c, void *reply, void *data) {
     [_plasterStatusItem setHighlightMode:YES];
     [_plasterStatusItem setMenu:[self plasterMenu]];
     
+    [self.plasterMenu setAutoenablesItems:NO];
+    [self.startMenuItem setEnabled:YES];
     [self.stopMenuItem setEnabled:NO];
+
 }
 
 - (IBAction)start:(id)sender {
