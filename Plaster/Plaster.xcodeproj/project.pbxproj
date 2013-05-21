@@ -26,6 +26,7 @@
 		4142E49B1743FED30091C7DF /* libevent_pthreads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4142E4971743FED30091C7DF /* libevent_pthreads.a */; };
 		4142E49C1743FED30091C7DF /* libevent.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4142E4981743FED30091C7DF /* libevent.a */; };
 		4142E4A417460E140091C7DF /* TSEventDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 4142E4A317460E140091C7DF /* TSEventDispatcher.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		41CAB0D517475629007B9444 /* NSString+TSPasteboardString.m in Sources */ = {isa = PBXBuildFile; fileRef = 41CAB0D417475629007B9444 /* NSString+TSPasteboardString.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -102,6 +103,8 @@
 		4142E4981743FED30091C7DF /* libevent.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libevent.a; sourceTree = "<group>"; };
 		4142E4A217460E140091C7DF /* TSEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSEventDispatcher.h; sourceTree = "<group>"; };
 		4142E4A317460E140091C7DF /* TSEventDispatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSEventDispatcher.m; sourceTree = "<group>"; };
+		41CAB0D317475629007B9444 /* NSString+TSPasteboardString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+TSPasteboardString.h"; sourceTree = "<group>"; };
+		41CAB0D417475629007B9444 /* NSString+TSPasteboardString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+TSPasteboardString.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -187,6 +190,8 @@
 				4142E3581743C1950091C7DF /* TSPlasterGlobals.h */,
 				4142E4A217460E140091C7DF /* TSEventDispatcher.h */,
 				4142E4A317460E140091C7DF /* TSEventDispatcher.m */,
+				41CAB0D317475629007B9444 /* NSString+TSPasteboardString.h */,
+				41CAB0D417475629007B9444 /* NSString+TSPasteboardString.m */,
 			);
 			path = Plaster;
 			sourceTree = "<group>";
@@ -419,6 +424,7 @@
 				4142E31E174280740091C7DF /* TSStack.m in Sources */,
 				4142E3571743C1630091C7DF /* TSRedisController.m in Sources */,
 				4142E4A417460E140091C7DF /* TSEventDispatcher.m in Sources */,
+				41CAB0D517475629007B9444 /* NSString+TSPasteboardString.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

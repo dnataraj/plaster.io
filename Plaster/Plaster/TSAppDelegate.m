@@ -11,6 +11,7 @@
 #import "TSPasteboardPacket.h"
 #import "TSRedisController.h"
 #import "TSEventDispatcher.h"
+#import "NSString+TSPasteboardString.h"
 
 void handlePeerCopy(redisAsyncContext *c, void *reply, void *data) {
     if (reply == NULL) {
@@ -21,13 +22,12 @@ void handlePeerCopy(redisAsyncContext *c, void *reply, void *data) {
         for (int j = 0; j < r->elements; j++) {
             printf("%u) %s\n", j, r->element[j]->str);
         }
-        // Looks like #3 is our man...
+        // Looks like #3 is our packet...
         if (r->elements > 2) {
             char *peerPacket = r->element[2]->str;
             if (peerPacket) {
-                char *_packet = malloc(sizeof(peerPacket));
-                strcpy(_packet, peerPacket);
-                NSString *packet = [NSString stringWithUTF8String:_packet];
+                TSPasteboardPacket *packet = [[TSPasteboardPacket alloc] initWithTag:@"packet" andBytes:peerPacket];
+                
                 NSLog(@"Obtained packet [%@]", packet);
                 NSPasteboard *pb = (__bridge NSPasteboard *)data;
                 if (!pb) {
@@ -36,10 +36,20 @@ void handlePeerCopy(redisAsyncContext *c, void *reply, void *data) {
                 }
                 NSLog(@"Pasting...");
                 [pb clearContents];
-                [pb writeObjects:[NSArray arrayWithObject:packet]];
-            }            
+                BOOL ok = [pb writeObjects:[NSArray arrayWithObject:packet]];
+                if (ok) {
+                    NSLog(@"Peer copy successfully written to local pasteboard.");
+                }
+            }
         }
     }
+}
+
+void handlePeerPaste(redisAsyncContext *c, void *reply, void *data) {
+    if (reply == NULL) {
+        return;
+    }
+    NSLog(@"Pasting to peers...");
 }
 
 @implementation TSAppDelegate {
@@ -60,8 +70,12 @@ void handlePeerCopy(redisAsyncContext *c, void *reply, void *data) {
     _pbStack = [[TSStack alloc] init];
     _generalPasteBoard = [NSPasteboard generalPasteboard];
     _changeCount = [_generalPasteBoard changeCount];
-    _readables = [NSArray arrayWithObject:[NSString class]];
+    //_readables = [NSArray arrayWithObjects:[TSPasteboardPacket class] ,[NSString class], nil];
+    _readables = [NSArray arrayWithObjects:[NSString class], nil];
     _dispatcher = [[TSEventDispatcher alloc] init];
+
+    // Initialize redis controller
+    _redisController = [[TSRedisController alloc] initWithDispatcher:_dispatcher];
     
     NSLog(@"Initializing block...");
     extractLatestCopy = ^(void) {
@@ -69,17 +83,24 @@ void handlePeerCopy(redisAsyncContext *c, void *reply, void *data) {
         if (_changeCount == newChangeCount) {
             return;
         }
-        _changeCount = [_generalPasteBoard changeCount];
+        _changeCount = newChangeCount;
+        BOOL isPeerPaste = [_generalPasteBoard canReadItemWithDataConformingToTypes:[NSArray arrayWithObject:@"com.trilobytesystems.plaster.uti"]];
+        if (isPeerPaste) {
+            NSLog(@"Packet is from a peer, discarding publish..");
+            return;
+        }
+        NSLog(@"Reading the general pasteboard...");
         NSArray *pbContents = [_generalPasteBoard readObjectsForClasses:_readables options:nil];
         NSLog(@"Found in pasteboard : [%@]" , [pbContents objectAtIndex:0]);
-        
+        // Now we have to extract the bytes
+        id packet = [pbContents objectAtIndex:0];
+        NSLog(@"Processing NSString packet and publishing...");
+        [_redisController publishMessage:(NSString *)packet toChannel:@"device3" withHandler:handlePeerPaste];
     };
     
-    // Initialize redis controller
-    _redisController = [[TSRedisController alloc] initWithDispatcher:_dispatcher];
     // Initialize subscription
     NSLog(@"Setting up subscriptions...");
-    _subscriptionList = [[NSMutableArray alloc] initWithObjects:@"device1", @"device2", @"device3", nil];
+    _subscriptionList = [[NSMutableArray alloc] initWithObjects:@"device1", @"device2", nil];
     [_redisController subscribeToChannels:_subscriptionList withHandler:handlePeerCopy andContext:(void *)_generalPasteBoard];
     NSLog(@"Ready to roll...");
 }
@@ -103,8 +124,18 @@ void handlePeerCopy(redisAsyncContext *c, void *reply, void *data) {
 - (IBAction)stop:(id)sender {
     NSLog(@"Stopping timer and cleaning up...");
     [_dispatcher stopTask:@"pbpoller"];
+    [_redisController unsubscribe];
     [self.startMenuItem setEnabled:YES];
     [self.stopMenuItem setEnabled:NO];
+}
+
+- (void)applicationWillTerminate:(NSNotification *)notification {
+    NSLog(@"Quitting...");
+    if ([self.stopMenuItem isEnabled]) {
+        [_dispatcher stopTask:@"pbpoller"];
+        [_redisController unsubscribe];
+    }
+    [_redisController terminate];
 }
 
 @end

@@ -8,10 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
-@interface TSPasteboardPacket : NSObject
+@interface TSPasteboardPacket : NSObject <NSPasteboardWriting, NSPasteboardReading>
 
 @property (readwrite, copy) NSString *tag;
 
-- (id)initWithTag:(NSString *)aTag andBytes:(char *)bytes;
+- (id)initWithTag:(NSString *)aTag andBytes:(const char *)bytes;
 
 @end

@@ -11,6 +11,7 @@
 
 #define WOOKIE_IP "176.9.2.188"
 #define LOCAL_IP "127.0.0.1"
+#define REDIS_IP "176.9.2.188"
 #define REDIS_PORT 6379
 
 #endif
