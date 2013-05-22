@@ -17,8 +17,19 @@ NSString * const PLAIN_TEXT_UTI = @"public.utf8-plain-text";
     NSString *_packet;
 }
 
-- (id)initWithTag:(NSString *)aTag andBytes:(const char *)bytes {
+- (id)init {
     self = [super init];
+    if (self) {
+        _tag = nil;
+        _packet = nil;
+        [self _setPacket:NULL];
+    }
+    
+    return self;
+}
+
+- (id)initWithTag:(NSString *)aTag andBytes:(const char *)bytes {
+    self = [self init];
     if (self) {
         _tag = aTag;
         [self _setPacket:bytes];
@@ -29,8 +40,19 @@ NSString * const PLAIN_TEXT_UTI = @"public.utf8-plain-text";
     return self;
 }
 
+- (id)initWithTag:(NSString *)aTag andString:(NSString *)aString {
+    self = [self init];
+    if (self) {
+        _tag = aTag;
+        _packet = [aString copy];
+        NSLog(@"Initialized packet with content [%@]", _packet);
+    }
+    
+    return self;
+}
+
 - (id)initWithPasteboardPropertyList:(id)propertyList ofType:(NSString *)type {
-    self = [super init];
+    self = [self init];
     if (self) {
         NSLog(@"Initializing with property list %@", [propertyList class]);
         NSLog(@"and type %@", type);
@@ -43,13 +65,15 @@ NSString * const PLAIN_TEXT_UTI = @"public.utf8-plain-text";
 }
 
 - (void)_setPacket:(const char *)bytes {
-    size_t length = sizeof(bytes);
-    __packet = malloc(length);
-    assert(__packet != NULL);
-    int i = 0;
-    while (i <= length) {
-        __packet[i] = bytes[i];
-        i++;
+    if (bytes) {
+        size_t length = sizeof(bytes);
+        __packet = malloc(length);
+        assert(__packet != NULL);
+        int i = 0;
+        while (i <= length) {
+            __packet[i] = bytes[i];
+            i++;
+        }        
     }
 }
 
@@ -107,5 +131,13 @@ NSString * const PLAIN_TEXT_UTI = @"public.utf8-plain-text";
     }
 }
 */
+
+- (NSString *)description {
+    if ([[self tag] isEqualToString:@"plaster-packet-string"]) {
+        return [NSString stringWithFormat:@"Packet [%@]", _packet];
+    }
+    
+    return @"DESC: Not Ready.";
+}
 
 @end

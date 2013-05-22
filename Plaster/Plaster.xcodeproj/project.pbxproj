@@ -26,7 +26,11 @@
 		4142E49B1743FED30091C7DF /* libevent_pthreads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4142E4971743FED30091C7DF /* libevent_pthreads.a */; };
 		4142E49C1743FED30091C7DF /* libevent.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4142E4981743FED30091C7DF /* libevent.a */; };
 		4142E4A417460E140091C7DF /* TSEventDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 4142E4A317460E140091C7DF /* TSEventDispatcher.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		41CAB0D517475629007B9444 /* NSString+TSPasteboardString.m in Sources */ = {isa = PBXBuildFile; fileRef = 41CAB0D417475629007B9444 /* NSString+TSPasteboardString.m */; };
+		41FE1392174BB40A00511395 /* libTSBase64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41FE1385174BA99B00511395 /* libTSBase64.a */; };
+		41FE1395174BB9DB00511395 /* TSPacketSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FE1394174BB9DB00511395 /* TSPacketSerializer.m */; };
+		41FE1397174CBFB600511395 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 41FE1396174CBFB600511395 /* Preferences.xib */; };
+		41FE139A174CC60C00511395 /* TSClientPreferenceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FE1399174CC60C00511395 /* TSClientPreferenceController.m */; };
+		41FE139D174CCC6000511395 /* TSClientIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FE139C174CCC6000511395 /* TSClientIdentifier.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +40,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 4142E2DF17425BC40091C7DF;
 			remoteInfo = Plaster;
+		};
+		41FE1384174BA99B00511395 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 41FE1380174BA99A00511395 /* TSBase64.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 41FE136F174BA99A00511395;
+			remoteInfo = TSBase64;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -103,8 +114,14 @@
 		4142E4981743FED30091C7DF /* libevent.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libevent.a; sourceTree = "<group>"; };
 		4142E4A217460E140091C7DF /* TSEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSEventDispatcher.h; sourceTree = "<group>"; };
 		4142E4A317460E140091C7DF /* TSEventDispatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSEventDispatcher.m; sourceTree = "<group>"; };
-		41CAB0D317475629007B9444 /* NSString+TSPasteboardString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+TSPasteboardString.h"; sourceTree = "<group>"; };
-		41CAB0D417475629007B9444 /* NSString+TSPasteboardString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+TSPasteboardString.m"; sourceTree = "<group>"; };
+		41FE1380174BA99A00511395 /* TSBase64.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TSBase64.xcodeproj; path = ../../TSBase64/TSBase64.xcodeproj; sourceTree = "<group>"; };
+		41FE1393174BB9DB00511395 /* TSPacketSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSPacketSerializer.h; sourceTree = "<group>"; };
+		41FE1394174BB9DB00511395 /* TSPacketSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSPacketSerializer.m; sourceTree = "<group>"; };
+		41FE1396174CBFB600511395 /* Preferences.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Preferences.xib; sourceTree = "<group>"; };
+		41FE1398174CC60C00511395 /* TSClientPreferenceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSClientPreferenceController.h; sourceTree = "<group>"; };
+		41FE1399174CC60C00511395 /* TSClientPreferenceController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSClientPreferenceController.m; sourceTree = "<group>"; };
+		41FE139B174CCC6000511395 /* TSClientIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSClientIdentifier.h; sourceTree = "<group>"; };
+		41FE139C174CCC6000511395 /* TSClientIdentifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSClientIdentifier.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +129,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				41FE1392174BB40A00511395 /* libTSBase64.a in Frameworks */,
 				4142E2E417425BC40091C7DF /* Cocoa.framework in Frameworks */,
 				4142E4941743F9860091C7DF /* libhiredis.a in Frameworks */,
 				4142E4991743FED30091C7DF /* libevent_core.a in Frameworks */,
@@ -190,8 +208,13 @@
 				4142E3581743C1950091C7DF /* TSPlasterGlobals.h */,
 				4142E4A217460E140091C7DF /* TSEventDispatcher.h */,
 				4142E4A317460E140091C7DF /* TSEventDispatcher.m */,
-				41CAB0D317475629007B9444 /* NSString+TSPasteboardString.h */,
-				41CAB0D417475629007B9444 /* NSString+TSPasteboardString.m */,
+				41FE1393174BB9DB00511395 /* TSPacketSerializer.h */,
+				41FE1394174BB9DB00511395 /* TSPacketSerializer.m */,
+				41FE1396174CBFB600511395 /* Preferences.xib */,
+				41FE1398174CC60C00511395 /* TSClientPreferenceController.h */,
+				41FE1399174CC60C00511395 /* TSClientPreferenceController.m */,
+				41FE139B174CCC6000511395 /* TSClientIdentifier.h */,
+				41FE139C174CCC6000511395 /* TSClientIdentifier.m */,
 			);
 			path = Plaster;
 			sourceTree = "<group>";
@@ -230,6 +253,7 @@
 		4142E31717425CDF0091C7DF /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				41FE1380174BA99A00511395 /* TSBase64.xcodeproj */,
 				4142E4951743FED30091C7DF /* libevent_core.a */,
 				4142E4961743FED30091C7DF /* libevent_openssl.a */,
 				4142E4971743FED30091C7DF /* libevent_pthreads.a */,
@@ -309,6 +333,14 @@
 			path = event2;
 			sourceTree = "<group>";
 		};
+		41FE1381174BA99A00511395 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				41FE1385174BA99B00511395 /* libTSBase64.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -368,6 +400,12 @@
 			mainGroup = 4142E2D717425BC40091C7DF;
 			productRefGroup = 4142E2E117425BC40091C7DF /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 41FE1381174BA99A00511395 /* Products */;
+					ProjectRef = 41FE1380174BA99A00511395 /* TSBase64.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				4142E2DF17425BC40091C7DF /* Plaster */,
@@ -375,6 +413,16 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		41FE1385174BA99B00511395 /* libTSBase64.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libTSBase64.a;
+			remoteRef = 41FE1384174BA99B00511395 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		4142E2DE17425BC40091C7DF /* Resources */ = {
@@ -384,6 +432,7 @@
 				4142E2EE17425BC40091C7DF /* InfoPlist.strings in Resources */,
 				4142E2F417425BC40091C7DF /* Credits.rtf in Resources */,
 				4142E2FA17425BC50091C7DF /* MainMenu.xib in Resources */,
+				41FE1397174CBFB600511395 /* Preferences.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -424,7 +473,9 @@
 				4142E31E174280740091C7DF /* TSStack.m in Sources */,
 				4142E3571743C1630091C7DF /* TSRedisController.m in Sources */,
 				4142E4A417460E140091C7DF /* TSEventDispatcher.m in Sources */,
-				41CAB0D517475629007B9444 /* NSString+TSPasteboardString.m in Sources */,
+				41FE1395174BB9DB00511395 /* TSPacketSerializer.m in Sources */,
+				41FE139A174CC60C00511395 /* TSClientPreferenceController.m in Sources */,
+				41FE139D174CCC6000511395 /* TSClientIdentifier.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -554,6 +605,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/Plaster\"",
 				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = app;
@@ -573,6 +625,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/Plaster\"",
 				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = app;

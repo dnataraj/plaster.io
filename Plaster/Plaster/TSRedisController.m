@@ -69,7 +69,6 @@ void disconnectCallback(const redisAsyncContext *c, int status) {
                 redisAsyncSetConnectCallback(_asyncPubSessionContext, connectCallback);
                 NSLog(@"Setting pub async disconnect callback...");
                 redisAsyncSetDisconnectCallback(_asyncPubSessionContext, disconnectCallback);
-                NSLog(@"Dispatched...");
             } else {
                 NSLog(@"Dispatching pub failed with code : %d", result);
             }
@@ -80,7 +79,6 @@ void disconnectCallback(const redisAsyncContext *c, int status) {
                 redisAsyncSetConnectCallback(_asyncSubSessionContext, connectCallback);
                 NSLog(@"Setting sub async disconnect callback...");
                 redisAsyncSetDisconnectCallback(_asyncSubSessionContext, disconnectCallback);
-                NSLog(@"Dispatched...");
             } else {
                 NSLog(@"Dispatching sub failed with code : %d", result);
             }
@@ -101,10 +99,16 @@ void disconnectCallback(const redisAsyncContext *c, int status) {
     redisAsyncCommand(_asyncSubSessionContext, handler, context, [subCmd UTF8String]);
 }
 
-- (void)publishMessage:(NSString *)message toChannel:(NSString *)channel withHandler:(tsPublishHandler)handler {
+- (void)publishMessageString:(NSString *)message toChannel:(NSString *)channel withHandler:(tsPublishHandler)handler {
     NSMutableString *pubCmd = [[NSMutableString alloc] initWithFormat:@"PUBLISH %@ '%%b'", channel];
     NSLog(@"REDIS : Publish command [%@]", pubCmd);
     redisAsyncCommand(_asyncPubSessionContext, handler, NULL, [pubCmd UTF8String], [message UTF8String], strlen([message UTF8String]));
+}
+
+- (void)publishMessage:(const char *)message toChannel:(NSString *)channel withHandler:(tsPublishHandler)handler {
+    NSMutableString *pubCmd = [[NSMutableString alloc] initWithFormat:@"PUBLISH %@ '%%b'", channel];
+    NSLog(@"REDIS : Publish command [%@]", pubCmd);
+    redisAsyncCommand(_asyncPubSessionContext, handler, NULL, [pubCmd UTF8String], message, strlen(message));
 }
 
 - (void)unsubscribe {
@@ -113,7 +117,8 @@ void disconnectCallback(const redisAsyncContext *c, int status) {
 }
 
 - (void)terminate {
-    NSLog(@"Freeing redis context...");
+    NSLog(@"Unsubscribe from any open channels and disconnect from Redis...");
+    [self unsubscribe];
     redisAsyncDisconnect(_asyncPubSessionContext);
     //redisFree(&_asyncPubSessionContext->c);
     redisAsyncDisconnect(_asyncSubSessionContext);

@@ -16,6 +16,7 @@
 
 - (IBAction)start:(id)sender;
 - (IBAction)stop:(id)sender;
+- (IBAction)showPreferences:(id)sender;
 
 
 @end

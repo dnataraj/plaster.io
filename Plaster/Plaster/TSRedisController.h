@@ -18,7 +18,8 @@ typedef void (*tsPublishHandler)(redisAsyncContext *c, void *reply, void *privat
 
 - (id)initWithDispatcher:(TSEventDispatcher *)dispatcher;
 - (void)subscribeToChannels:(NSArray *)channels withHandler:(tsSubcriptionHandler)handler andContext:(void *)context;
-- (void)publishMessage:(NSString *)message toChannel:(NSString *)channel withHandler:(tsPublishHandler)handler;
+- (void)publishMessageString:(NSString *)message toChannel:(NSString *)channel withHandler:(tsPublishHandler)handler;
+- (void)publishMessage:(const char *)message toChannel:(NSString *)channel withHandler:(tsPublishHandler)handler;
 - (void)unsubscribe;
 - (void)terminate;
 

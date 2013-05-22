@@ -1,0 +1,264 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		41FE1373174BA99A00511395 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41FE1372174BA99A00511395 /* Foundation.framework */; };
+		41FE1389174BAAB500511395 /* TSBase64.c in Sources */ = {isa = PBXBuildFile; fileRef = 41FE1388174BAAB500511395 /* TSBase64.c */; };
+		41FE138D174BAFED00511395 /* NSString+TSBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FE138C174BAFED00511395 /* NSString+TSBase64.m */; };
+		41FE1390174BB3D300511395 /* NSString+TSBase64.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 41FE138B174BAFED00511395 /* NSString+TSBase64.h */; };
+		41FE1391174BB3E100511395 /* TSBase64.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 41FE138A174BAABF00511395 /* TSBase64.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		41FE136D174BA99A00511395 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/${PRODUCT_NAME}";
+			dstSubfolderSpec = 16;
+			files = (
+				41FE1390174BB3D300511395 /* NSString+TSBase64.h in CopyFiles */,
+				41FE1391174BB3E100511395 /* TSBase64.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		41FE136F174BA99A00511395 /* libTSBase64.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTSBase64.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		41FE1372174BA99A00511395 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		41FE1376174BA99A00511395 /* TSBase64-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TSBase64-Prefix.pch"; sourceTree = "<group>"; };
+		41FE1388174BAAB500511395 /* TSBase64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TSBase64.c; sourceTree = "<group>"; };
+		41FE138A174BAABF00511395 /* TSBase64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TSBase64.h; sourceTree = "<group>"; };
+		41FE138B174BAFED00511395 /* NSString+TSBase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+TSBase64.h"; sourceTree = "<group>"; };
+		41FE138C174BAFED00511395 /* NSString+TSBase64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+TSBase64.m"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		41FE136C174BA99A00511395 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				41FE1373174BA99A00511395 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		41FE1366174BA99A00511395 = {
+			isa = PBXGroup;
+			children = (
+				41FE1374174BA99A00511395 /* TSBase64 */,
+				41FE1371174BA99A00511395 /* Frameworks */,
+				41FE1370174BA99A00511395 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		41FE1370174BA99A00511395 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				41FE136F174BA99A00511395 /* libTSBase64.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		41FE1371174BA99A00511395 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				41FE1372174BA99A00511395 /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		41FE1374174BA99A00511395 /* TSBase64 */ = {
+			isa = PBXGroup;
+			children = (
+				41FE1375174BA99A00511395 /* Supporting Files */,
+				41FE1388174BAAB500511395 /* TSBase64.c */,
+				41FE138A174BAABF00511395 /* TSBase64.h */,
+				41FE138B174BAFED00511395 /* NSString+TSBase64.h */,
+				41FE138C174BAFED00511395 /* NSString+TSBase64.m */,
+			);
+			path = TSBase64;
+			sourceTree = "<group>";
+		};
+		41FE1375174BA99A00511395 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				41FE1376174BA99A00511395 /* TSBase64-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		41FE136E174BA99A00511395 /* TSBase64 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 41FE137D174BA99A00511395 /* Build configuration list for PBXNativeTarget "TSBase64" */;
+			buildPhases = (
+				41FE136B174BA99A00511395 /* Sources */,
+				41FE136C174BA99A00511395 /* Frameworks */,
+				41FE136D174BA99A00511395 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TSBase64;
+			productName = TSBase64;
+			productReference = 41FE136F174BA99A00511395 /* libTSBase64.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		41FE1367174BA99A00511395 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0460;
+				ORGANIZATIONNAME = "Trilobyte Systems ApS";
+			};
+			buildConfigurationList = 41FE136A174BA99A00511395 /* Build configuration list for PBXProject "TSBase64" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 41FE1366174BA99A00511395;
+			productRefGroup = 41FE1370174BA99A00511395 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				41FE136E174BA99A00511395 /* TSBase64 */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		41FE136B174BA99A00511395 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				41FE1389174BAAB500511395 /* TSBase64.c in Sources */,
+				41FE138D174BAFED00511395 /* NSString+TSBase64.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		41FE137B174BA99A00511395 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		41FE137C174BA99A00511395 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		41FE137E174BA99A00511395 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				DSTROOT = /tmp/TSBase64.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "TSBase64/TSBase64-Prefix.pch";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = macosx;
+			};
+			name = Debug;
+		};
+		41FE137F174BA99A00511395 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				DSTROOT = /tmp/TSBase64.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "TSBase64/TSBase64-Prefix.pch";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		41FE136A174BA99A00511395 /* Build configuration list for PBXProject "TSBase64" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				41FE137B174BA99A00511395 /* Debug */,
+				41FE137C174BA99A00511395 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		41FE137D174BA99A00511395 /* Build configuration list for PBXNativeTarget "TSBase64" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				41FE137E174BA99A00511395 /* Debug */,
+				41FE137F174BA99A00511395 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 41FE1367174BA99A00511395 /* Project object */;
+}

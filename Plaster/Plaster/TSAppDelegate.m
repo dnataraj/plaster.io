@@ -11,7 +11,10 @@
 #import "TSPasteboardPacket.h"
 #import "TSRedisController.h"
 #import "TSEventDispatcher.h"
-#import "NSString+TSPasteboardString.h"
+#import "TSBase64/NSString+TSBase64.h"
+#import "TSPacketSerializer.h"
+#import "TSClientIdentifier.h"
+#import "TSClientPreferenceController.h"
 
 void handlePeerCopy(redisAsyncContext *c, void *reply, void *data) {
     if (reply == NULL) {
@@ -24,9 +27,11 @@ void handlePeerCopy(redisAsyncContext *c, void *reply, void *data) {
         }
         // Looks like #3 is our packet...
         if (r->elements > 2) {
-            char *peerPacket = r->element[2]->str;
-            if (peerPacket) {
-                TSPasteboardPacket *packet = [[TSPasteboardPacket alloc] initWithTag:@"packet" andBytes:peerPacket];
+            char *bytes = r->element[2]->str;
+            if (bytes) {
+                NSDictionary *payload = [TSPacketSerializer dictionaryFromJSON:bytes];
+                TSPasteboardPacket *packet = [[TSPasteboardPacket alloc] initWithTag:@"plaster-packet-string"
+                                                                           andString:[payload objectForKey:@"plaster-packet-string"]];
                 
                 NSLog(@"Obtained packet [%@]", packet);
                 NSPasteboard *pb = (__bridge NSPasteboard *)data;
@@ -64,6 +69,8 @@ void handlePeerPaste(redisAsyncContext *c, void *reply, void *data) {
     TSRedisController *_redisController;
     TSEventDispatcher *_dispatcher;
     NSMutableArray *_subscriptionList;
+    
+    TSClientPreferenceController *_preferenceController;
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
@@ -95,13 +102,20 @@ void handlePeerPaste(redisAsyncContext *c, void *reply, void *data) {
         // Now we have to extract the bytes
         id packet = [pbContents objectAtIndex:0];
         NSLog(@"Processing NSString packet and publishing...");
-        [_redisController publishMessage:(NSString *)packet toChannel:@"device3" withHandler:handlePeerPaste];
+        const char *jsonBytes = [TSPacketSerializer JSONWithStringPacket:[[NSString alloc] initWithString:packet]];
+        //[_redisController publishMessage:(NSString *)packet toChannel:@"device3" withHandler:handlePeerPaste];
+        [_redisController publishMessage:jsonBytes toChannel:@"device3" withHandler:handlePeerPaste];
     };
     
-    // Initialize subscription
-    NSLog(@"Setting up subscriptions...");
-    _subscriptionList = [[NSMutableArray alloc] initWithObjects:@"device1", @"device2", nil];
-    [_redisController subscribeToChannels:_subscriptionList withHandler:handlePeerCopy andContext:(void *)_generalPasteBoard];
+    // Register application default preferences
+    NSMutableDictionary *defaultPreferences = [NSMutableDictionary dictionary];
+    [defaultPreferences setObject:[TSClientIdentifier createUUID] forKey:@"plaster-spider-key"];
+    [defaultPreferences setObject:[NSNumber numberWithBool:YES] forKey:@"plaster-allow-text"];
+    [defaultPreferences setObject:[NSNumber numberWithBool:NO] forKey:@"plaster-allow-images"];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:defaultPreferences];
+    
+    _preferenceController = nil;
+    
     NSLog(@"Ready to roll...");
 }
 
@@ -118,6 +132,9 @@ void handlePeerPaste(redisAsyncContext *c, void *reply, void *data) {
 }
 
 - (IBAction)start:(id)sender {
+    NSLog(@"Setting up subscriptions...");
+    _subscriptionList = [[NSMutableArray alloc] initWithObjects:@"device1", @"device2", nil];
+    [_redisController subscribeToChannels:_subscriptionList withHandler:handlePeerCopy andContext:(void *)_generalPasteBoard];
     NSLog(@"Starting pasteboard monitoring...");
     [_dispatcher dispatchTask:@"pbpoller" WithPeriod:(15 * NSEC_PER_MSEC) andHandler:extractLatestCopy];
     [self.startMenuItem setEnabled:NO];
@@ -130,6 +147,14 @@ void handlePeerPaste(redisAsyncContext *c, void *reply, void *data) {
     [_redisController unsubscribe];
     [self.startMenuItem setEnabled:YES];
     [self.stopMenuItem setEnabled:NO];
+}
+
+- (IBAction)showPreferences:(id)sender {
+    if (!_preferenceController) {
+        _preferenceController = [[TSClientPreferenceController alloc] init];
+    }
+    
+    [_preferenceController showWindow:self];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)notification {

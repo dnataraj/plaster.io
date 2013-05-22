@@ -13,5 +13,6 @@
 @property (readwrite, copy) NSString *tag;
 
 - (id)initWithTag:(NSString *)aTag andBytes:(const char *)bytes;
+- (id)initWithTag:(NSString *)aTag andString:(NSString *)aString;
 
 @end
