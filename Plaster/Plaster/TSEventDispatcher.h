@@ -10,6 +10,9 @@
 #import "hiredis.h"
 #import "async.h"
 
+#define TS_DISPATCH_OK 1
+#define TS_DISPATCH_ERR 2
+
 void redisRead(void *privateData);
 void redisDeleteRead(void *privateData);
 void redisWrite(void *privateData);
@@ -19,8 +22,8 @@ void redisClean(void *privateData);
 
 @interface TSEventDispatcher : NSObject
 
-- (int)dispatchWithContext:(redisAsyncContext *)asyncContext;
-- (void)dispatchTask:(NSString *)taskName WithPeriod:(uint64_t)interval andHandler:(void (^)(void))handler;
-- (void)stopTask:(NSString *)taskName;
+- (uint)dispatchWithContext:(redisAsyncContext *)asyncContext;
+- (uint)dispatchTask:(NSString *)taskName WithPeriod:(uint64_t)interval andHandler:(void (^)(void))handler;
+- (uint)stopTask:(NSString *)taskName;
                                                                
 @end

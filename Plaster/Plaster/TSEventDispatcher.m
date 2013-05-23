@@ -126,7 +126,7 @@ int redisAttachAndDispatch(redisAsyncContext *asyncContext, dispatch_queue_t que
     return self;
 }
 
-- (int)dispatchWithContext:(redisAsyncContext *)asyncContext {
+- (uint)dispatchWithContext:(redisAsyncContext *)asyncContext {
     redisContext *redisCtx = &(asyncContext->c);
     
     if (asyncContext->ev.data != NULL) {
@@ -168,25 +168,38 @@ int redisAttachAndDispatch(redisAsyncContext *asyncContext, dispatch_queue_t que
     return REDIS_OK;    
 }
 
-- (void)dispatchTask:(NSString *)taskName WithPeriod:(uint64_t)interval andHandler:(void (^)(void))handler {
+- (uint)dispatchTask:(NSString *)taskName WithPeriod:(uint64_t)interval andHandler:(void (^)(void))handler {
+    if (!taskName || !handler) {
+        return TS_DISPATCH_ERR;
+    }
+    if ([_timers objectForKey:taskName]) {
+        NSLog(@"Timer already exists, stop it first.");
+        return TS_DISPATCH_ERR;
+    }
     uint64_t leeway = ((uint64_t)(DEFAULT_TIMER_LEEWAY_PERCENTAGE / 100)) * interval;
     dispatch_source_t timer = [self createTimerWithInterval:interval andLeeway:leeway];
-    dispatch_source_set_event_handler(timer, handler);
-    dispatch_resume(timer);
-    NSLog(@"Adding timer to list...");
-    [_timers setObject:timer forKey:taskName];
+    if (timer) {
+        dispatch_source_set_event_handler(timer, handler);
+        dispatch_resume(timer);
+        NSLog(@"Adding timer to list...");
+        [_timers setObject:timer forKey:taskName];
+        return TS_DISPATCH_OK;
+    }
+    
+    return TS_DISPATCH_ERR;
 }
 
-- (void)stopTask:(NSString *)taskName {
+- (uint)stopTask:(NSString *)taskName {
     dispatch_source_t timer = [_timers objectForKey:taskName];
     if (!timer) {
         NSLog(@"No task with name %@ is availble.", taskName);
-        return;
+        return TS_DISPATCH_ERR;
     }
     NSLog(@"Cancelling task : %@", taskName);
     dispatch_source_cancel(timer);
     [_timers removeObjectForKey:taskName];
     timer = nil;
+    return TS_DISPATCH_OK;
 }
 
 - (dispatch_source_t) createTimerWithInterval:(uint64_t)interval andLeeway:(uint64_t)leeway {

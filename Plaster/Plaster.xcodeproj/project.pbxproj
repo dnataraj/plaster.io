@@ -31,6 +31,9 @@
 		41FE1397174CBFB600511395 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 41FE1396174CBFB600511395 /* Preferences.xib */; };
 		41FE139A174CC60C00511395 /* TSClientPreferenceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FE1399174CC60C00511395 /* TSClientPreferenceController.m */; };
 		41FE139D174CCC6000511395 /* TSClientIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FE139C174CCC6000511395 /* TSClientIdentifier.m */; };
+		41FE139F174D0D2100511395 /* TSClientStartPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 41FE139E174D0D2100511395 /* TSClientStartPanel.xib */; };
+		41FE13A5174D0DAB00511395 /* TSClientStartPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FE13A4174D0DAB00511395 /* TSClientStartPanelController.m */; };
+		41FE13A8174E432800511395 /* TSPlasterController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FE13A7174E432800511395 /* TSPlasterController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -122,6 +125,13 @@
 		41FE1399174CC60C00511395 /* TSClientPreferenceController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSClientPreferenceController.m; sourceTree = "<group>"; };
 		41FE139B174CCC6000511395 /* TSClientIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSClientIdentifier.h; sourceTree = "<group>"; };
 		41FE139C174CCC6000511395 /* TSClientIdentifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSClientIdentifier.m; sourceTree = "<group>"; };
+		41FE139E174D0D2100511395 /* TSClientStartPanel.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TSClientStartPanel.xib; sourceTree = "<group>"; };
+		41FE13A3174D0DAA00511395 /* TSClientStartPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSClientStartPanelController.h; sourceTree = "<group>"; };
+		41FE13A4174D0DAB00511395 /* TSClientStartPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSClientStartPanelController.m; sourceTree = "<group>"; };
+		41FE13A6174E432800511395 /* TSPlasterController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSPlasterController.h; sourceTree = "<group>"; };
+		41FE13A7174E432800511395 /* TSPlasterController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSPlasterController.m; sourceTree = "<group>"; };
+		41FE13AB174E65E500511395 /* TSMessagingProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TSMessagingProvider.h; sourceTree = "<group>"; };
+		41FE13AC174E709300511395 /* TSDataStoreProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TSDataStoreProvider.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -215,6 +225,13 @@
 				41FE1399174CC60C00511395 /* TSClientPreferenceController.m */,
 				41FE139B174CCC6000511395 /* TSClientIdentifier.h */,
 				41FE139C174CCC6000511395 /* TSClientIdentifier.m */,
+				41FE139E174D0D2100511395 /* TSClientStartPanel.xib */,
+				41FE13A3174D0DAA00511395 /* TSClientStartPanelController.h */,
+				41FE13A4174D0DAB00511395 /* TSClientStartPanelController.m */,
+				41FE13A6174E432800511395 /* TSPlasterController.h */,
+				41FE13A7174E432800511395 /* TSPlasterController.m */,
+				41FE13AB174E65E500511395 /* TSMessagingProvider.h */,
+				41FE13AC174E709300511395 /* TSDataStoreProvider.h */,
 			);
 			path = Plaster;
 			sourceTree = "<group>";
@@ -433,6 +450,7 @@
 				4142E2F417425BC40091C7DF /* Credits.rtf in Resources */,
 				4142E2FA17425BC50091C7DF /* MainMenu.xib in Resources */,
 				41FE1397174CBFB600511395 /* Preferences.xib in Resources */,
+				41FE139F174D0D2100511395 /* TSClientStartPanel.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -476,6 +494,8 @@
 				41FE1395174BB9DB00511395 /* TSPacketSerializer.m in Sources */,
 				41FE139A174CC60C00511395 /* TSClientPreferenceController.m in Sources */,
 				41FE139D174CCC6000511395 /* TSClientIdentifier.m in Sources */,
+				41FE13A5174D0DAB00511395 /* TSClientStartPanelController.m in Sources */,
+				41FE13A8174E432800511395 /* TSPlasterController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

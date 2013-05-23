@@ -15,6 +15,10 @@
 #import "TSPacketSerializer.h"
 #import "TSClientIdentifier.h"
 #import "TSClientPreferenceController.h"
+#import "TSClientStartPanelController.h"
+#import "TSPlasterController.h"
+
+static TSClientIdentifier *_clientIdentifier = nil;
 
 void handlePeerCopy(redisAsyncContext *c, void *reply, void *data) {
     if (reply == NULL) {
@@ -59,62 +63,30 @@ void handlePeerPaste(redisAsyncContext *c, void *reply, void *data) {
 
 @implementation TSAppDelegate {
     NSStatusItem *_plasterStatusItem;
-    TSStack *_pbStack;
-    NSPasteboard *_generalPasteBoard;
-    NSArray *_readables;
-    
-    void (^extractLatestCopy)(void);
-    NSInteger _changeCount;
-    
     TSRedisController *_redisController;
-    TSEventDispatcher *_dispatcher;
     NSMutableArray *_subscriptionList;
-    
+    TSPlasterController *_plaster;
     TSClientPreferenceController *_preferenceController;
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
-    _pbStack = [[TSStack alloc] init];
-    _generalPasteBoard = [NSPasteboard generalPasteboard];
-    _changeCount = [_generalPasteBoard changeCount];
-    //_readables = [NSArray arrayWithObjects:[TSPasteboardPacket class] ,[NSString class], nil];
-    _readables = [NSArray arrayWithObjects:[NSString class], nil];
-    _dispatcher = [[TSEventDispatcher alloc] init];
+    _redisController = [[TSRedisController alloc] init];
+    _plaster = [[TSPlasterController alloc] initWithPasteboard:[NSPasteboard generalPasteboard] andProvider:_redisController];
 
-    // Initialize redis controller
-    _redisController = [[TSRedisController alloc] initWithDispatcher:_dispatcher];
-    
-    NSLog(@"Initializing block...");
-    extractLatestCopy = ^(void) {
-        NSInteger newChangeCount = [_generalPasteBoard changeCount];
-        if (_changeCount == newChangeCount) {
-            return;
-        }
-        _changeCount = newChangeCount;
-        BOOL isPeerPaste = [_generalPasteBoard canReadItemWithDataConformingToTypes:[NSArray arrayWithObject:@"com.trilobytesystems.plaster.uti"]];
-        if (isPeerPaste) {
-            NSLog(@"Packet is from a peer, discarding publish..");
-            return;
-        }
-        NSLog(@"Reading the general pasteboard...");
-        NSArray *pbContents = [_generalPasteBoard readObjectsForClasses:_readables options:nil];
-        NSLog(@"Found in pasteboard : [%@]" , [pbContents objectAtIndex:0]);
-        // Now we have to extract the bytes
-        id packet = [pbContents objectAtIndex:0];
-        NSLog(@"Processing NSString packet and publishing...");
-        const char *jsonBytes = [TSPacketSerializer JSONWithStringPacket:[[NSString alloc] initWithString:packet]];
-        //[_redisController publishMessage:(NSString *)packet toChannel:@"device3" withHandler:handlePeerPaste];
-        [_redisController publishMessage:jsonBytes toChannel:@"device3" withHandler:handlePeerPaste];
-    };
+    _clientIdentifier = [[TSClientIdentifier alloc] init];
+    NSLog(@"Initializing plaster session with id [%@] and spider-key [%@]", [TSClientIdentifier clientID], [_clientIdentifier spiderKey]);
     
     // Register application default preferences
     NSMutableDictionary *defaultPreferences = [NSMutableDictionary dictionary];
-    [defaultPreferences setObject:[TSClientIdentifier createUUID] forKey:@"plaster-spider-key"];
+    [defaultPreferences setObject:[_clientIdentifier spiderKey] forKey:@"plaster-spider-key"];
     [defaultPreferences setObject:[NSNumber numberWithBool:YES] forKey:@"plaster-allow-text"];
     [defaultPreferences setObject:[NSNumber numberWithBool:NO] forKey:@"plaster-allow-images"];
-    [[NSUserDefaults standardUserDefaults] registerDefaults:defaultPreferences];
     
-    _preferenceController = nil;
+    // This let's us know (I hope) whether the client is being installed/started for the first time.
+    // This will be flipped when the User dismisses the start configuration panel.
+    [defaultPreferences setObject:[NSNumber numberWithBool:NO] forKey:@"plaster-init"];
+    
+    [[NSUserDefaults standardUserDefaults] registerDefaults:defaultPreferences];
     
     NSLog(@"Ready to roll...");
 }
@@ -128,22 +100,27 @@ void handlePeerPaste(redisAsyncContext *c, void *reply, void *data) {
     [self.plasterMenu setAutoenablesItems:NO];
     [self.startMenuItem setEnabled:YES];
     [self.stopMenuItem setEnabled:NO];
-
 }
 
 - (IBAction)start:(id)sender {
+    BOOL initialized = [[NSUserDefaults standardUserDefaults] boolForKey:@"plaster-init"];
+    if (!initialized) {
+        TSClientStartPanelController *startPanelController = [[TSClientStartPanelController alloc] init];
+        NSLog(@"Starting modal configuration panel for Plaster...");
+        [NSApp runModalForWindow:[startPanelController window]];
+    }
     NSLog(@"Setting up subscriptions...");
     _subscriptionList = [[NSMutableArray alloc] initWithObjects:@"device1", @"device2", nil];
-    [_redisController subscribeToChannels:_subscriptionList withHandler:handlePeerCopy andContext:(void *)_generalPasteBoard];
-    NSLog(@"Starting pasteboard monitoring...");
-    [_dispatcher dispatchTask:@"pbpoller" WithPeriod:(15 * NSEC_PER_MSEC) andHandler:extractLatestCopy];
+    [_redisController subscribeToChannels:_subscriptionList withCallback:NULL andContext:(void *)[NSPasteboard generalPasteboard]];
+    NSLog(@"Starting pasteboard monitoring every 15ms");
+    [_plaster scheduleMonitorWithID:[TSClientIdentifier clientID] andTimeInterval:0.015];
     [self.startMenuItem setEnabled:NO];
     [self.stopMenuItem setEnabled:YES];
 }
 
 - (IBAction)stop:(id)sender {
     NSLog(@"Stopping timer and cleaning up...");
-    [_dispatcher stopTask:@"pbpoller"];
+    [_plaster invalidateMonitorWithID:[TSClientIdentifier clientID]];
     [_redisController unsubscribe];
     [self.startMenuItem setEnabled:YES];
     [self.stopMenuItem setEnabled:NO];
@@ -160,7 +137,7 @@ void handlePeerPaste(redisAsyncContext *c, void *reply, void *data) {
 - (void)applicationWillTerminate:(NSNotification *)notification {
     NSLog(@"Quitting...");
     if ([self.stopMenuItem isEnabled]) {
-        [_dispatcher stopTask:@"pbpoller"];
+        [_plaster invalidateMonitorWithID:[TSClientIdentifier clientID]];
         [_redisController unsubscribe];
     }
     [_redisController terminate];

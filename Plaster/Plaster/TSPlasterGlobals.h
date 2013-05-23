@@ -14,4 +14,6 @@
 #define REDIS_IP "176.9.2.188"
 #define REDIS_PORT 6379
 
+#define DEFAULT_PUBLISHER TSRedisController
+
 #endif

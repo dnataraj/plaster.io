@@ -41,12 +41,14 @@ void disconnectCallback(const redisAsyncContext *c, int status) {
 @implementation TSRedisController {
     redisAsyncContext *_asyncPubSessionContext;
     redisAsyncContext *_asyncSubSessionContext;
+    TSEventDispatcher *_dispatcher;
 }
 
-- (id)initWithDispatcher:(TSEventDispatcher *)dispatcher {
+- (id)init {
     self = [super init];
     if (self) {
-        if (dispatcher) {
+        _dispatcher = [[TSEventDispatcher alloc] init];
+        if (_dispatcher) {
             // Setting up the asynchronous publish context
             _asyncPubSessionContext = redisAsyncConnect(REDIS_IP, REDIS_PORT);
             if (_asyncPubSessionContext->err) {
@@ -63,7 +65,7 @@ void disconnectCallback(const redisAsyncContext *c, int status) {
                 NSLog(@"Established connection to %@\n", @REDIS_IP);
             }
             
-            int result = [dispatcher dispatchWithContext:_asyncPubSessionContext];
+            int result = [_dispatcher dispatchWithContext:_asyncPubSessionContext];
             if (result == REDIS_OK) {
                 NSLog(@"Setting pub async connect callback...");
                 redisAsyncSetConnectCallback(_asyncPubSessionContext, connectCallback);
@@ -73,7 +75,7 @@ void disconnectCallback(const redisAsyncContext *c, int status) {
                 NSLog(@"Dispatching pub failed with code : %d", result);
             }
      
-            result = [dispatcher dispatchWithContext:_asyncSubSessionContext];
+            result = [_dispatcher dispatchWithContext:_asyncSubSessionContext];
             if (result == REDIS_OK) {
                 NSLog(@"Setting sub async connect callback...");
                 redisAsyncSetConnectCallback(_asyncSubSessionContext, connectCallback);
@@ -82,33 +84,31 @@ void disconnectCallback(const redisAsyncContext *c, int status) {
             } else {
                 NSLog(@"Dispatching sub failed with code : %d", result);
             }
-
+        } else {
+            NSLog(@"Unable to initialize event dispatcher, exiting Redis controller...");
+            return nil;
         }
     }
 
     return self;
 }
 
-- (id)init {
-    return [self initWithDispatcher:nil];
-}
-
-- (void)subscribeToChannels:(NSArray *)channels withHandler:(tsSubcriptionHandler)handler andContext:(void *)context {
+- (void)subscribeToChannels:(NSArray *)channels withCallback:(void (^)(id))callback andContext:(void *)context {
     NSMutableString *subCmd = [[NSMutableString alloc] initWithFormat:@"SUBSCRIBE %@", [channels componentsJoinedByString:@" "]];
     NSLog(@"REDIS : Subscription command [%@]", subCmd);
-    redisAsyncCommand(_asyncSubSessionContext, handler, context, [subCmd UTF8String]);
+    redisAsyncCommand(_asyncSubSessionContext, NULL, context, [subCmd UTF8String]);
 }
 
-- (void)publishMessageString:(NSString *)message toChannel:(NSString *)channel withHandler:(tsPublishHandler)handler {
+- (void)publishObject:(NSString *)object toChannel:(NSString *)channel withCallback:(void (^)(id))callback {
     NSMutableString *pubCmd = [[NSMutableString alloc] initWithFormat:@"PUBLISH %@ '%%b'", channel];
     NSLog(@"REDIS : Publish command [%@]", pubCmd);
-    redisAsyncCommand(_asyncPubSessionContext, handler, NULL, [pubCmd UTF8String], [message UTF8String], strlen([message UTF8String]));
+    redisAsyncCommand(_asyncPubSessionContext, NULL, NULL, [pubCmd UTF8String], [object UTF8String], strlen([object UTF8String]));
 }
 
-- (void)publishMessage:(const char *)message toChannel:(NSString *)channel withHandler:(tsPublishHandler)handler {
+- (void)publish:(const char *)bytes toChannel:(NSString *)channel withCallback:(void (^)(id))callback {
     NSMutableString *pubCmd = [[NSMutableString alloc] initWithFormat:@"PUBLISH %@ '%%b'", channel];
     NSLog(@"REDIS : Publish command [%@]", pubCmd);
-    redisAsyncCommand(_asyncPubSessionContext, handler, NULL, [pubCmd UTF8String], message, strlen(message));
+    redisAsyncCommand(_asyncPubSessionContext, NULL, NULL, [pubCmd UTF8String], bytes, strlen(bytes));
 }
 
 - (void)unsubscribe {
