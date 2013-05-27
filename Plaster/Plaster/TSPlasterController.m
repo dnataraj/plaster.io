@@ -9,6 +9,10 @@
 #import "TSPlasterController.h"
 #import "TSEventDispatcher.h"
 #import "TSPacketSerializer.h"
+#import "TSClientIdentifier.h"
+
+//#define PEER_JOIN_CHANNEL "plaster:join:"
+#define PLASTER_SESSION_KEY "plaster:session:"
 
 @interface TSPlasterController ()
 
@@ -22,12 +26,19 @@
     NSArray *_readables;
     
     TSEventDispatcher *_dispatcher;
-    void (^plaster)(void);
+    
+    // The block declaration for handling a local pb copy
+    void (^plasterOut)(void);
+    // The block declaration to handle new peer join's
+    void (^handleNewPeer)(id, id);
+    // The block declaration to handle incoming plasters from a peer
+    void (^plasterIn)(id);
     
     id <TSMessagingProvider, TSDataStoreProvider> _provider;
+    //NSString *_clientID;
 }
 
-void (^publishCallback)(id) = ^(id context) {
+void (^publishCallback)(id, id) = ^(id reply, id context) {
     NSLog(@"Pasting to peers...");
 };
 
@@ -38,6 +49,7 @@ void (^publishCallback)(id) = ^(id context) {
             NSLog(@"The pasteboard controller needs both a valid pasteboard and a message provider.");
             return nil;
         }
+
         _provider = provider;
         _pb = pasteboard;
         _dispatcher = [[TSEventDispatcher alloc] init];
@@ -45,7 +57,7 @@ void (^publishCallback)(id) = ^(id context) {
         //_readables = [NSArray arrayWithObjects:[TSPasteboardPacket class] ,[NSString class], nil];
         _readables = [NSArray arrayWithObjects:[NSString class], nil];
 
-        plaster = ^(void) {
+        plasterOut = ^(void) {
             NSInteger newChangeCount = [_pb changeCount];
             if (_changeCount == newChangeCount) {
                 return;
@@ -63,7 +75,11 @@ void (^publishCallback)(id) = ^(id context) {
             id packet = [pbContents objectAtIndex:0];
             NSLog(@"Processing NSString packet and publishing...");
             const char *jsonBytes = [TSPacketSerializer JSONWithStringPacket:[[NSString alloc] initWithString:packet]];
-            [_provider publish:jsonBytes toChannel:@"device3" withCallback:publishCallback];
+            [_provider publish:jsonBytes toChannel:@"device3"];
+        };
+        
+        handleNewPeer = ^(id reply, id data) {
+            NSLog(@"Handling new peers...");
         };
         
     }
@@ -71,8 +87,29 @@ void (^publishCallback)(id) = ^(id context) {
     return self;
 }
 
+- (void)bootWithPeers:(NSUInteger)maxPeers {
+    NSString *clientID = [TSClientIdentifier clientID];
+    
+    // Obtain a session id from the user preferences (Note : this client could the session initiator, or a participant)
+    NSString *clientSessionID = [[NSUserDefaults standardUserDefaults] objectForKey:@"plaster-session-id"];
+    DLog(@"PLASTER BOOT : Booting plaster with client ID : [%@], and session ID [%@]", clientID, clientSessionID);
+    
+    // 1. Does a plaster session exist for this key?
+    NSString *sessionKey = [NSString stringWithFormat:@"%@%@", @PLASTER_SESSION_KEY, clientSessionID];
+    DLog(@"PLASTER BOOT : Verifying session for key : [%@]", sessionKey);
+    BOOL sessionExists = [_provider setNXStringValue:@"1" forKey:sessionKey];  // eq: SET key value NX
+
+    if (sessionExists) {
+        DLog(@"PLASTER BOOT : Found session with key [%@]", sessionKey);
+    } else {
+        DLog(@"PLASTER BOOT : New session. This client is participant 1");
+    }
+
+}
+
+
 - (void)scheduleMonitorWithID:(NSString *)id andTimeInterval:(NSTimeInterval)interval {
-    uint ret = [_dispatcher dispatchTask:id WithPeriod:(interval * NSEC_PER_SEC) andHandler:plaster];
+    uint ret = [_dispatcher dispatchTask:id WithPeriod:(interval * NSEC_PER_SEC) andHandler:plasterOut];
     if (ret == TS_DISPATCH_ERR) {
         NSLog(@"Error starting Plaster monitor : Unable to create/start dispatch timer, id : %@", id);
     }

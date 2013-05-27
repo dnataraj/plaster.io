@@ -10,10 +10,10 @@
 
 @interface TSClientStartPanelController : NSWindowController
 
-@property (weak) IBOutlet NSTextField *sharedKeyTextField;
-@property (readwrite, copy) NSString *sharedKey;
+@property (weak) IBOutlet NSTextField *sessionKeyTextField;
+@property (readwrite, copy) NSString *sessionKey;
 
-- (IBAction)useSharedKey:(id)sender;
+- (IBAction)useSessionKey:(id)sender;
 - (IBAction)cancel:(id)sender;
 
 @end

@@ -18,8 +18,6 @@
 #import "TSClientStartPanelController.h"
 #import "TSPlasterController.h"
 
-static TSClientIdentifier *_clientIdentifier = nil;
-
 void handlePeerCopy(redisAsyncContext *c, void *reply, void *data) {
     if (reply == NULL) {
         return;
@@ -72,13 +70,13 @@ void handlePeerPaste(redisAsyncContext *c, void *reply, void *data) {
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
     _redisController = [[TSRedisController alloc] init];
     _plaster = [[TSPlasterController alloc] initWithPasteboard:[NSPasteboard generalPasteboard] andProvider:_redisController];
+    [_plaster bootWithPeers:10];
 
-    _clientIdentifier = [[TSClientIdentifier alloc] init];
-    NSLog(@"Initializing plaster session with id [%@] and spider-key [%@]", [TSClientIdentifier clientID], [_clientIdentifier spiderKey]);
+    DLog(@"PLASTER : BOOTED.");
     
     // Register application default preferences
     NSMutableDictionary *defaultPreferences = [NSMutableDictionary dictionary];
-    [defaultPreferences setObject:[_clientIdentifier spiderKey] forKey:@"plaster-spider-key"];
+    [defaultPreferences setObject:[TSClientIdentifier createUUID] forKey:@"plaster-session-id"];
     [defaultPreferences setObject:[NSNumber numberWithBool:YES] forKey:@"plaster-allow-text"];
     [defaultPreferences setObject:[NSNumber numberWithBool:NO] forKey:@"plaster-allow-images"];
     
@@ -111,7 +109,7 @@ void handlePeerPaste(redisAsyncContext *c, void *reply, void *data) {
     }
     NSLog(@"Setting up subscriptions...");
     _subscriptionList = [[NSMutableArray alloc] initWithObjects:@"device1", @"device2", nil];
-    [_redisController subscribeToChannels:_subscriptionList withCallback:NULL andContext:(void *)[NSPasteboard generalPasteboard]];
+    //[_redisController subscribeToChannels:_subscriptionList withCallback:NULL andContext:(void *)[NSPasteboard generalPasteboard]];
     NSLog(@"Starting pasteboard monitoring every 15ms");
     [_plaster scheduleMonitorWithID:[TSClientIdentifier clientID] andTimeInterval:0.015];
     [self.startMenuItem setEnabled:NO];
@@ -130,7 +128,7 @@ void handlePeerPaste(redisAsyncContext *c, void *reply, void *data) {
     if (!_preferenceController) {
         _preferenceController = [[TSClientPreferenceController alloc] init];
     }
-    
+    [NSApp activateIgnoringOtherApps:YES];
     [_preferenceController showWindow:self];
 }
 

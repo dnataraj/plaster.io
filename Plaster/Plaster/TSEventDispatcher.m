@@ -49,6 +49,7 @@ void redisDeleteWrite(void *privateData) {
 }
 
 void redisClean(void *privateData) {
+    NSLog(@"!!CLEANING UP!!");
     tsDispatchContext *dc = (tsDispatchContext *)privateData;
     
     if (dc->_readEvent != NULL && dispatch_source_testcancel(dc->_readEvent) == 0) {
@@ -65,50 +66,6 @@ void redisClean(void *privateData) {
     
     free(dc);
 }
-
-/*
-int redisAttachAndDispatch(redisAsyncContext *asyncContext, dispatch_queue_t queue) {
-    redisContext *redisCtx = &(asyncContext->c);
-    
-    if (asyncContext->ev.data != NULL) {
-        return REDIS_ERR;        
-    }
-    
-    // Initialize and install read/write events
-    dispatch_source_t readEvent = dispatch_source_create(DISPATCH_SOURCE_TYPE_READ, redisCtx->fd, 0, queue);
-    if (readEvent == NULL) {
-        return REDIS_ERR_IO;        
-    }
-    dispatch_source_set_event_handler(readEvent, ^{
-        redisAsyncHandleRead(asyncContext);
-    });
-    
-    dispatch_source_t writeEvent = dispatch_source_create(DISPATCH_SOURCE_TYPE_WRITE, redisCtx->fd, 0, queue);
-    if (writeEvent == NULL) {
-        return REDIS_ERR_IO;        
-    }
-    dispatch_source_set_event_handler(writeEvent, ^{
-        redisAsyncHandleWrite(asyncContext);
-    });
-    
-    // Create container for context and r/w events
-    tsDispatchContext *dc = (tsDispatchContext *)malloc(sizeof(*dc));
-    dc->context = asyncContext;
-    dc->_isReading = dc->_isWriting = 0;
-    
-    // Register functions to start/stop listening for events
-    asyncContext->ev.addRead = redisRead;
-    asyncContext->ev.delRead = redisDeleteRead;
-    asyncContext->ev.addWrite = redisWrite;
-    asyncContext->ev.delWrite = redisDeleteWrite;
-    asyncContext->ev.cleanup = redisClean;
-    asyncContext->ev.data = dc;  // Do we need this?
-    dc->_readEvent = readEvent;
-    dc->_writeEvent = writeEvent;
-    
-    return REDIS_OK;
-}
-*/
 
 @implementation TSEventDispatcher {
     dispatch_queue_t _queue;
@@ -138,16 +95,22 @@ int redisAttachAndDispatch(redisAsyncContext *asyncContext, dispatch_queue_t que
     if (readEvent == NULL) {
         return REDIS_ERR_IO;
     }
+    
+    //dispatch_retain(readEvent);
     dispatch_source_set_event_handler(readEvent, ^{
         redisAsyncHandleRead(asyncContext);
+        //dispatch_release(readEvent);
     });
     
     dispatch_source_t writeEvent = dispatch_source_create(DISPATCH_SOURCE_TYPE_WRITE, redisCtx->fd, 0, _queue);
     if (writeEvent == NULL) {
         return REDIS_ERR_IO;
     }
+    
+    //dispatch_retain(writeEvent);
     dispatch_source_set_event_handler(writeEvent, ^{
         redisAsyncHandleWrite(asyncContext);
+        //dispatch_release(writeEvent);
     });
     
     // Create container for context and r/w events

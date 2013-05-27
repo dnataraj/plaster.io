@@ -27,18 +27,20 @@ static NSString *_clientID = nil;
     return _clientID;
 }
 
+/*
 - (id)init {
     self = [super init];
     if (self) {
-        _spiderKey = [TSClientIdentifier createUUID];
-        NSLog(@"Initializing client identifier with spider-key [%@]", _spiderKey);
+        _sessionKey = [TSClientIdentifier createUUID];
+        NSLog(@"Initializing client with session key [%@]", _sessionKey);
     }
     
     return self;
 }
 
-- (void)resetSpiderKey {
-    [self setSpiderKey:[TSClientIdentifier createUUID]];
+- (void)resetSessionKey {
+    [self setSessionKey:[TSClientIdentifier createUUID]];
 }
+*/
 
 @end

@@ -10,11 +10,9 @@
 
 @interface TSClientIdentifier : NSObject
 
-@property (readwrite, copy) NSString *spiderKey;
+//@property (readwrite, copy) NSString *sessionKey;
 
 + (NSString *)createUUID;
 + (NSString *)clientID;
-
-- (void)resetSpiderKey;
 
 @end

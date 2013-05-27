@@ -10,13 +10,13 @@
 
 @interface TSClientPreferenceController : NSWindowController <NSWindowDelegate>
 
-@property (weak) IBOutlet NSTextField *spiderKeyTextField;
+@property (weak) IBOutlet NSTextField *sessionIDTextField;
 @property (weak) IBOutlet NSButton *handleTextTypeButton;
 @property (weak) IBOutlet NSButton *handleImageTypeButton;
 
-@property (readonly, copy) NSString *spiderKey;
+@property (readonly, copy) NSString *sessionID;
 @property (readwrite) BOOL handlesTextType, handlesImageType;
 
-- (IBAction)generateSpiderKey:(id)sender;
+- (IBAction)generateSessionID:(id)sender;
 
 @end

@@ -219,28 +219,12 @@ ZWN0aW5nIFByZWZlcmVuY2VzIGZyb20gdGhlIGFwcGxpY2F0aW9uIG1lbnUuA</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<bool key="NSWindowIsRestorable">YES</bool>
 			</object>
-			<object class="NSUserDefaultsController" id="760323382">
+			<object class="NSUserDefaultsController" id="1032614469">
 				<bool key="NSSharedInstance">YES</bool>
 			</object>
 		</array>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
 			<array class="NSMutableArray" key="connectionRecords">
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">sharedKeyTextField</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="193454775"/>
-					</object>
-					<int key="connectionID">197</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">useSharedKey:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="570163643"/>
-					</object>
-					<int key="connectionID">198</int>
-				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">cancel:</string>
@@ -256,6 +240,22 @@ ZWN0aW5nIFByZWZlcmVuY2VzIGZyb20gdGhlIGFwcGxpY2F0aW9uIG1lbnUuA</string>
 						<reference key="destination" ref="77406033"/>
 					</object>
 					<int key="connectionID">205</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">sessionKeyTextField</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="193454775"/>
+					</object>
+					<int key="connectionID">359</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">useSessionKey:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="570163643"/>
+					</object>
+					<int key="connectionID">360</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
@@ -279,15 +279,15 @@ ZWN0aW5nIFByZWZlcmVuY2VzIGZyb20gdGhlIGFwcGxpY2F0aW9uIG1lbnUuA</string>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled: sharedKey</string>
+						<string key="label">enabled: sessionKey</string>
 						<reference key="source" ref="570163643"/>
 						<reference key="destination" ref="1001"/>
 						<object class="NSNibBindingConnector" key="connector">
 							<reference key="NSSource" ref="570163643"/>
 							<reference key="NSDestination" ref="1001"/>
-							<string key="NSLabel">enabled: sharedKey</string>
+							<string key="NSLabel">enabled: sessionKey</string>
 							<string key="NSBinding">enabled</string>
-							<string key="NSKeyPath">sharedKey</string>
+							<string key="NSKeyPath">sessionKey</string>
 							<object class="NSDictionary" key="NSOptions">
 								<string key="NS.key.0">NSValueTransformerName</string>
 								<string key="NS.object.0">TSClientStartPanelValueTransformer</string>
@@ -295,7 +295,7 @@ ZWN0aW5nIFByZWZlcmVuY2VzIGZyb20gdGhlIGFwcGxpY2F0aW9uIG1lbnUuA</string>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
-					<int key="connectionID">224</int>
+					<int key="connectionID">358</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -384,7 +384,7 @@ ZWN0aW5nIFByZWZlcmVuY2VzIGZyb20gdGhlIGFwcGxpY2F0aW9uIG1lbnUuA</string>
 								<float key="scoringTypeFloat">29</float>
 								<int key="contentType">3</int>
 							</object>
-							<object class="IBNSLayoutConstraint" id="1035054995">
+							<object class="IBNSLayoutConstraint" id="95445892">
 								<reference key="firstItem" ref="570163643"/>
 								<int key="firstAttribute">3</int>
 								<int key="relation">0</int>
@@ -400,7 +400,7 @@ ZWN0aW5nIFByZWZlcmVuY2VzIGZyb20gdGhlIGFwcGxpY2F0aW9uIG1lbnUuA</string>
 								<float key="scoringTypeFloat">24</float>
 								<int key="contentType">3</int>
 							</object>
-							<object class="IBNSLayoutConstraint" id="602995939">
+							<object class="IBNSLayoutConstraint" id="879976484">
 								<reference key="firstItem" ref="1050539714"/>
 								<int key="firstAttribute">4</int>
 								<int key="relation">0</int>
@@ -614,7 +614,7 @@ ZWN0aW5nIFByZWZlcmVuY2VzIGZyb20gdGhlIGFwcGxpY2F0aW9uIG1lbnUuA</string>
 						<reference key="object" ref="804709554"/>
 						<array class="NSMutableArray" key="children">
 							<reference ref="626115222"/>
-							<object class="IBNSLayoutConstraint" id="144936232">
+							<object class="IBNSLayoutConstraint" id="211144684">
 								<reference key="firstItem" ref="804709554"/>
 								<int key="firstAttribute">7</int>
 								<int key="relation">0</int>
@@ -665,7 +665,7 @@ ZWN0aW5nIFByZWZlcmVuY2VzIGZyb20gdGhlIGFwcGxpY2F0aW9uIG1lbnUuA</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">206</int>
-						<reference key="object" ref="760323382"/>
+						<reference key="object" ref="1032614469"/>
 						<reference key="parent" ref="0"/>
 					</object>
 					<object class="IBObjectRecord">
@@ -675,7 +675,7 @@ ZWN0aW5nIFByZWZlcmVuY2VzIGZyb20gdGhlIGFwcGxpY2F0aW9uIG1lbnUuA</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">243</int>
-						<reference key="object" ref="144936232"/>
+						<reference key="object" ref="211144684"/>
 						<reference key="parent" ref="804709554"/>
 					</object>
 					<object class="IBObjectRecord">
@@ -685,7 +685,7 @@ ZWN0aW5nIFByZWZlcmVuY2VzIGZyb20gdGhlIGFwcGxpY2F0aW9uIG1lbnUuA</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">315</int>
-						<reference key="object" ref="602995939"/>
+						<reference key="object" ref="879976484"/>
 						<reference key="parent" ref="1050539714"/>
 					</object>
 					<object class="IBObjectRecord">
@@ -695,7 +695,7 @@ ZWN0aW5nIFByZWZlcmVuY2VzIGZyb20gdGhlIGFwcGxpY2F0aW9uIG1lbnUuA</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">352</int>
-						<reference key="object" ref="1035054995"/>
+						<reference key="object" ref="95445892"/>
 						<reference key="parent" ref="1050539714"/>
 					</object>
 					<object class="IBObjectRecord">
@@ -724,7 +724,7 @@ ZWN0aW5nIFByZWZlcmVuY2VzIGZyb20gdGhlIGFwcGxpY2F0aW9uIG1lbnUuA</string>
 				<string key="136.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="137.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<array class="NSMutableArray" key="144.IBNSViewMetadataConstraints">
-					<reference ref="144936232"/>
+					<reference ref="211144684"/>
 				</array>
 				<boolean value="NO" key="144.IBNSViewMetadataTranslatesAutoresizingMaskIntoConstraints"/>
 				<string key="144.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -738,8 +738,8 @@ ZWN0aW5nIFByZWZlcmVuY2VzIGZyb20gdGhlIGFwcGxpY2F0aW9uIG1lbnUuA</string>
 					<reference ref="538185807"/>
 					<reference ref="349083297"/>
 					<reference ref="354692596"/>
-					<reference ref="602995939"/>
-					<reference ref="1035054995"/>
+					<reference ref="879976484"/>
+					<reference ref="95445892"/>
 					<reference ref="722710454"/>
 					<reference ref="1051274813"/>
 					<reference ref="379759684"/>
@@ -774,7 +774,7 @@ ZWN0aW5nIFByZWZlcmVuY2VzIGZyb20gdGhlIGFwcGxpY2F0aW9uIG1lbnUuA</string>
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">357</int>
+			<int key="maxID">360</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -791,26 +791,26 @@ ZWN0aW5nIFByZWZlcmVuY2VzIGZyb20gdGhlIGFwcGxpY2F0aW9uIG1lbnUuA</string>
 					<string key="superclassName">NSWindowController</string>
 					<dictionary class="NSMutableDictionary" key="actions">
 						<string key="cancel:">id</string>
-						<string key="useSharedKey:">id</string>
+						<string key="useSessionKey:">id</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="actionInfosByName">
 						<object class="IBActionInfo" key="cancel:">
 							<string key="name">cancel:</string>
 							<string key="candidateClassName">id</string>
 						</object>
-						<object class="IBActionInfo" key="useSharedKey:">
-							<string key="name">useSharedKey:</string>
+						<object class="IBActionInfo" key="useSessionKey:">
+							<string key="name">useSessionKey:</string>
 							<string key="candidateClassName">id</string>
 						</object>
 					</dictionary>
 					<object class="NSMutableDictionary" key="outlets">
-						<string key="NS.key.0">sharedKeyTextField</string>
+						<string key="NS.key.0">sessionKeyTextField</string>
 						<string key="NS.object.0">NSTextField</string>
 					</object>
 					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<string key="NS.key.0">sharedKeyTextField</string>
+						<string key="NS.key.0">sessionKeyTextField</string>
 						<object class="IBToOneOutletInfo" key="NS.object.0">
-							<string key="name">sharedKeyTextField</string>
+							<string key="name">sessionKeyTextField</string>
 							<string key="candidateClassName">NSTextField</string>
 						</object>
 					</object>

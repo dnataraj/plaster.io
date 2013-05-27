@@ -8,10 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+typedef void (^mpCallback)(id reply, id data);
+
 @protocol TSMessagingProvider <NSObject>
 
-- (void)publishObject:(NSString *)object toChannel:(NSString *)channel withCallback:(void (^)(id))callback;
-- (void)publish:(const char *)bytes toChannel:(NSString *)channel withCallback:(void (^)(id))callback;
-- (void)subscribeToChannels:(NSArray *)channels withCallback:(void (^)(id))callback andContext:(void *)context;
+- (void)publishObject:(NSString *)object toChannel:(NSString *)channel;
+- (void)publish:(const char *)bytes toChannel:(NSString *)channel;
+- (void)subscribeToChannels:(NSSet *)channels withCallback:(mpCallback)callback andContext:(id)context;
 
 @end
