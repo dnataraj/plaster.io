@@ -9,11 +9,14 @@
 #import <Foundation/Foundation.h>
 
 typedef void (^mpCallback)(id reply, id data);
+typedef void (*mpCallbackC)(char *reply, void *data);
 
 @protocol TSMessagingProvider <NSObject>
 
 - (void)publishObject:(NSString *)object toChannel:(NSString *)channel;
 - (void)publish:(const char *)bytes toChannel:(NSString *)channel;
-- (void)subscribeToChannels:(NSSet *)channels withCallback:(mpCallback)callback andContext:(id)context;
+- (NSString *)subscribeToChannels:(NSArray *)channels withCallback:(mpCallbackC)callback andContext:(void *)context;
+- (void)unsubscribe:(NSString *)subscriptionID;
+- (void)unsubscribeAll;
 
 @end

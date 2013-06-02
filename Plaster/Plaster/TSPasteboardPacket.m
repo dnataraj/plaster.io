@@ -28,24 +28,24 @@ NSString * const PLAIN_TEXT_UTI = @"public.utf8-plain-text";
     return self;
 }
 
-- (id)initWithTag:(NSString *)aTag andBytes:(const char *)bytes {
+- (id)initWithTag:(NSString *)aTag bytes:(const char *)bytes {
     self = [self init];
     if (self) {
         _tag = aTag;
         [self _setPacket:bytes];
         _packet = [[NSString alloc] initWithUTF8String:bytes];
-        NSLog(@"Initialized packet with content [%@]", _packet);
+        //NSLog(@"Initialized packet with content [%@]", _packet);
     }
     
     return self;
 }
 
-- (id)initWithTag:(NSString *)aTag andString:(NSString *)aString {
+- (id)initWithTag:(NSString *)aTag string:(NSString *)aString {
     self = [self init];
     if (self) {
         _tag = aTag;
         _packet = [aString copy];
-        NSLog(@"Initialized packet with content [%@]", _packet);
+        //NSLog(@"Initialized packet with content [%@]", _packet);
     }
     
     return self;
@@ -54,11 +54,11 @@ NSString * const PLAIN_TEXT_UTI = @"public.utf8-plain-text";
 - (id)initWithPasteboardPropertyList:(id)propertyList ofType:(NSString *)type {
     self = [self init];
     if (self) {
-        NSLog(@"Initializing with property list %@", [propertyList class]);
-        NSLog(@"and type %@", type);
+        DLog(@"PACKET: Initializing with property list %@", [propertyList class]);
+        DLog(@"PACKET: and type %@", type);
         if ([type isEqualToString:PLASTER_UTI]) {
             _packet = [[NSString alloc] initWithPasteboardPropertyList:propertyList ofType:NSPasteboardTypeString];
-            NSLog(@"Initialized packet after peer copy [%@]", _packet);
+            DLog(@"PACKET: Initialized packet after peer copy [%@]", _packet);
         }
     }
     return self;
@@ -82,21 +82,21 @@ NSString * const PLAIN_TEXT_UTI = @"public.utf8-plain-text";
     if (!writeableTypes) {
         writeableTypes = [[NSArray alloc] initWithObjects:PLASTER_UTI, NSPasteboardTypeString, PLAIN_TEXT_UTI, nil];
     }
-    NSLog(@"Returning writeable types...");
+    //DLog(@"Returning writeable types...");
     return writeableTypes;
 }
 
 - (id)pasteboardPropertyListForType:(NSString *)type {
     if ([type isEqualToString:PLASTER_UTI]) {
-        NSLog(@"Returning packet for type [%@]", PLASTER_UTI);
+        DLog(@"PACKET: Returning packet for type [%@]", PLASTER_UTI);
         return _packet;
     }
     if ([type isEqualToString:NSPasteboardTypeString]) {
-        NSLog(@"Returning packet for type [%@]", NSPasteboardTypeString);
+        DLog(@"PACKET: Returning packet for type [%@]", NSPasteboardTypeString);
         return _packet;
     }
     if ([type isEqualToString:PLAIN_TEXT_UTI]) {
-        NSLog(@"Returning packet for type [%@]", PLAIN_TEXT_UTI);
+        DLog(@"PACKET: Returning packet for type [%@]", PLAIN_TEXT_UTI);
         return _packet;
     }
     
@@ -108,7 +108,7 @@ NSString * const PLAIN_TEXT_UTI = @"public.utf8-plain-text";
     if (!readableTypes) {
         readableTypes = [[NSArray alloc] initWithObjects:PLASTER_UTI, NSPasteboardTypeString, PLAIN_TEXT_UTI, nil];
     }
-    NSLog(@"Returning readable types...");
+    //DLog(@"Returning readable types...");
     return readableTypes;
 }
 
@@ -137,7 +137,7 @@ NSString * const PLAIN_TEXT_UTI = @"public.utf8-plain-text";
         return [NSString stringWithFormat:@"Packet [%@]", _packet];
     }
     
-    return @"DESC: Not Ready.";
+    return @"PACKET: Not Ready.";
 }
 
 @end

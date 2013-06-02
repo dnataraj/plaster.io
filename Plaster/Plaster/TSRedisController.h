@@ -28,11 +28,9 @@ HandlerBundle makeHandlerBundle(mpCallback callback, void *data, dispatch_semaph
 
 @interface TSRedisController : NSObject <TSMessagingProvider, TSDataStoreProvider>
 
-@property (readwrite, retain) NSHost *redisHost;
-@property (readwrite, assign) NSUInteger redisPort;
+@property (readwrite) NSHost *redisHost;
+@property (readwrite) NSUInteger redisPort;
 
-- (id)initWithIPAddress:(NSString *)ip andPort:(NSUInteger)port;
-- (void)unsubscribe;
-- (void)terminate;
+- (id)initWithIPAddress:(NSString *)ip port:(NSUInteger)port;
 
 @end

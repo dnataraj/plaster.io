@@ -11,14 +11,17 @@
 #import "async.h"
 #import "TSPlasterGlobals.h"
 #import "TSEventDispatcher.h"
+#import "TSClientIdentifier.h"
+#import "TSRedisSubscriptionContext.h"
 #import "errno.h"
 
 void _signal(const char *caller, void *bundle) {
     if (bundle) {
         HandlerBundle hb = (HandlerBundle)bundle;
         if (hb->semaphore) {
-            NSLog(@"REDIS : %s : Signalling...", caller);
-            dispatch_semaphore_signal(*hb->semaphore);
+            //NSLog(@"REDIS: %s : Signalling...", caller);
+            printf("REDIS: %s : Signalling...", caller);
+            dispatch_semaphore_signal(*(hb->semaphore));
         }
     }
 }
@@ -26,24 +29,24 @@ void _signal(const char *caller, void *bundle) {
 BOOL rcProcessReply(redisAsyncContext *ctx, void *r, void *data) {
     redisReply *reply = r;
     if (reply == NULL) {
-        NSLog(@"REDIS : The reply was null, checking context...");
+        NSLog(@"REDIS: The reply was null, checking context...");
         if (ctx) {
             switch (ctx->err) {
                 case REDIS_ERR_IO:
-                    NSLog(@"REDIS : Error occured : %s", strerror(errno));
+                    NSLog(@"REDIS: Error occured : %s", strerror(errno));
                     break;
                 case REDIS_ERR_EOF:
-                    NSLog(@"REDIS :  The server closed the connection which resulted in an empty read. : %s", ctx->errstr);
+                    NSLog(@"REDIS:  The server closed the connection which resulted in an empty read. : %s", ctx->errstr);
                     break;
                 case REDIS_ERR_PROTOCOL:
-                    NSLog(@"REDIS :  There was an error while parsing the protocol. : %s", ctx->errstr);
+                    NSLog(@"REDIS:  There was an error while parsing the protocol. : %s", ctx->errstr);
                     break;
                 case REDIS_ERR_OTHER:
-                    NSLog(@"REDIS :  Possible error when resolving hostname. : %s", ctx->errstr);
+                    NSLog(@"REDIS:  Possible error when resolving hostname. : %s", ctx->errstr);
                     break;
                     
                 default:
-                    NSLog(@"REDIS : Unknown error. : %s", ctx->errstr);
+                    NSLog(@"REDIS: Unknown error. : %s", ctx->errstr);
                     break;
             }
         } else {
@@ -54,22 +57,22 @@ BOOL rcProcessReply(redisAsyncContext *ctx, void *r, void *data) {
     
     switch (reply->type) {
         case REDIS_REPLY_STATUS:
-            NSLog(@"REDIS : REDIS_REPLY_STATUS : %s", reply->str);
+            NSLog(@"REDIS: REDIS_REPLY_STATUS : %s", reply->str);
             break;
         case REDIS_REPLY_ERROR:
-            NSLog(@"REDIS : ERROR! :REDIS_REPLY_ERROR : %s", reply->str);
+            NSLog(@"REDIS: ERROR! :REDIS_REPLY_ERROR : %s", reply->str);
             break;
         case REDIS_REPLY_INTEGER:
-            NSLog(@"REDIS : REDIS_REPLY_INTEGER : %lld", reply->integer);
+            NSLog(@"REDIS: REDIS_REPLY_INTEGER : %lld", reply->integer);
             break;
         case REDIS_REPLY_NIL:
-            NSLog(@"REDIS : REDIS_REPLY_NIL : no data.");
+            NSLog(@"REDIS: REDIS_REPLY_NIL : no data.");
             break;
         case REDIS_REPLY_STRING:
-            NSLog(@"REDIS : REDIS_REPLY_STRING : %s", reply->str);
+            NSLog(@"REDIS: REDIS_REPLY_STRING : %s", reply->str);
             break;
         case REDIS_REPLY_ARRAY:
-            NSLog(@"REDIS : REDIS_REPLY_ARRAY : Number of elements : %zd", reply->elements);
+            NSLog(@"REDIS: REDIS_REPLY_ARRAY : Number of elements : %zd", reply->elements);
             break;
             
         default:
@@ -84,21 +87,21 @@ void rcSet(redisAsyncContext *ctx, void *r, void *data) {
         redisReply *reply = r;
         if (reply->type == REDIS_REPLY_STATUS) {
             if (strcmp(reply->str, "OK")) {
-                NSLog(@"REDIS : SET replied with OK.");
+                NSLog(@"REDIS: SET replied with OK.");
                 if (data) {
                     HandlerBundle hb = (HandlerBundle)data;
                     hb->int_data = 1;
                 }
             }
         } else if (reply->type == REDIS_REPLY_NIL) {
-            NSLog(@"REDIS : SET replied with (nil).");
+            NSLog(@"REDIS: SET replied with (nil).");
             if (data) {
                 HandlerBundle hb = (HandlerBundle)data;
                 hb->int_data = 0;
             }
             
         }
-        NSLog(@"REDIS : SET : Disconnecting...");
+        NSLog(@"REDIS: SET : Disconnecting...");
         redisAsyncDisconnect(ctx);
     }
     _signal("SET", data);
@@ -110,14 +113,14 @@ void rcGet(redisAsyncContext *ctx, void *r, void *data) {
         redisReply *reply = r;
         if (reply->type == REDIS_REPLY_STRING) {
             if (data) {
-                NSLog(@"REDIS : Processing GET reply..");
+                NSLog(@"REDIS: GET : Processing GET reply..");
                 HandlerBundle hb = (HandlerBundle)data;
                 hb->data = (char *)malloc(strlen(reply->str));
                 strcpy(hb->data, reply->str);
             }
         }
         
-        NSLog(@"REDIS : GET : Disconnecting...");
+        NSLog(@"REDIS: GET : Disconnecting...");
         redisAsyncDisconnect(ctx);        
     }
     
@@ -130,13 +133,13 @@ void rcIncr(redisAsyncContext *ctx, void *r, void *data) {
         redisReply *reply = r;
         if (reply->type == REDIS_REPLY_INTEGER) {
             if (data) {
-                NSLog(@"REDIS : Processing INCR reply..");
+                NSLog(@"REDIS: INCR : Processing INCR reply..");
                 HandlerBundle hb = (HandlerBundle)data;
                 hb->int_data = reply->integer;
             }
         }
         
-        NSLog(@"REDIS : INCR : Disconnecting...");
+        NSLog(@"REDIS: INCR : Disconnecting...");
         redisAsyncDisconnect(ctx);
     }
     
@@ -144,46 +147,94 @@ void rcIncr(redisAsyncContext *ctx, void *r, void *data) {
     return;
 }
 
+void rcDel(redisAsyncContext *ctx, void *r, void *data) {
+    if (rcProcessReply(ctx, r, data)) {
+        redisReply *reply = r;
+        if (reply->type == REDIS_REPLY_INTEGER) {
+            if (data) {
+                NSLog(@"REDIS: DEL : Processing DEL reply..");
+                HandlerBundle hb = (HandlerBundle)data;
+                hb->int_data = reply->integer;
+            }
+        }
+        
+        NSLog(@"REDIS: DEL : Disconnecting...");
+        redisAsyncDisconnect(ctx);
+    }
+    
+    _signal("DEL", data);
+    return;
+}
+
+void rcSubscribe(redisAsyncContext *ctx, void *r, void *data) {
+    if (rcProcessReply(ctx, r, data)) {
+        redisReply *reply = r;
+        if (reply->type == REDIS_REPLY_ARRAY) {
+            for (int j = 0; j < reply->elements; j++) {
+                printf("%u) %s\n", j, reply->element[j]->str);
+            }
+            if (reply->elements > 2) {
+                if (strcmp(reply->element[0]->str, "unsubscribe") == 0) {
+                    NSLog(@"REDIS: UNSUBSCRIBE : Disconnecting...");
+                    redisAsyncDisconnect(ctx);
+                    return;
+                }
+                HandlerBundle hb = (HandlerBundle)data;
+                (hb->handler)(reply->element[2]->str, hb->data);
+            }
+        }
+    }
+}
+
+/*
+void rcUnsubscribe(redisAsyncContext *ctx, void *r, void *data) {
+    if (rcProcessReply(ctx, r, data)) {
+        
+    }
+    NSLog(@"REDIS: UNSUBSCRIBE : Disconnecting...");
+    redisAsyncDisconnect(ctx);
+}
+*/
+
 void connectCallback(const redisAsyncContext *c, int status) {
     if (status != REDIS_OK) {
-        printf("Error: %s\n", c->errstr);
+        printf("REDIS: CONNECT : Error: %s\n", c->errstr);
         return;
     }
-    printf("REDIS : Connected...\n");
+    printf("REDIS: CONNECT : Connected...\n");
 }
 
 void disconnectCallback(const redisAsyncContext *c, int status) {
     if (status != REDIS_OK) {
-        NSLog(@"Error: %s\n", c->errstr);
+        NSLog(@"REDIS: DISCONNECT : Error: %s\n", c->errstr);
         return;
     }
-    NSLog(@"REDIS : Disconnected.");
-}
-
-void subscribe(redisAsyncContext *c, void *r, void *data) {
-    redisReply *reply = r;
-    if (reply == NULL) {
-        return;
-    }
-    if (reply->type == REDIS_REPLY_ARRAY) {
-        for (int j = 0; j < reply->elements; j++) {
-            printf("%u) %s\n", j, reply->element[j]->str);
-        }
-    }
-    if (reply->elements > 2) {
-        HandlerBundle hb = (HandlerBundle)data;
-        NSLog(@"Invoking callback handler...");
-        (hb->handler)(reply->element[2]->str, hb->data);
-    }
+    NSLog(@"REDIS : DISCONNECT : Disconnected.");
 }
 
 HandlerBundle makeHandlerBundle(mpCallback callback, void *data, dispatch_semaphore_t *sema) {
     HandlerBundle hb = (HandlerBundle)malloc(sizeof(HandlerBundle));
     hb->data = data;
     if (callback) {
+        //NSLog(@"Setting callback in bundle...");
         hb->handler = (__bridge void *) callback;
     }
     hb->semaphore = sema;
+    return hb;
+}
+
+HandlerBundle makeHandlerBundleC(mpCallbackC callback, void *data, dispatch_semaphore_t *sema) {
+    HandlerBundle hb = (HandlerBundle)malloc(sizeof(HandlerBundle));
+    hb->data = data;
+    hb->handler = NULL;
+    if (callback) {
+        //NSLog(@"Setting callback in bundle...");
+        hb->handler = callback;
+    }
+    hb->semaphore = nil;
+    if (sema) {
+        hb->semaphore = sema;
+    }
     return hb;
 }
 
@@ -206,60 +257,40 @@ void freeBundle(HandlerBundle hb) {
 
 @implementation TSRedisController {
     redisAsyncContext *_asyncPubSessionContext;
-    redisAsyncContext *_asyncSubSessionContext;
+    
     TSEventDispatcher *_dispatcher;
+    NSMutableDictionary *_subscribers;
+    
+    // Long-living redis synchronous contexts.
+    redisContext *_blockingContext;
+    
 }
 
-- (id)initWithIPAddress:(NSString *)ip andPort:(NSUInteger)port {
+- (id)initWithIPAddress:(NSString *)ip port:(NSUInteger)port {
     self = [super init];
     if (self) {
         signal(SIGPIPE, SIG_IGN);
         _redisHost = [NSHost hostWithAddress:ip];
         _redisPort = port;
         
+        // Initialize the subscriber list
+        _subscribers = [[NSMutableDictionary alloc] init];
+        
         _dispatcher = [[TSEventDispatcher alloc] init];
         if (_dispatcher) {
             // Setting up the asynchronous publish context
-            
-            _asyncPubSessionContext = [self connect];
-            if (_asyncPubSessionContext->err) {
-                NSLog(@"Error establishing connection : %s\n", _asyncPubSessionContext->errstr);
-            } else {
-                NSLog(@"Established connection to %@\n", @REDIS_IP);
-            }
-            
-            // Setting up the asynchronous subscribe context
-            _asyncSubSessionContext = redisAsyncConnect(REDIS_IP, REDIS_PORT);
-            if (_asyncSubSessionContext->err) {
-                NSLog(@"Error establishing connection : %s\n", _asyncSubSessionContext->errstr);
-            } else {
-                NSLog(@"Established connection to %@\n", @REDIS_IP);
-            }
-            
-            int result = [_dispatcher dispatchWithContext:_asyncPubSessionContext];
-            if (result == REDIS_OK) {
-                NSLog(@"Setting pub async connect callback...");
-                redisAsyncSetConnectCallback(_asyncPubSessionContext, connectCallback);
-                NSLog(@"Setting pub async disconnect callback...");
-                redisAsyncSetDisconnectCallback(_asyncPubSessionContext, disconnectCallback);
-            } else {
-                NSLog(@"Dispatching pub failed with code : %d", result);
-            }
-     
-            result = [_dispatcher dispatchWithContext:_asyncSubSessionContext];
-            if (result == REDIS_OK) {
-                NSLog(@"Setting sub async connect callback...");
-                redisAsyncSetConnectCallback(_asyncSubSessionContext, connectCallback);
-                NSLog(@"Setting sub async disconnect callback...");
-                redisAsyncSetDisconnectCallback(_asyncSubSessionContext, disconnectCallback);
-            } else {
-                NSLog(@"Dispatching sub failed with code : %d", result);
-            }
-            
+            _asyncPubSessionContext = [self connectAndDispatch];
         } else {
-            NSLog(@"Unable to initialize event dispatcher, exiting Redis controller...");
+            DLog(@"REDIS: INIT : Unable to initialize event dispatcher, exiting Redis controller...");
             return nil;
         }
+        
+        _blockingContext = [self connect];
+        if (!_blockingContext) {
+            DLog(@"REDIS: Unable to initialize synchronous Redis context.");
+            return nil;
+        }
+        
         
     }
 
@@ -267,32 +298,95 @@ void freeBundle(HandlerBundle hb) {
 }
 
 - (id)init {
-    return [self initWithIPAddress:@REDIS_IP andPort:REDIS_PORT];
+    return [self initWithIPAddress:@REDIS_IP port:REDIS_PORT];
 }
 
-- (redisAsyncContext *)connect {
-    return redisAsyncConnect([[[self redisHost] address] UTF8String], (uint)[self redisPort]);
+- (BOOL)processReply:(redisContext *)ctx withReply:(void *)r andData:(void *)data {
+    redisReply *reply = r;
+    if (reply == NULL) {
+        NSLog(@"REDIS: The reply was null, checking context...");
+        if (ctx) {
+            switch (ctx->err) {
+                case REDIS_ERR_IO:
+                    NSLog(@"REDIS: Error occured : %s", strerror(errno));
+                    break;
+                case REDIS_ERR_EOF:
+                    NSLog(@"REDIS:  The server closed the connection which resulted in an empty read. : %s", ctx->errstr);
+                    break;
+                case REDIS_ERR_PROTOCOL:
+                    NSLog(@"REDIS:  There was an error while parsing the protocol. : %s", ctx->errstr);
+                    break;
+                case REDIS_ERR_OTHER:
+                    NSLog(@"REDIS:  Possible error when resolving hostname. : %s", ctx->errstr);
+                    break;
+                    
+                default:
+                    NSLog(@"REDIS: Unknown error. : %s", ctx->errstr);
+                    break;
+            }
+        } else {
+            NSLog(@"Context is null as well. Aborting.");
+        }
+        return NO;
+    }
+    
+    switch (reply->type) {
+        case REDIS_REPLY_STATUS:
+            NSLog(@"REDIS: REDIS_REPLY_STATUS : %s", reply->str);
+            break;
+        case REDIS_REPLY_ERROR:
+            NSLog(@"REDIS: ERROR! :REDIS_REPLY_ERROR : %s", reply->str);
+            break;
+        case REDIS_REPLY_INTEGER:
+            NSLog(@"REDIS: REDIS_REPLY_INTEGER : %lld", reply->integer);
+            break;
+        case REDIS_REPLY_NIL:
+            NSLog(@"REDIS: REDIS_REPLY_NIL : no data.");
+            break;
+        case REDIS_REPLY_STRING:
+            NSLog(@"REDIS: REDIS_REPLY_STRING : %s", reply->str);
+            break;
+        case REDIS_REPLY_ARRAY:
+            NSLog(@"REDIS: REDIS_REPLY_ARRAY : Number of elements : %zd", reply->elements);
+            break;
+            
+        default:
+            break;
+    }
+    
+    return YES;
+}
+
+- (redisContext *)connect {
+    redisContext *context = redisConnect([[[self redisHost] address] UTF8String], (uint)[self redisPort]);
+    if (context && context->err) {
+        DLog(@"REDIS: SYNC CONNECT : There was an error establishing the connection : %s", context->errstr);
+        context = NULL;
+        return context;
+    }
+    
+    return context;
 }
 
 - (redisAsyncContext *)connectAndDispatch {
     redisAsyncContext *localAsyncCtx = redisAsyncConnect([[[self redisHost] address] UTF8String], (uint)[self redisPort]);
     if (localAsyncCtx->err) {
-        ALog(@"REDIS : Error establishing connection : %s\n", localAsyncCtx->errstr);
+        ALog(@"REDIS: Error establishing connection : %s\n", localAsyncCtx->errstr);
         return NULL;
     } else {
-        DLog(@"REDIS : Established connection to %@\n", [[self redisHost] address]);
+        DLog(@"REDIS: Establishing connection to %@\n", [[self redisHost] address]);
     }
-    DLog(@"REDIS : Dispatching context...");
+    DLog(@"REDIS: Dispatching context...");
     uint result = [_dispatcher dispatchWithContext:localAsyncCtx];
     if (result != REDIS_OK) {
-        ALog(@"REDIS : Error dispatching Redis context to event loop : %s", localAsyncCtx->errstr);
+        ALog(@"REDIS: Error dispatching Redis context to event loop : %s", localAsyncCtx->errstr);
         redisAsyncDisconnect(localAsyncCtx);
         return NULL;
     }
-    DLog(@"REDIS : Setting disconnect callback...");
+    DLog(@"REDIS: Setting disconnect callback...");
     result = redisAsyncSetDisconnectCallback(localAsyncCtx, disconnectCallback);
     if (result != REDIS_OK) {
-        ALog(@"REDIS : Error setting disconnect callback : %s", localAsyncCtx->errstr);
+        ALog(@"REDIS: Error setting disconnect callback : %s", localAsyncCtx->errstr);
         redisAsyncDisconnect(localAsyncCtx);
         return NULL;
     }
@@ -300,56 +394,135 @@ void freeBundle(HandlerBundle hb) {
     return localAsyncCtx;
 }
 
-- (void)subscribeToChannels:(NSArray *)channels withCallback:(mpCallback)callback andContext:(id)context {
+- (NSString *)subscribeToChannels:(NSArray *)channels withCallback:(mpCallbackC)callback andContext:(void *)context {
     NSMutableString *subCmd = [[NSMutableString alloc] initWithFormat:@"SUBSCRIBE %@", [channels componentsJoinedByString:@" "]];
-    NSLog(@"REDIS : Subscription command [%@]", subCmd);
-    HandlerBundle subscriptionBundle = makeHandlerBundle(callback, (__bridge void *)context, nil);
-    redisAsyncCommand(_asyncSubSessionContext, subscribe, subscriptionBundle, [subCmd UTF8String]);
+    DLog(@"REDIS: Subscription command [%@]", subCmd);
+    redisAsyncContext *localAsyncCtx = [self connectAndDispatch];
+    HandlerBundle bundle = NULL;
+    NSString *subscriberID = nil;
+    char *cmd = (char *)malloc((sizeof(char)) * strlen([subCmd UTF8String]));
+    strcpy(cmd, [subCmd UTF8String]);
+    if (localAsyncCtx) {
+        bundle = makeHandlerBundleC(callback, context, nil);
+        uint result = redisAsyncCommand(localAsyncCtx, rcSubscribe, bundle, cmd);
+        if (result != REDIS_OK) {
+            ALog(@"REDIS: Error buffering SUBSCRIBE command for this session : %s", localAsyncCtx->errstr);
+            redisAsyncDisconnect(localAsyncCtx);
+            freeBundle(bundle);
+            return nil;
+        }
+        subscriberID = [TSClientIdentifier createUUID];
+        DLog(@"REDIS: Registering new subscriber...");
+        TSRedisSubscriptionContext *subscription = [[TSRedisSubscriptionContext alloc] initWithRedisContext:localAsyncCtx
+                                                                                                   channels:channels bundle:bundle];
+        [_subscribers setObject:subscription forKey:subscriberID];
+    } else {
+        DLog(@"REDIS: Unable to complete SUBSCRIBE.");
+    }
+    
+    //free(cmd);
+    return subscriberID;
 }
 
+- (void)unsubscribe:(NSString *)subscriptionID {
+    TSRedisSubscriptionContext *context = [_subscribers objectForKey:subscriptionID];
+    if (context) {
+        DLog(@"REDIS: Found subscriber...");
+        redisAsyncContext *redisContext = [context context];
+        uint result = redisAsyncCommand(redisContext, NULL, NULL, "UNSUBSCRIBE");
+        if (result != REDIS_OK) {
+            ALog(@"REDIS : Error buffering UNSUBSCRIBE command for this session : %s", redisContext->errstr);
+        }
+        //DLog(@"REDIS: Disconnecting subscription context...");
+        //redisAsyncDisconnect(redisContext);
+        [_subscribers removeObjectForKey:subscriptionID];
+    }
+}
+
+- (void)unsubscribeAll {
+    DLog(@"REDIS: Unsubscribing from all channels...");
+    for (id obj in [_subscribers objectEnumerator]) {
+        TSRedisSubscriptionContext *context = (TSRedisSubscriptionContext *)obj;
+        redisAsyncContext *redisContext = [context context];
+        DLog(@"REDIS: Unsubscribing from : %@", [[context channels] componentsJoinedByString:@" "]);
+        redisAsyncCommand(redisContext, NULL, NULL, "UNSUBSCRIBE");  // TODO: Check return!
+        //redisAsyncDisconnect(redisContext); // TODO: Check return!
+        [context freeBundle];
+    }
+    [_subscribers removeAllObjects];
+}
+
+
 - (void)publishObject:(NSString *)object toChannel:(NSString *)channel {
-    NSMutableString *pubCmd = [[NSMutableString alloc] initWithFormat:@"PUBLISH %@ '%%b'", channel];
-    NSLog(@"REDIS : Publish command [%@]", pubCmd);
+    NSMutableString *pubCmd = [[NSMutableString alloc] initWithFormat:@"PUBLISH %@ %%b", channel];
+    DLog(@"REDIS: Publish command [%@]", pubCmd);
     redisAsyncCommand(_asyncPubSessionContext, NULL, NULL, [pubCmd UTF8String], [object UTF8String], strlen([object UTF8String]));
 }
 
 - (void)publish:(const char *)bytes toChannel:(NSString *)channel {
-    NSMutableString *pubCmd = [[NSMutableString alloc] initWithFormat:@"PUBLISH %@ '%%b'", channel];
-    NSLog(@"REDIS : Publish command [%@]", pubCmd);
+    NSMutableString *pubCmd = [[NSMutableString alloc] initWithFormat:@"PUBLISH %@ %%b", channel];
+    DLog(@"REDIS: Publish command [%@]", pubCmd);
     redisAsyncCommand(_asyncPubSessionContext, NULL, NULL, [pubCmd UTF8String], bytes, strlen(bytes));
 }
 
-- (void)unsubscribe {
-    NSLog(@"REDIS : Unsubscribing from all channels...");
-    redisAsyncCommand(_asyncSubSessionContext, NULL, NULL, "UNSUBSCRIBE");
-}
-
--(void)setStringValue:(NSString *)stringValue forKey:(NSString *)key {
-    DLog(@"REDIS : Setting value [%@] for key [%@]...", stringValue, key);
+-(void)setStringValueAsynchronous:(NSString *)stringValue forKey:(NSString *)key {
+    DLog(@"REDIS: Setting value [%@] for key [%@]...", stringValue, key);
     redisAsyncContext *localAsyncCtx = [self connectAndDispatch];
     HandlerBundle bundle = NULL;
     if (localAsyncCtx) {
         dispatch_semaphore_t set = dispatch_semaphore_create(0);
         bundle = makeHandlerBundle(nil, NULL, &set);
         uint result = redisAsyncCommand(localAsyncCtx, rcSet, bundle, "SET %s %b", [key UTF8String], [stringValue UTF8String],
-                                                                                 strlen([stringValue UTF8String]));
+                                        strlen([stringValue UTF8String]));
         if (result != REDIS_OK) {
-            ALog(@"REDIS : Error buffering SET command for this session : %s", localAsyncCtx->errstr);
+            ALog(@"REDIS: Error buffering SET command for this session : %s", localAsyncCtx->errstr);
             redisAsyncDisconnect(localAsyncCtx);
             freeBundle(bundle);
             return;
         }
         dispatch_semaphore_wait(set, DISPATCH_TIME_FOREVER);
     } else {
-        NSLog(@"REDIS : Unable to complete SET.");
+        DLog(@"REDIS: Unable to complete SET.");
     }
-
+    
     freeBundle(bundle);
     return;
 }
 
+-(void)setStringValue:(NSString *)stringValue forKey:(NSString *)aKey {
+    DLog(@"REDIS: Setting value [%@] for key [%@]...", stringValue, aKey);
+    char *key = (char *)malloc((sizeof(char) * strlen([aKey UTF8String])));
+    strcpy(key, [aKey UTF8String]);
+    char *value = (char *)malloc((sizeof(char) * strlen([stringValue UTF8String])));
+    strcpy(value, [stringValue UTF8String]);
+    redisReply *reply = NULL;
+    
+    void *response = redisCommand(_blockingContext, "SET %s %b", key, value, strlen(value));
+    if ([self processReply:_blockingContext withReply:response andData:NULL]) {
+        reply = (redisReply *)response;
+        if (reply->type == REDIS_REPLY_STATUS) {
+            if (strcmp(reply->str, "OK")) {
+                DLog(@"REDIS: SET replied with OK.");
+            }
+        } else if (reply->type == REDIS_REPLY_NIL) {
+            DLog(@"REDIS: SET replied with (nil).");
+        }
+    } else {
+        DLog(@"REDIS: Error processing SET.");
+    }
+    
+    DLog(@"REDIS: SET : Finishing...");
+    if (reply) {
+        freeReplyObject(reply);
+        free(key);
+        free(value);
+    }
+    
+    return;
+}
+
 -(BOOL)setNXStringValue:(NSString *)stringValue forKey:(NSString *)key {
-    DLog(@"REDIS : NX : Setting value [%@] for key [%@]...", stringValue, key);
+    DLog(@"REDIS: NX : Setting value [%@] for key [%@]...", stringValue, key);
     redisAsyncContext *localAsyncCtx = [self connectAndDispatch];
     BOOL isSet = NO;
     HandlerBundle bundle = NULL;
@@ -359,7 +532,7 @@ void freeBundle(HandlerBundle hb) {
         uint result = redisAsyncCommand(localAsyncCtx, rcSet, bundle, "SET %s %b NX", [key UTF8String], [stringValue UTF8String],
                                                                                         strlen([stringValue UTF8String]));
         if (result != REDIS_OK) {
-            ALog(@"REDIS : Error buffering SETNX command for this session : %s", localAsyncCtx->errstr);
+            ALog(@"REDIS: Error buffering SETNX command for this session : %s", localAsyncCtx->errstr);
             redisAsyncDisconnect(localAsyncCtx);
             freeBundle(bundle);
             return NO;
@@ -367,20 +540,48 @@ void freeBundle(HandlerBundle hb) {
         dispatch_semaphore_wait(setnx, DISPATCH_TIME_FOREVER);
         if (bundle) {
             if (bundle->int_data) {
-                DLog(@"REDIS : NX : Key was set.");
+                DLog(@"REDIS: NX : Key was set.");
                 isSet = YES;
             }
         }
     } else {
-        NSLog(@"REDIS : Unable to complete SETNX.");
+        DLog(@"REDIS : Unable to complete SETNX.");
     }
     
     freeBundle(bundle);
     return isSet;
 }
 
--(NSString *)stringValueForKey:(NSString *)key {
-    DLog(@"REDIS : Getting value for key [%@]...", key);
+-(NSString *)stringValueForKey:(NSString *)aKey {
+    DLog(@"REDIS: Getting value for key [%@]...", aKey);
+    char *key = (char *)malloc((sizeof(char) * strlen([aKey UTF8String])));
+    strcpy(key, [aKey UTF8String]);
+    NSString *stringValue = nil;
+    redisReply *reply = NULL;
+    void *response = redisCommand(_blockingContext, "GET %s", key);
+    if ([self processReply:_blockingContext withReply:response andData:NULL]) {
+        reply = (redisReply *)response;
+        if (reply->type == REDIS_REPLY_STRING) {
+            DLog(@"REDIS: GET : Processing GET reply..");
+            stringValue = [NSString stringWithCString:reply->str encoding:NSUTF8StringEncoding];
+        } else {
+            DLog(@"REDIS: GET replied with (nil).");
+        }
+        
+    } else {
+        DLog(@"REDIS: Error processing GET.");
+    }
+    NSLog(@"REDIS: GET : Finishing...");
+    if (reply) {
+        freeReplyObject(reply);
+        free(key);
+    }
+    
+    return stringValue;
+}
+
+-(NSString *)stringValueForKeyAsynchronous:(NSString *)key {
+    DLog(@"REDIS: Getting value for key [%@]...", key);
     NSString *stringValue = nil;
     HandlerBundle bundle = NULL;
     redisAsyncContext *localAsyncCtx = [self connectAndDispatch];
@@ -389,7 +590,7 @@ void freeBundle(HandlerBundle hb) {
         bundle = makeHandlerBundle(nil, NULL, &get);
         uint result = redisAsyncCommand(localAsyncCtx, rcGet, bundle, "GET %s", [key UTF8String]);
         if (result != REDIS_OK) {
-            ALog(@"REDIS : Error buffering GET command for this session : %s", localAsyncCtx->errstr);
+            ALog(@"REDIS: Error buffering GET command for this session : %s", localAsyncCtx->errstr);
             redisAsyncDisconnect(localAsyncCtx);
             free(bundle);
             return nil;
@@ -400,7 +601,7 @@ void freeBundle(HandlerBundle hb) {
             //DLog(@"REDIS : Obtained value from GET %@", stringValue);
         }
     } else {
-        DLog(@"REDIS : Unable to complete GET.");
+        DLog(@"REDIS: Unable to complete GET.");
     }
     
     free(bundle->data);
@@ -410,7 +611,7 @@ void freeBundle(HandlerBundle hb) {
 }
 
 -(NSUInteger)incrementKey:(NSString *)key {
-    DLog(@"REDIS : Incrementing key [%@]...", key);
+    DLog(@"REDIS: Incrementing key [%@]...", key);
     NSUInteger incremented = UINT32_MAX;
     HandlerBundle bundle = NULL;
     redisAsyncContext *localAsyncCtx = [self connectAndDispatch];
@@ -419,7 +620,7 @@ void freeBundle(HandlerBundle hb) {
         bundle = makeHandlerBundle(nil, NULL, &incr);
         uint result = redisAsyncCommand(localAsyncCtx, rcIncr, bundle, "INCR %s", [key UTF8String]);
         if (result != REDIS_OK) {
-            ALog(@"REDIS : Error buffering INCR command for this session : %s", localAsyncCtx->errstr);
+            ALog(@"REDIS: Error buffering INCR command for this session : %s", localAsyncCtx->errstr);
             redisAsyncDisconnect(localAsyncCtx);
             free(bundle);
             return incremented;
@@ -429,12 +630,69 @@ void freeBundle(HandlerBundle hb) {
             incremented = bundle->int_data;
         }
     } else {
-        DLog(@"REDIS : Unable to complete INCR.");
+        DLog(@"REDIS: Unable to complete INCR.");
     }
     
     free(bundle); // IMP!
     return incremented;
 }
+
+-(NSUInteger)deleteKey:(NSString *)aKey {
+    DLog(@"REDIS: Deleting key [%@]...", aKey);
+    char *key = (char *)malloc((sizeof(char) * strlen([aKey UTF8String])));
+    strcpy(key, [aKey UTF8String]);
+    redisReply *reply = NULL;
+    NSUInteger deleted = 0;
+    
+    void *response = redisCommand(_blockingContext, "DEL %s", key);
+    if ([self processReply:_blockingContext withReply:response andData:NULL]) {
+        reply = (redisReply *)response;
+        if (reply->type == REDIS_REPLY_INTEGER) {
+            deleted = reply->integer;
+        } else {
+            DLog(@"REDIS: DEL replied with (nil).");
+        }
+        
+    } else {
+        DLog(@"REDIS: Error processing DEL.");
+    }
+    NSLog(@"REDIS: DEL : Finishing...");
+    if (reply) {
+        freeReplyObject(reply);
+        free(key);
+    }
+    
+    return deleted;
+}
+
+/*
+-(NSUInteger)deleteKey:(NSString *)key {
+    DLog(@"REDIS: Deleting key [%@]...", key);
+    NSUInteger deleted = 0;
+    HandlerBundle bundle = NULL;
+    redisAsyncContext *localAsyncCtx = [self connectAndDispatch];
+    if (localAsyncCtx) {
+        dispatch_semaphore_t del = dispatch_semaphore_create(0);
+        bundle = makeHandlerBundle(nil, NULL, &del);
+        uint result = redisAsyncCommand(localAsyncCtx, rcDel, bundle, "DEL %s", [key UTF8String]);
+        if (result != REDIS_OK) {
+            ALog(@"REDIS: Error buffering DEL command for this session : %s", localAsyncCtx->errstr);
+            redisAsyncDisconnect(localAsyncCtx);
+            free(bundle);
+            return deleted;
+        }
+        dispatch_semaphore_wait(del, DISPATCH_TIME_FOREVER);
+        if (bundle) {
+            deleted = bundle->int_data;
+        }
+    } else {
+        DLog(@"REDIS: Unable to complete INCR.");
+    }
+    
+    free(bundle); // IMP!
+    return deleted;
+}
+*/
 
 /*
 -(void)setDictionaryValue:(NSDictionary *)dictionary forKey:(NSString *)key;
@@ -442,18 +700,17 @@ void freeBundle(HandlerBundle hb) {
 -(NSArray *)dictionaryKeysForKey:(NSString *)key;
 */
 
-- (void)terminate {
-    NSLog(@"Unsubscribe from any open channels and disconnect from Redis...");
+- (void)dealloc {
+    _subscribers = nil;
+    DLog(@"REDIS: Disconnecting from publish context...");
     
     if (!_asyncPubSessionContext->err) {
-        redisAsyncDisconnect(_asyncPubSessionContext);        
+        redisAsyncDisconnect(_asyncPubSessionContext);
     }
-    if (!_asyncSubSessionContext->err) {
-        [self unsubscribe];
-        redisAsyncDisconnect(_asyncSubSessionContext);        
-    }
+    _asyncPubSessionContext = nil;
     
-
+    DLog(@"REDIS: Deallocating blocking context...");
+    redisFree(_blockingContext);
 }
 
 @end

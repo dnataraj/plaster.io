@@ -15,7 +15,7 @@
     NSMutableDictionary *kvDictionary = [[NSMutableDictionary alloc] init];
     [kvDictionary setObject:@"plaster-text" forKey:@"plaster-type"];
     NSString *b64 = [packet base64String];
-    NSLog(@"BASE 64 ENCODED : [%@]", b64);
+    //NSLog(@"BASE 64 ENCODED : [%@]", b64);
     [kvDictionary setObject:b64 forKey:@"plaster-data"];
     
     NSError *error = nil;
@@ -32,12 +32,12 @@
     id kvStore = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
     //NSLog(@"Retrieved id of type [%@]", [json class]);
     if (error) {
-        NSLog(@"Error occured : %@", error);
+        DLog(@"SERIALIZER: Error occured : %@", error);
     }
     if ([kvStore isKindOfClass:[NSMutableDictionary class]]) {
         NSMutableDictionary *dictionary = (NSMutableDictionary *)kvStore;
         id packet64 = [dictionary objectForKey:@"plaster-data"];
-        NSLog(@"base64 encoded packet : %@", [packet64 class]);
+        //NSLog(@"base64 encoded packet : %@", [packet64 class]);
         if ([packet64 isKindOfClass:[NSString class]]) {
             NSData *packet = [(NSString*)packet64 dataFromBase64];
             if (packet) {

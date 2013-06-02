@@ -12,12 +12,9 @@
 
 @interface TSPlasterController : NSObject
 
-@property (readwrite, atomic) NSSet *peers;
+- (id)initWithPasteboard:(NSPasteboard *)pasteboard provider:(id<TSMessagingProvider, TSDataStoreProvider>)provider;
 
-- (id)initWithPasteboard:(NSPasteboard *)pasteboard andProvider:(id<TSMessagingProvider, TSDataStoreProvider>)publisher;
-
-- (void)bootWithPeers:(NSUInteger)maxPeers;
-- (void)scheduleMonitorWithID:(NSString *)id andTimeInterval:(NSTimeInterval)interval;
-- (void)invalidateMonitorWithID:(NSString *)id;
+- (void)start;
+- (void)stop;
 
 @end

@@ -18,62 +18,25 @@
 #import "TSClientStartPanelController.h"
 #import "TSPlasterController.h"
 
-void handlePeerCopy(redisAsyncContext *c, void *reply, void *data) {
-    if (reply == NULL) {
-        return;
-    }
-    redisReply *r = reply;
-    if (r->type == REDIS_REPLY_ARRAY) {
-        for (int j = 0; j < r->elements; j++) {
-            printf("%u) %s\n", j, r->element[j]->str);
-        }
-        // Looks like #3 is our packet...
-        if (r->elements > 2) {
-            char *bytes = r->element[2]->str;
-            if (bytes) {
-                NSDictionary *payload = [TSPacketSerializer dictionaryFromJSON:bytes];
-                TSPasteboardPacket *packet = [[TSPasteboardPacket alloc] initWithTag:@"plaster-packet-string"
-                                                                           andString:[payload objectForKey:@"plaster-packet-string"]];
-                
-                NSLog(@"Obtained packet [%@]", packet);
-                NSPasteboard *pb = (__bridge NSPasteboard *)data;
-                if (!pb) {
-                    NSLog(@"No pasteboard available...");
-                    return;
-                }
-                NSLog(@"Pasting...");
-                [pb clearContents];
-                BOOL ok = [pb writeObjects:[NSArray arrayWithObject:packet]];
-                if (ok) {
-                    NSLog(@"Peer copy successfully written to local pasteboard.");
-                }
-            }
-        }
-    }
-}
-
-void handlePeerPaste(redisAsyncContext *c, void *reply, void *data) {
-    if (reply == NULL) {
-        return;
-    }
-    NSLog(@"Pasting to peers...");
-}
-
 @implementation TSAppDelegate {
     NSStatusItem *_plasterStatusItem;
     TSRedisController *_redisController;
-    NSMutableArray *_subscriptionList;
     TSPlasterController *_plaster;
     TSClientPreferenceController *_preferenceController;
 }
 
-- (void)applicationDidFinishLaunching:(NSNotification *)notification {
-    _redisController = [[TSRedisController alloc] init];
-    _plaster = [[TSPlasterController alloc] initWithPasteboard:[NSPasteboard generalPasteboard] andProvider:_redisController];
-    [_plaster bootWithPeers:10];
-
-    DLog(@"PLASTER : BOOTED.");
+- (id)init {
+    self = [super init];
+    if (self) {
+        DLog(@"AD: Delegate initializing...");
+        _redisController = [[TSRedisController alloc] init];
+        _plaster = [[TSPlasterController alloc] initWithPasteboard:[NSPasteboard generalPasteboard] provider:_redisController];
+    }
     
+    return self;
+}
+
+- (void)applicationDidFinishLaunching:(NSNotification *)notification {
     // Register application default preferences
     NSMutableDictionary *defaultPreferences = [NSMutableDictionary dictionary];
     [defaultPreferences setObject:[TSClientIdentifier createUUID] forKey:@"plaster-session-id"];
@@ -86,8 +49,9 @@ void handlePeerPaste(redisAsyncContext *c, void *reply, void *data) {
     
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaultPreferences];
     
-    NSLog(@"Ready to roll...");
+    DLog(@"AD: Application Launched.");
 }
+
 
 - (void)awakeFromNib {
     _plasterStatusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
@@ -98,28 +62,24 @@ void handlePeerPaste(redisAsyncContext *c, void *reply, void *data) {
     [self.plasterMenu setAutoenablesItems:NO];
     [self.startMenuItem setEnabled:YES];
     [self.stopMenuItem setEnabled:NO];
+    DLog(@"AD: Awakening from NIB...");
 }
 
 - (IBAction)start:(id)sender {
     BOOL initialized = [[NSUserDefaults standardUserDefaults] boolForKey:@"plaster-init"];
     if (!initialized) {
         TSClientStartPanelController *startPanelController = [[TSClientStartPanelController alloc] init];
-        NSLog(@"Starting modal configuration panel for Plaster...");
+        DLog(@"Starting modal configuration panel for Plaster...");
         [NSApp runModalForWindow:[startPanelController window]];
     }
-    NSLog(@"Setting up subscriptions...");
-    _subscriptionList = [[NSMutableArray alloc] initWithObjects:@"device1", @"device2", nil];
-    //[_redisController subscribeToChannels:_subscriptionList withCallback:NULL andContext:(void *)[NSPasteboard generalPasteboard]];
-    NSLog(@"Starting pasteboard monitoring every 15ms");
-    [_plaster scheduleMonitorWithID:[TSClientIdentifier clientID] andTimeInterval:0.015];
+    [_plaster start];
+    
     [self.startMenuItem setEnabled:NO];
     [self.stopMenuItem setEnabled:YES];
 }
 
 - (IBAction)stop:(id)sender {
-    NSLog(@"Stopping timer and cleaning up...");
-    [_plaster invalidateMonitorWithID:[TSClientIdentifier clientID]];
-    [_redisController unsubscribe];
+    [_plaster stop];
     [self.startMenuItem setEnabled:YES];
     [self.stopMenuItem setEnabled:NO];
 }
@@ -132,13 +92,12 @@ void handlePeerPaste(redisAsyncContext *c, void *reply, void *data) {
     [_preferenceController showWindow:self];
 }
 
+ 
 - (void)applicationWillTerminate:(NSNotification *)notification {
-    NSLog(@"Quitting...");
+    DLog(@"AD: Quitting...");
     if ([self.stopMenuItem isEnabled]) {
-        [_plaster invalidateMonitorWithID:[TSClientIdentifier clientID]];
-        [_redisController unsubscribe];
+        [_plaster stop];
     }
-    [_redisController terminate];
 }
 
 @end

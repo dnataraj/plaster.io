@@ -49,7 +49,6 @@ void redisDeleteWrite(void *privateData) {
 }
 
 void redisClean(void *privateData) {
-    NSLog(@"!!CLEANING UP!!");
     tsDispatchContext *dc = (tsDispatchContext *)privateData;
     
     if (dc->_readEvent != NULL && dispatch_source_testcancel(dc->_readEvent) == 0) {
@@ -75,8 +74,8 @@ void redisClean(void *privateData) {
 - (id)init {
     self = [super init];
     if (self) {
-        NSLog(@"Obtaining event dispatcher queue...");
         _queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+        dispatch_retain(_queue);
         _timers = [[NSMutableDictionary alloc] init];
     }
     
@@ -107,10 +106,8 @@ void redisClean(void *privateData) {
         return REDIS_ERR_IO;
     }
     
-    //dispatch_retain(writeEvent);
     dispatch_source_set_event_handler(writeEvent, ^{
         redisAsyncHandleWrite(asyncContext);
-        //dispatch_release(writeEvent);
     });
     
     // Create container for context and r/w events
@@ -136,7 +133,7 @@ void redisClean(void *privateData) {
         return TS_DISPATCH_ERR;
     }
     if ([_timers objectForKey:taskName]) {
-        NSLog(@"Timer already exists, stop it first.");
+        DLog(@"DISPATCHER: Timer already exists, stop it first.");
         return TS_DISPATCH_ERR;
     }
     uint64_t leeway = ((uint64_t)(DEFAULT_TIMER_LEEWAY_PERCENTAGE / 100)) * interval;
@@ -144,7 +141,7 @@ void redisClean(void *privateData) {
     if (timer) {
         dispatch_source_set_event_handler(timer, handler);
         dispatch_resume(timer);
-        NSLog(@"Adding timer to list...");
+        DLog(@"DISPATCHER: Adding timer to list...");
         [_timers setObject:timer forKey:taskName];
         return TS_DISPATCH_OK;
     }
@@ -155,24 +152,32 @@ void redisClean(void *privateData) {
 - (uint)stopTask:(NSString *)taskName {
     dispatch_source_t timer = [_timers objectForKey:taskName];
     if (!timer) {
-        NSLog(@"No task with name %@ is availble.", taskName);
+        DLog(@"DISPATCHER: No task with name %@ is availble.", taskName);
         return TS_DISPATCH_ERR;
     }
-    NSLog(@"Cancelling task : %@", taskName);
+    DLog(@"DISPATCHER: Cancelling task : %@", taskName);
     dispatch_source_cancel(timer);
+    dispatch_release(timer);
     [_timers removeObjectForKey:taskName];
     timer = nil;
     return TS_DISPATCH_OK;
 }
 
 - (dispatch_source_t) createTimerWithInterval:(uint64_t)interval andLeeway:(uint64_t)leeway {
-    NSLog(@"Creating a dispatch timer...");
+    DLog(@"DISPATCHER: Creating a dispatch timer...");
     dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, _queue);
     if (timer) {
         dispatch_source_set_timer(timer, dispatch_time(DISPATCH_TIME_NOW, 0), interval, leeway);
     }
     
     return timer;
+}
+
+- (void)dealloc {
+    [_timers release];
+    _timers = nil;
+    dispatch_release(_queue);
+    [super dealloc];
 }
 
 @end

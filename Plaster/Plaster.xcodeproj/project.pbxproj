@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4136D1E81754D78800DA4D89 /* TSRedisSubscriptionContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 4136D1E71754D78800DA4D89 /* TSRedisSubscriptionContext.m */; };
 		4142E2E417425BC40091C7DF /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4142E2E317425BC40091C7DF /* Cocoa.framework */; };
 		4142E2EE17425BC40091C7DF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4142E2EC17425BC40091C7DF /* InfoPlist.strings */; };
 		4142E2F017425BC40091C7DF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4142E2EF17425BC40091C7DF /* main.m */; };
@@ -55,6 +56,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4136D1E61754D78800DA4D89 /* TSRedisSubscriptionContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSRedisSubscriptionContext.h; sourceTree = "<group>"; };
+		4136D1E71754D78800DA4D89 /* TSRedisSubscriptionContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSRedisSubscriptionContext.m; sourceTree = "<group>"; };
 		4142E2E017425BC40091C7DF /* Plaster.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Plaster.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4142E2E317425BC40091C7DF /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		4142E2E617425BC40091C7DF /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -235,6 +238,8 @@
 				41FE13A7174E432800511395 /* TSPlasterController.m */,
 				41FE13AB174E65E500511395 /* TSMessagingProvider.h */,
 				41FE13AC174E709300511395 /* TSDataStoreProvider.h */,
+				4136D1E61754D78800DA4D89 /* TSRedisSubscriptionContext.h */,
+				4136D1E71754D78800DA4D89 /* TSRedisSubscriptionContext.m */,
 			);
 			path = Plaster;
 			sourceTree = "<group>";
@@ -501,6 +506,7 @@
 				41FE139D174CCC6000511395 /* TSClientIdentifier.m in Sources */,
 				41FE13A5174D0DAB00511395 /* TSClientStartPanelController.m in Sources */,
 				41FE13A8174E432800511395 /* TSPlasterController.m in Sources */,
+				4136D1E81754D78800DA4D89 /* TSRedisSubscriptionContext.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

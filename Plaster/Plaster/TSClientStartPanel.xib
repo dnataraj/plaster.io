@@ -259,15 +259,15 @@ ZWN0aW5nIFByZWZlcmVuY2VzIGZyb20gdGhlIGFwcGxpY2F0aW9uIG1lbnUuA</string>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: sharedKey</string>
+						<string key="label">value: sessionKey</string>
 						<reference key="source" ref="193454775"/>
 						<reference key="destination" ref="1001"/>
 						<object class="NSNibBindingConnector" key="connector">
 							<reference key="NSSource" ref="193454775"/>
 							<reference key="NSDestination" ref="1001"/>
-							<string key="NSLabel">value: sharedKey</string>
+							<string key="NSLabel">value: sessionKey</string>
 							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">sharedKey</string>
+							<string key="NSKeyPath">sessionKey</string>
 							<object class="NSDictionary" key="NSOptions">
 								<string key="NS.key.0">NSContinuouslyUpdatesValue</string>
 								<boolean value="YES" key="NS.object.0"/>
@@ -275,7 +275,7 @@ ZWN0aW5nIFByZWZlcmVuY2VzIGZyb20gdGhlIGFwcGxpY2F0aW9uIG1lbnUuA</string>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
-					<int key="connectionID">215</int>
+					<int key="connectionID">361</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
@@ -774,7 +774,7 @@ ZWN0aW5nIFByZWZlcmVuY2VzIGZyb20gdGhlIGFwcGxpY2F0aW9uIG1lbnUuA</string>
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">360</int>
+			<int key="maxID">361</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
