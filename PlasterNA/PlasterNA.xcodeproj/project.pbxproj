@@ -1,0 +1,603 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		41B68C59175CD7700090A108 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41B68C58175CD7700090A108 /* Cocoa.framework */; };
+		41B68C63175CD7700090A108 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 41B68C61175CD7700090A108 /* InfoPlist.strings */; };
+		41B68C65175CD7700090A108 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68C64175CD7700090A108 /* main.m */; };
+		41B68C69175CD7700090A108 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 41B68C67175CD7700090A108 /* Credits.rtf */; };
+		41B68C77175CD7710090A108 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41B68C76175CD7710090A108 /* SenTestingKit.framework */; };
+		41B68C78175CD7710090A108 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41B68C58175CD7700090A108 /* Cocoa.framework */; };
+		41B68C80175CD7710090A108 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 41B68C7E175CD7710090A108 /* InfoPlist.strings */; };
+		41B68C83175CD7710090A108 /* PlasterNATests.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68C82175CD7710090A108 /* PlasterNATests.m */; };
+		41B68CE9175CD9370090A108 /* TSAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68CE8175CD9370090A108 /* TSAppDelegate.m */; };
+		41B68CF5175CD9410090A108 /* TSPasteboardPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68CEB175CD9410090A108 /* TSPasteboardPacket.m */; };
+		41B68CF6175CD9410090A108 /* TSStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68CED175CD9410090A108 /* TSStack.m */; };
+		41B68CF7175CD9410090A108 /* TSRedisController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68CEF175CD9410090A108 /* TSRedisController.m */; };
+		41B68CF8175CD9410090A108 /* TSEventDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68CF2175CD9410090A108 /* TSEventDispatcher.m */; };
+		41B68CF9175CD9410090A108 /* TSPacketSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68CF4175CD9410090A108 /* TSPacketSerializer.m */; };
+		41B68D07175CD94C0090A108 /* TSClientPreferenceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68CFB175CD94C0090A108 /* TSClientPreferenceController.m */; };
+		41B68D08175CD94C0090A108 /* TSClientIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68CFD175CD94C0090A108 /* TSClientIdentifier.m */; };
+		41B68D0A175CD94C0090A108 /* TSClientStartPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68D00175CD94C0090A108 /* TSClientStartPanelController.m */; };
+		41B68D0B175CD94C0090A108 /* TSPlasterController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68D02175CD94C0090A108 /* TSPlasterController.m */; };
+		41B68D0C175CD94C0090A108 /* TSRedisSubscriptionContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68D06175CD94C0090A108 /* TSRedisSubscriptionContext.m */; };
+		41B68D0E175CD9560090A108 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 41B68D0D175CD9560090A108 /* Preferences.xib */; };
+		41B68D11175CD9FC0090A108 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 41B68D0F175CD9FC0090A108 /* MainMenu.xib */; };
+		41B68D6A175CDDE70090A108 /* TSPasteboardPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68CEB175CD9410090A108 /* TSPasteboardPacket.m */; };
+		41B68D6B175CDDE70090A108 /* TSStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68CED175CD9410090A108 /* TSStack.m */; };
+		41B68D6C175CDDE70090A108 /* TSRedisController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68CEF175CD9410090A108 /* TSRedisController.m */; };
+		41B68D6D175CDDE70090A108 /* TSEventDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68CF2175CD9410090A108 /* TSEventDispatcher.m */; };
+		41B68D6E175CDDE70090A108 /* TSPacketSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68CF4175CD9410090A108 /* TSPacketSerializer.m */; };
+		41B68D6F175CDDE70090A108 /* TSClientPreferenceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68CFB175CD94C0090A108 /* TSClientPreferenceController.m */; };
+		41B68D70175CDDE70090A108 /* TSClientIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68CFD175CD94C0090A108 /* TSClientIdentifier.m */; };
+		41B68D71175CDDE70090A108 /* TSClientStartPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68D00175CD94C0090A108 /* TSClientStartPanelController.m */; };
+		41B68D72175CDDE70090A108 /* TSPlasterController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68D02175CD94C0090A108 /* TSPlasterController.m */; };
+		41B68D73175CDDE70090A108 /* TSRedisSubscriptionContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68D06175CD94C0090A108 /* TSRedisSubscriptionContext.m */; };
+		41B68D75175CDF030090A108 /* TSClientStartPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 41B68D74175CDF030090A108 /* TSClientStartPanel.xib */; };
+		41B68D7C175CE4AE0090A108 /* libhiredis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41B68D7B175CE4AE0090A108 /* libhiredis.a */; };
+		41B68D7E175CE4C20090A108 /* libTSBase64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41B68D7D175CE4C20090A108 /* libTSBase64.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		41B68C79175CD7710090A108 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 41B68C4D175CD7700090A108 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 41B68C54175CD7700090A108;
+			remoteInfo = PlasterNA;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		41B68C55175CD7700090A108 /* PlasterNA.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PlasterNA.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		41B68C58175CD7700090A108 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		41B68C5B175CD7700090A108 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		41B68C5C175CD7700090A108 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		41B68C5D175CD7700090A108 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		41B68C60175CD7700090A108 /* PlasterNA-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PlasterNA-Info.plist"; sourceTree = "<group>"; };
+		41B68C62175CD7700090A108 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		41B68C64175CD7700090A108 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		41B68C66175CD7700090A108 /* PlasterNA-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PlasterNA-Prefix.pch"; sourceTree = "<group>"; };
+		41B68C68175CD7700090A108 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		41B68C75175CD7710090A108 /* PlasterNATests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PlasterNATests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		41B68C76175CD7710090A108 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		41B68C7D175CD7710090A108 /* PlasterNATests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PlasterNATests-Info.plist"; sourceTree = "<group>"; };
+		41B68C7F175CD7710090A108 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		41B68C81175CD7710090A108 /* PlasterNATests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlasterNATests.h; sourceTree = "<group>"; };
+		41B68C82175CD7710090A108 /* PlasterNATests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlasterNATests.m; sourceTree = "<group>"; };
+		41B68CE7175CD9370090A108 /* TSAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSAppDelegate.h; sourceTree = "<group>"; };
+		41B68CE8175CD9370090A108 /* TSAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSAppDelegate.m; sourceTree = "<group>"; };
+		41B68CEA175CD9410090A108 /* TSPasteboardPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSPasteboardPacket.h; sourceTree = "<group>"; };
+		41B68CEB175CD9410090A108 /* TSPasteboardPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSPasteboardPacket.m; sourceTree = "<group>"; };
+		41B68CEC175CD9410090A108 /* TSStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSStack.h; sourceTree = "<group>"; };
+		41B68CED175CD9410090A108 /* TSStack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSStack.m; sourceTree = "<group>"; };
+		41B68CEE175CD9410090A108 /* TSRedisController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSRedisController.h; sourceTree = "<group>"; };
+		41B68CEF175CD9410090A108 /* TSRedisController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSRedisController.m; sourceTree = "<group>"; };
+		41B68CF0175CD9410090A108 /* TSPlasterGlobals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSPlasterGlobals.h; sourceTree = "<group>"; };
+		41B68CF1175CD9410090A108 /* TSEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSEventDispatcher.h; sourceTree = "<group>"; };
+		41B68CF2175CD9410090A108 /* TSEventDispatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSEventDispatcher.m; sourceTree = "<group>"; };
+		41B68CF3175CD9410090A108 /* TSPacketSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSPacketSerializer.h; sourceTree = "<group>"; };
+		41B68CF4175CD9410090A108 /* TSPacketSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSPacketSerializer.m; sourceTree = "<group>"; };
+		41B68CFA175CD94C0090A108 /* TSClientPreferenceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSClientPreferenceController.h; sourceTree = "<group>"; };
+		41B68CFB175CD94C0090A108 /* TSClientPreferenceController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSClientPreferenceController.m; sourceTree = "<group>"; };
+		41B68CFC175CD94C0090A108 /* TSClientIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSClientIdentifier.h; sourceTree = "<group>"; };
+		41B68CFD175CD94C0090A108 /* TSClientIdentifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSClientIdentifier.m; sourceTree = "<group>"; };
+		41B68CFF175CD94C0090A108 /* TSClientStartPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSClientStartPanelController.h; sourceTree = "<group>"; };
+		41B68D00175CD94C0090A108 /* TSClientStartPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSClientStartPanelController.m; sourceTree = "<group>"; };
+		41B68D01175CD94C0090A108 /* TSPlasterController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSPlasterController.h; sourceTree = "<group>"; };
+		41B68D02175CD94C0090A108 /* TSPlasterController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSPlasterController.m; sourceTree = "<group>"; };
+		41B68D03175CD94C0090A108 /* TSMessagingProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSMessagingProvider.h; sourceTree = "<group>"; };
+		41B68D04175CD94C0090A108 /* TSDataStoreProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSDataStoreProvider.h; sourceTree = "<group>"; };
+		41B68D05175CD94C0090A108 /* TSRedisSubscriptionContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSRedisSubscriptionContext.h; sourceTree = "<group>"; };
+		41B68D06175CD94C0090A108 /* TSRedisSubscriptionContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSRedisSubscriptionContext.m; sourceTree = "<group>"; };
+		41B68D0D175CD9560090A108 /* Preferences.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Preferences.xib; sourceTree = "<group>"; };
+		41B68D10175CD9FC0090A108 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		41B68D74175CDF030090A108 /* TSClientStartPanel.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TSClientStartPanel.xib; sourceTree = "<group>"; };
+		41B68D78175CE4A00090A108 /* libevent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libevent.h; sourceTree = "<group>"; };
+		41B68D79175CE4A00090A108 /* async.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = async.h; sourceTree = "<group>"; };
+		41B68D7A175CE4A00090A108 /* hiredis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hiredis.h; sourceTree = "<group>"; };
+		41B68D7B175CE4AE0090A108 /* libhiredis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libhiredis.a; sourceTree = "<group>"; };
+		41B68D7D175CE4C20090A108 /* libTSBase64.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libTSBase64.a; path = ../../DerivedData/plaster/Build/Products/Debug/libTSBase64.a; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		41B68C52175CD7700090A108 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				41B68D7E175CE4C20090A108 /* libTSBase64.a in Frameworks */,
+				41B68C59175CD7700090A108 /* Cocoa.framework in Frameworks */,
+				41B68D7C175CE4AE0090A108 /* libhiredis.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		41B68C71175CD7710090A108 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				41B68C77175CD7710090A108 /* SenTestingKit.framework in Frameworks */,
+				41B68C78175CD7710090A108 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		41B68C4C175CD7700090A108 = {
+			isa = PBXGroup;
+			children = (
+				41B68D76175CE4860090A108 /* Libraries */,
+				41B68C5E175CD7700090A108 /* PlasterNA */,
+				41B68C7B175CD7710090A108 /* PlasterNATests */,
+				41B68C57175CD7700090A108 /* Frameworks */,
+				41B68C56175CD7700090A108 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		41B68C56175CD7700090A108 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				41B68C55175CD7700090A108 /* PlasterNA.app */,
+				41B68C75175CD7710090A108 /* PlasterNATests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		41B68C57175CD7700090A108 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				41B68C58175CD7700090A108 /* Cocoa.framework */,
+				41B68C76175CD7710090A108 /* SenTestingKit.framework */,
+				41B68C5A175CD7700090A108 /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		41B68C5A175CD7700090A108 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				41B68C5B175CD7700090A108 /* AppKit.framework */,
+				41B68C5C175CD7700090A108 /* CoreData.framework */,
+				41B68C5D175CD7700090A108 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		41B68C5E175CD7700090A108 /* PlasterNA */ = {
+			isa = PBXGroup;
+			children = (
+				41B68CE7175CD9370090A108 /* TSAppDelegate.h */,
+				41B68CE8175CD9370090A108 /* TSAppDelegate.m */,
+				41B68D0F175CD9FC0090A108 /* MainMenu.xib */,
+				41B68C5F175CD7700090A108 /* Supporting Files */,
+				41B68CEA175CD9410090A108 /* TSPasteboardPacket.h */,
+				41B68CEB175CD9410090A108 /* TSPasteboardPacket.m */,
+				41B68CEC175CD9410090A108 /* TSStack.h */,
+				41B68CED175CD9410090A108 /* TSStack.m */,
+				41B68CEE175CD9410090A108 /* TSRedisController.h */,
+				41B68CEF175CD9410090A108 /* TSRedisController.m */,
+				41B68CF0175CD9410090A108 /* TSPlasterGlobals.h */,
+				41B68CF1175CD9410090A108 /* TSEventDispatcher.h */,
+				41B68CF2175CD9410090A108 /* TSEventDispatcher.m */,
+				41B68CF3175CD9410090A108 /* TSPacketSerializer.h */,
+				41B68CF4175CD9410090A108 /* TSPacketSerializer.m */,
+				41B68D0D175CD9560090A108 /* Preferences.xib */,
+				41B68CFA175CD94C0090A108 /* TSClientPreferenceController.h */,
+				41B68CFB175CD94C0090A108 /* TSClientPreferenceController.m */,
+				41B68CFC175CD94C0090A108 /* TSClientIdentifier.h */,
+				41B68CFD175CD94C0090A108 /* TSClientIdentifier.m */,
+				41B68D74175CDF030090A108 /* TSClientStartPanel.xib */,
+				41B68CFF175CD94C0090A108 /* TSClientStartPanelController.h */,
+				41B68D00175CD94C0090A108 /* TSClientStartPanelController.m */,
+				41B68D01175CD94C0090A108 /* TSPlasterController.h */,
+				41B68D02175CD94C0090A108 /* TSPlasterController.m */,
+				41B68D03175CD94C0090A108 /* TSMessagingProvider.h */,
+				41B68D04175CD94C0090A108 /* TSDataStoreProvider.h */,
+				41B68D05175CD94C0090A108 /* TSRedisSubscriptionContext.h */,
+				41B68D06175CD94C0090A108 /* TSRedisSubscriptionContext.m */,
+			);
+			path = PlasterNA;
+			sourceTree = "<group>";
+		};
+		41B68C5F175CD7700090A108 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				41B68C60175CD7700090A108 /* PlasterNA-Info.plist */,
+				41B68C61175CD7700090A108 /* InfoPlist.strings */,
+				41B68C64175CD7700090A108 /* main.m */,
+				41B68C66175CD7700090A108 /* PlasterNA-Prefix.pch */,
+				41B68C67175CD7700090A108 /* Credits.rtf */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		41B68C7B175CD7710090A108 /* PlasterNATests */ = {
+			isa = PBXGroup;
+			children = (
+				41B68C81175CD7710090A108 /* PlasterNATests.h */,
+				41B68C82175CD7710090A108 /* PlasterNATests.m */,
+				41B68C7C175CD7710090A108 /* Supporting Files */,
+			);
+			path = PlasterNATests;
+			sourceTree = "<group>";
+		};
+		41B68C7C175CD7710090A108 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				41B68C7D175CD7710090A108 /* PlasterNATests-Info.plist */,
+				41B68C7E175CD7710090A108 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		41B68D76175CE4860090A108 /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				41B68D7D175CE4C20090A108 /* libTSBase64.a */,
+				41B68D7B175CE4AE0090A108 /* libhiredis.a */,
+				41B68D77175CE4A00090A108 /* adapters */,
+				41B68D79175CE4A00090A108 /* async.h */,
+				41B68D7A175CE4A00090A108 /* hiredis.h */,
+			);
+			name = Libraries;
+			path = PlasterNA;
+			sourceTree = "<group>";
+		};
+		41B68D77175CE4A00090A108 /* adapters */ = {
+			isa = PBXGroup;
+			children = (
+				41B68D78175CE4A00090A108 /* libevent.h */,
+			);
+			path = adapters;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		41B68C54175CD7700090A108 /* PlasterNA */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 41B68C86175CD7710090A108 /* Build configuration list for PBXNativeTarget "PlasterNA" */;
+			buildPhases = (
+				41B68C51175CD7700090A108 /* Sources */,
+				41B68C52175CD7700090A108 /* Frameworks */,
+				41B68C53175CD7700090A108 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PlasterNA;
+			productName = PlasterNA;
+			productReference = 41B68C55175CD7700090A108 /* PlasterNA.app */;
+			productType = "com.apple.product-type.application";
+		};
+		41B68C74175CD7710090A108 /* PlasterNATests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 41B68C89175CD7710090A108 /* Build configuration list for PBXNativeTarget "PlasterNATests" */;
+			buildPhases = (
+				41B68C70175CD7710090A108 /* Sources */,
+				41B68C71175CD7710090A108 /* Frameworks */,
+				41B68C72175CD7710090A108 /* Resources */,
+				41B68C73175CD7710090A108 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				41B68C7A175CD7710090A108 /* PBXTargetDependency */,
+			);
+			name = PlasterNATests;
+			productName = PlasterNATests;
+			productReference = 41B68C75175CD7710090A108 /* PlasterNATests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		41B68C4D175CD7700090A108 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = TS;
+				LastUpgradeCheck = 0460;
+				ORGANIZATIONNAME = "Trilobyte Systems ApS";
+			};
+			buildConfigurationList = 41B68C50175CD7700090A108 /* Build configuration list for PBXProject "PlasterNA" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 41B68C4C175CD7700090A108;
+			productRefGroup = 41B68C56175CD7700090A108 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				41B68C54175CD7700090A108 /* PlasterNA */,
+				41B68C74175CD7710090A108 /* PlasterNATests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		41B68C53175CD7700090A108 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				41B68C63175CD7700090A108 /* InfoPlist.strings in Resources */,
+				41B68C69175CD7700090A108 /* Credits.rtf in Resources */,
+				41B68D0E175CD9560090A108 /* Preferences.xib in Resources */,
+				41B68D11175CD9FC0090A108 /* MainMenu.xib in Resources */,
+				41B68D75175CDF030090A108 /* TSClientStartPanel.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		41B68C72175CD7710090A108 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				41B68C80175CD7710090A108 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		41B68C73175CD7710090A108 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		41B68C51175CD7700090A108 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				41B68D6A175CDDE70090A108 /* TSPasteboardPacket.m in Sources */,
+				41B68D6B175CDDE70090A108 /* TSStack.m in Sources */,
+				41B68D6C175CDDE70090A108 /* TSRedisController.m in Sources */,
+				41B68D6D175CDDE70090A108 /* TSEventDispatcher.m in Sources */,
+				41B68D6E175CDDE70090A108 /* TSPacketSerializer.m in Sources */,
+				41B68D6F175CDDE70090A108 /* TSClientPreferenceController.m in Sources */,
+				41B68D70175CDDE70090A108 /* TSClientIdentifier.m in Sources */,
+				41B68D71175CDDE70090A108 /* TSClientStartPanelController.m in Sources */,
+				41B68D72175CDDE70090A108 /* TSPlasterController.m in Sources */,
+				41B68D73175CDDE70090A108 /* TSRedisSubscriptionContext.m in Sources */,
+				41B68C65175CD7700090A108 /* main.m in Sources */,
+				41B68CE9175CD9370090A108 /* TSAppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		41B68C70175CD7710090A108 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				41B68C83175CD7710090A108 /* PlasterNATests.m in Sources */,
+				41B68CF5175CD9410090A108 /* TSPasteboardPacket.m in Sources */,
+				41B68CF6175CD9410090A108 /* TSStack.m in Sources */,
+				41B68CF7175CD9410090A108 /* TSRedisController.m in Sources */,
+				41B68CF8175CD9410090A108 /* TSEventDispatcher.m in Sources */,
+				41B68CF9175CD9410090A108 /* TSPacketSerializer.m in Sources */,
+				41B68D07175CD94C0090A108 /* TSClientPreferenceController.m in Sources */,
+				41B68D08175CD94C0090A108 /* TSClientIdentifier.m in Sources */,
+				41B68D0A175CD94C0090A108 /* TSClientStartPanelController.m in Sources */,
+				41B68D0B175CD94C0090A108 /* TSPlasterController.m in Sources */,
+				41B68D0C175CD94C0090A108 /* TSRedisSubscriptionContext.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		41B68C7A175CD7710090A108 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 41B68C54175CD7700090A108 /* PlasterNA */;
+			targetProxy = 41B68C79175CD7710090A108 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		41B68C61175CD7700090A108 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				41B68C62175CD7700090A108 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		41B68C67175CD7700090A108 /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				41B68C68175CD7700090A108 /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		41B68C7E175CD7710090A108 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				41B68C7F175CD7710090A108 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		41B68D0F175CD9FC0090A108 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				41B68D10175CD9FC0090A108 /* en */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		41B68C84175CD7710090A108 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		41B68C85175CD7710090A108 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		41B68C87175CD7710090A108 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "PlasterNA/PlasterNA-Prefix.pch";
+				INFOPLIST_FILE = "PlasterNA/PlasterNA-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../DerivedData/plaster/Build/Products/Debug\"",
+					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/PlasterNA\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		41B68C88175CD7710090A108 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "PlasterNA/PlasterNA-Prefix.pch";
+				INFOPLIST_FILE = "PlasterNA/PlasterNA-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../DerivedData/plaster/Build/Products/Debug\"",
+					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/PlasterNA\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		41B68C8A175CD7710090A108 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/PlasterNA.app/Contents/MacOS/PlasterNA";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "PlasterNA/PlasterNA-Prefix.pch";
+				INFOPLIST_FILE = "PlasterNATests/PlasterNATests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		41B68C8B175CD7710090A108 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/PlasterNA.app/Contents/MacOS/PlasterNA";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "PlasterNA/PlasterNA-Prefix.pch";
+				INFOPLIST_FILE = "PlasterNATests/PlasterNATests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		41B68C50175CD7700090A108 /* Build configuration list for PBXProject "PlasterNA" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				41B68C84175CD7710090A108 /* Debug */,
+				41B68C85175CD7710090A108 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		41B68C86175CD7710090A108 /* Build configuration list for PBXNativeTarget "PlasterNA" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				41B68C87175CD7710090A108 /* Debug */,
+				41B68C88175CD7710090A108 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		41B68C89175CD7710090A108 /* Build configuration list for PBXNativeTarget "PlasterNATests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				41B68C8A175CD7710090A108 /* Debug */,
+				41B68C8B175CD7710090A108 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 41B68C4D175CD7700090A108 /* Project object */;
+}
