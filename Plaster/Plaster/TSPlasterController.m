@@ -46,6 +46,7 @@ void handlePeer(char *reply, void *data) {
 }
 
 void plasterIn(char *reply, void *data) {
+    NSLog(@"PLASTER: HANDLER PLASTER IN: ...");
     if (reply) {
         NSDictionary *payload = [TSPacketSerializer dictionaryFromJSON:reply];
         TSPasteboardPacket *packet = [[TSPasteboardPacket alloc] initWithTag:@"plaster-packet-string"
@@ -56,6 +57,7 @@ void plasterIn(char *reply, void *data) {
         NSPasteboard *pb = [NSPasteboard generalPasteboard];
         if (!pb) {
             NSLog(@"PLASTER: PLASTER IN : No pasteboard available...");
+            [packet release];
             return;
         }
         NSLog(@"Pasting...");
@@ -64,7 +66,13 @@ void plasterIn(char *reply, void *data) {
         if (ok) {
             NSLog(@"PLASTER: PLASTER IN : Peer copy successfully written to local pasteboard.");
         }
+        
+        [packet release];
+    } else {
+        NSLog(@"Reply was invalid : %s", reply);
     }
+    
+    return;
 }
 
 @implementation TSPlasterController {
@@ -92,36 +100,42 @@ void plasterIn(char *reply, void *data) {
     self = [super init];
     if (self) {
         if (!pasteboard || !provider) {
-            DLog(@"PLASTER: INIT : The pasteboard controller needs both a valid pasteboard and a message provider.");
+            NSLog(@"PLASTER: INIT : The pasteboard controller needs both a valid pasteboard and a message provider.");
             return nil;
         }
-        _clientID = [TSClientIdentifier clientID];
-        _provider = provider;
-        _pb = pasteboard;
+        _clientID = [[TSClientIdentifier clientID] retain];
+        _provider = [provider retain];
+        _pb = [pasteboard retain];
         _dispatcher = [[TSEventDispatcher alloc] init];
         _changeCount = [_pb changeCount];
         //_readables = [NSArray arrayWithObjects:[TSPasteboardPacket class] ,[NSString class], nil];
         _readables = [NSArray arrayWithObjects:[NSString class], nil];
 
         plasterOut = ^(void) {
-            NSInteger newChangeCount = [_pb changeCount];
-            if (_changeCount == newChangeCount) {
-                return;
+            /*
+            @autoreleasepool {
+                NSLog(@"Does something!");
+                NSPasteboard *localPB = [NSPasteboard generalPasteboard];
+                NSInteger newChangeCount = [localPB changeCount];
+                if (_changeCount == newChangeCount) {
+                    return;
+                }
+                _changeCount = newChangeCount;
+                BOOL isPeerPaste = [_pb canReadItemWithDataConformingToTypes:[NSArray arrayWithObject:@"com.trilobytesystems.plaster.uti"]];
+                if (isPeerPaste) {
+                    //NSLog(@"PLASTER : PLASTER OUT : Packet is from a peer, discarding publish..");
+                    return;
+                }
+                //NSLog(@"PLASTER : PLASTER OUT : Reading the general pasteboard...");
+                NSArray *pbContents = [localPB readObjectsForClasses:_readables options:nil];
+                //NSLog(@"PLASTER : PLASTER OUT : Found in pasteboard : [%@]" , [pbContents objectAtIndex:0]);
+                // Now we have to extract the bytes
+                id packet = [pbContents objectAtIndex:0];
+                //NSLog(@"PLASTER : PLASTER OUT : Processing NSString packet and publishing...");
+                const char *jsonBytes = [TSPacketSerializer JSONWithStringPacket:[NSString stringWithString:packet]];
+                [_provider publish:jsonBytes toChannel:_clientID];
             }
-            _changeCount = newChangeCount;
-            BOOL isPeerPaste = [_pb canReadItemWithDataConformingToTypes:[NSArray arrayWithObject:@"com.trilobytesystems.plaster.uti"]];
-            if (isPeerPaste) {
-                DLog(@"PLASTER : PLASTER OUT : Packet is from a peer, discarding publish..");
-                return;
-            }
-            DLog(@"PLASTER : PLASTER OUT : Reading the general pasteboard...");
-            NSArray *pbContents = [_pb readObjectsForClasses:_readables options:nil];
-            DLog(@"PLASTER : PLASTER OUT : Found in pasteboard : [%@]" , [pbContents objectAtIndex:0]);
-            // Now we have to extract the bytes
-            id packet = [pbContents objectAtIndex:0];
-            DLog(@"PLASTER : PLASTER OUT : Processing NSString packet and publishing...");
-            const char *jsonBytes = [TSPacketSerializer JSONWithStringPacket:[[NSString alloc] initWithString:packet]];
-            [_provider publish:jsonBytes toChannel:_clientID];
+            */
         };
  
     }
@@ -129,103 +143,130 @@ void plasterIn(char *reply, void *data) {
     return self;
 }
 
+- (void)onTimer {
+    NSLog(@"Does something!");
+    
+    NSInteger newChangeCount = [_pb changeCount];
+    if (_changeCount == newChangeCount) {
+        return;
+    }
+    _changeCount = newChangeCount;
+    
+    BOOL isPeerPaste = [_pb canReadItemWithDataConformingToTypes:[NSArray arrayWithObject:@"com.trilobytesystems.plaster.uti"]];
+    if (isPeerPaste) {
+        //NSLog(@"PLASTER : PLASTER OUT : Packet is from a peer, discarding publish..");
+        return;
+    }
+    
+    //NSLog(@"PLASTER : PLASTER OUT : Reading the general pasteboard...");
+    NSArray *pbContents = [_pb readObjectsForClasses:_readables options:nil];
+    //NSLog(@"PLASTER : PLASTER OUT : Found in pasteboard : [%@]" , [pbContents objectAtIndex:0]);
+    // Now we have to extract the bytes
+    id packet = [pbContents objectAtIndex:0];
+    //NSLog(@"PLASTER : PLASTER OUT : Processing NSString packet and publishing...");
+    const char *jsonBytes = [TSPacketSerializer JSONWithStringPacket:[NSString stringWithString:packet]];
+    [_provider publish:jsonBytes toChannel:_clientID];
+    
+}
+
 - (void)bootWithPeers:(NSUInteger)maxPeers {
-    // Obtain a session id from the user preferences (Note : this client could the session initiator, or a participant)
-    NSString *sessionID = [[NSUserDefaults standardUserDefaults] objectForKey:@"plaster-session-id"];
-    DLog(@"PLASTER: BOOT : Booting plaster with client ID : [%@], and session ID [%@]", _clientID, sessionID);
-   
-    // Publish to the plaster broadcast channel to announce self to participating peers
-    NSString *broadcastChannel = [NSString stringWithFormat:@SESSION_BROADCAST_CHANNEL, sessionID];
-    DLog(@"PLASTER: BOOT : Publishing HELLO to broadcast channel : %@", broadcastChannel);
-    [_provider publishObject:_clientID toChannel:broadcastChannel];
-    
-    // Subscribe to the plaster broadcast channel to listen to broadcasts from new participants
-    [_provider subscribeToChannels:[NSArray arrayWithObject:broadcastChannel] withCallback:handlePeer andContext:NULL];
-    
-    // Get the list of participants already in the current session
-    NSString *participantsKey = [NSString stringWithFormat:@SESSION_PARTICIPANTS_KEY, sessionID];
-    NSString *participants = [_provider stringValueForKey:participantsKey];
-    if (!participants) {
-        DLog(@"PLASTER: BOOT : First participant for session id [%@], registering...", sessionID);
-        [_provider setStringValue:_clientID forKey:participantsKey];
-    } else {
-        DLog(@"PLASTER: BOOT : Found participants : [%@]", participants);
-        NSArray *participantList = [participants componentsSeparatedByString:@":"];
-        [_peers addObjectsFromArray:participantList];
+        // Obtain a session id from the user preferences (Note : this client could the session initiator, or a participant)
+        NSString *sessionID = [[NSUserDefaults standardUserDefaults] objectForKey:@"plaster-session-id"];
+        NSLog(@"PLASTER: BOOT : Booting plaster with client ID : [%@], and session ID [%@]", _clientID, sessionID);
         
-        // Add self to list, for the benefit of future participants joining this session
-        NSString *updatedParticipants = [participants stringByAppendingFormat:@":%@", _clientID];
-        DLog(@"PLASTER: BOOT : Updating peer list with value [%@]", updatedParticipants);
-        [_provider setStringValue:updatedParticipants forKey:participantsKey];
-    }
+        // Publish to the plaster broadcast channel to announce self to participating peers
+        NSString *broadcastChannel = [NSString stringWithFormat:@SESSION_BROADCAST_CHANNEL, sessionID];
+        NSLog(@"PLASTER: BOOT : Publishing HELLO to broadcast channel : %@", broadcastChannel);
+        [_provider publishObject:_clientID toChannel:broadcastChannel];
+        
+        // Subscribe to the plaster broadcast channel to listen to broadcasts from new participants
+        [_provider subscribeToChannels:[NSArray arrayWithObject:broadcastChannel] withCallback:handlePeer andContext:NULL];
+        
+        // Get the list of participants already in the current session
+        NSString *participantsKey = [NSString stringWithFormat:@SESSION_PARTICIPANTS_KEY, sessionID];
+        NSString *participants = [_provider stringValueForKey:participantsKey];
+        if (!participants) {
+            NSLog(@"PLASTER: BOOT : First participant for session id [%@], registering...", sessionID);
+            [_provider setStringValue:_clientID forKey:participantsKey];
+        } else {
+            NSLog(@"PLASTER: BOOT : Found participants : [%@]", participants);
+            NSArray *participantList = [participants componentsSeparatedByString:@":"];
+            [_peers addObjectsFromArray:participantList];
+            
+            // Add self to list, for the benefit of future participants joining this session
+            NSString *updatedParticipants = [participants stringByAppendingFormat:@":%@", _clientID];
+            NSLog(@"PLASTER: BOOT : Updating peer list with value [%@]", updatedParticipants);
+            [_provider setStringValue:updatedParticipants forKey:participantsKey];
+        }
+        
+        // Subscribe to peers
+        if ([_peers count] > 0) {
+            NSLog(@"PLASTER: BOOT : Subscribing to peers...");
+            //[_provider subscribeToChannels:[_peers allObjects] withCallback:plasterIn andContext:NULL];
+        }
     
-    // Subscribe to peers
-    if ([_peers count] > 0) {
-        DLog(@"PLASTER: BOOT : Subscribing to peers...");
-        [_provider subscribeToChannels:[_peers allObjects] withCallback:plasterIn andContext:NULL];
-    }
-    
-    DLog(@"PLASTER: BOOT : peers : %@", _peers);
-    DLog(@"PLASTER: BOOT : Done.");
+        //NSLog(@"PLASTER: BOOT : peers : %@", _peers);
+        NSLog(@"PLASTER: BOOT : Done.");
 }
 
 - (void)start {
     /*
         Start a plaster session, OR join an existing one.
     */
-    DLog(@"PLASTER: START : Starting activities...");
+    NSLog(@"PLASTER: START : Starting activities...");
     [self bootWithPeers:10];
-    DLog(@"PLASTER: START : Starting pasteboard monitoring every 15ms");
+    //NSLog(@"PLASTER: START : Starting pasteboard monitoring every 15ms");
     [self scheduleMonitorWithID:_clientID andTimeInterval:0.015];
-
 }
 
 - (void)stop {
-    DLog(@"PLASTER: Peers : %@", _peers);
-    /*
-        Stop monitoring the local pasteboard.
-        Unsubscribe from the broadcast channel, and from all peer paste channels.
-        Indicate you are leaving the plaster session by removing yourself from the
-        list of participants.
-        Also empty the list of peers.
-    */
-    DLog(@"PLASTER: STOP : Stopping timer and cleaning up...");
-    [self invalidateMonitorWithID:_clientID];
-    
-    
-    NSString *sessionID = [[NSUserDefaults standardUserDefaults] objectForKey:@"plaster-session-id"];
-    DLog(@"PLASTER: STOP : Stopping plaster session with client ID : [%@], and session ID [%@]", _clientID, sessionID);
-
-    // Unsubscribe from both broadcast and peer channels...
-    [_provider unsubscribeAll];
-    NSString *participantsKey = [NSString stringWithFormat:@SESSION_PARTICIPANTS_KEY, sessionID];
-    NSString *participants = [_provider stringValueForKey:participantsKey];
-    if (!participants) {
-        // Something went wrong - you are supposed to be in a session...
-        ALog(@"PLASTER: STOP : Unable to stop plaster session!");
-        return;
+    @autoreleasepool {
+        //NSLog(@"PLASTER: Peers : %@", _peers);
+        /*
+         Stop monitoring the local pasteboard.
+         Unsubscribe from the broadcast channel, and from all peer paste channels.
+         Indicate you are leaving the plaster session by removing yourself from the
+         list of participants.
+         Also empty the list of peers.
+         */
+        NSLog(@"PLASTER: STOP : Stopping timer and cleaning up...");
+        [self invalidateMonitorWithID:_clientID];
+        
+        
+        NSString *sessionID = [[NSUserDefaults standardUserDefaults] objectForKey:@"plaster-session-id"];
+        NSLog(@"PLASTER: STOP : Stopping plaster session with client ID : [%@], and session ID [%@]", _clientID, sessionID);
+        
+        // Unsubscribe from both broadcast and peer channels...
+        [_provider unsubscribeAll];
+        NSString *participantsKey = [NSString stringWithFormat:@SESSION_PARTICIPANTS_KEY, sessionID];
+        NSString *participants = [_provider stringValueForKey:participantsKey];
+        if (!participants) {
+            // Something went wrong - you are supposed to be in a session...
+            NSLog(@"PLASTER: STOP : Unable to stop plaster session!");
+            return;
+        }
+        NSLog(@"PLASTER: STOP : Found participants : [%@]", participants);
+        NSMutableArray *participantList = [NSMutableArray arrayWithArray:[participants componentsSeparatedByString:@":"]];
+        // If this is the only participant, then remove the session key entirely.
+        if ([participantList count] == 1) {
+            NSLog(@"PLASTER: STOP : Only participant, removing session key...");
+            NSUInteger result = [_provider deleteKey:participantsKey];
+            NSLog(@"PLASTER: STOP : Removed %ld keys.", (unsigned long)result);
+        } else {
+            NSLog(@"PLASTER: STOP : Removing this client from participants...");
+            [participantList removeObject:_clientID];
+            [_provider setStringValue:[participantList componentsJoinedByString:@":"] forKey:participantsKey];
+        }
+        
+        NSLog(@"PLASTER: Peers : %@", [_peers class]);
+        [_peers removeAllObjects];
+        
+        NSLog(@"PLASTER: STOP : Done.");
     }
-    DLog(@"PLASTER: STOP : Found participants : [%@]", participants);
-    NSMutableArray *participantList = [NSMutableArray arrayWithArray:[participants componentsSeparatedByString:@":"]];
-    // If this is the only participant, then remove the session key entirely.
-    if ([participantList count] == 1) {
-        DLog(@"PLASTER: STOP : Only participant, removing session key...");
-        NSUInteger result = [_provider deleteKey:participantsKey];
-        DLog(@"PLASTER: STOP : Removed %ld keys.", (unsigned long)result);
-    } else {
-        DLog(@"PLASTER: STOP : Removing this client from participants...");
-        [participantList removeObject:_clientID];
-        [_provider setStringValue:[participantList componentsJoinedByString:@":"] forKey:participantsKey];
-    }
-
-    DLog(@"PLASTER: Peers : %@", [_peers class]);
-    [_peers removeAllObjects];
-    
-    DLog(@"PLASTER: STOP : Done.");
 }
 
 - (void)scheduleMonitorWithID:(NSString *)id andTimeInterval:(NSTimeInterval)interval {
-    uint ret = [_dispatcher dispatchTask:id WithPeriod:(interval * NSEC_PER_SEC) andHandler:plasterOut];
+    uint ret = [_dispatcher dispatchTask:id WithPeriod:(interval * NSEC_PER_SEC) andController:self];
     if (ret == TS_DISPATCH_ERR) {
         NSLog(@"PLASTER: Error starting Plaster monitor : Unable to create/start dispatch timer, id : %@", id);
     }
@@ -236,6 +277,15 @@ void plasterIn(char *reply, void *data) {
     if (ret == TS_DISPATCH_ERR) {
         NSLog(@"PLASTER: Error invalidating Plaster monitor : Unable to stop dispatch timer, id : %@", id);
     }
+}
+
+- (void)dealloc {
+    [_clientID release];
+    [_peers release];
+    [_provider release];
+    [_pb release];
+    [_dispatcher release];
+    [super dealloc];
 }
 
 @end

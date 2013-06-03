@@ -11,12 +11,7 @@
 @protocol TSDataStoreProvider <NSObject>
 
 @optional
--(void)setStringValueAsynchronous:(NSString *)stringValue forKey:(NSString *)key;
 -(void)setStringValue:(NSString *)stringValue forKey:(NSString *)key;
-
--(BOOL)setNXStringValue:(NSString *)stringValue forKey:(NSString *)key;
-
--(NSString *)stringValueForKeyAsynchronous:(NSString *)key;
 -(NSString *)stringValueForKey:(NSString *)key;
 
 -(void)setDictionaryValue:(NSDictionary *)dictionary forKey:(NSString *)key;

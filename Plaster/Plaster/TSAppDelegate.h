@@ -10,9 +10,9 @@
 
 @interface TSAppDelegate : NSObject <NSApplicationDelegate>
 
-@property (weak) IBOutlet NSMenu *plasterMenu;
-@property (weak) IBOutlet NSMenuItem *stopMenuItem;
-@property (weak) IBOutlet NSMenuItem *startMenuItem;
+@property (assign) IBOutlet NSMenu *plasterMenu;
+@property (assign) IBOutlet NSMenuItem *stopMenuItem;
+@property (assign) IBOutlet NSMenuItem *startMenuItem;
 
 - (IBAction)start:(id)sender;
 - (IBAction)stop:(id)sender;

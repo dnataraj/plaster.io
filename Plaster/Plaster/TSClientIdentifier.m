@@ -20,7 +20,7 @@ static NSString *_clientID = nil;
     CFUUIDRef uuidRef = CFUUIDCreate(NULL);
     CFStringRef uuidStrRef = CFUUIDCreateString(NULL, uuidRef);
     CFRelease(uuidRef);
-    return (__bridge_transfer  NSString *)uuidStrRef;
+    return [(NSString *)uuidStrRef autorelease];
 }
 
 + (NSString *)clientID {
@@ -42,5 +42,10 @@ static NSString *_clientID = nil;
     [self setSessionKey:[TSClientIdentifier createUUID]];
 }
 */
+
+- (void)dealloc {
+    [_clientID release];
+    [super dealloc];
+}
 
 @end

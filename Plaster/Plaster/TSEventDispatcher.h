@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "hiredis.h"
 #import "async.h"
+#import "TSPlasterController.h"
 
 #define TS_DISPATCH_OK 1
 #define TS_DISPATCH_ERR 2
@@ -24,6 +25,7 @@ void redisClean(void *privateData);
 
 - (uint)dispatchWithContext:(redisAsyncContext *)asyncContext;
 - (uint)dispatchTask:(NSString *)taskName WithPeriod:(uint64_t)interval andHandler:(void (^)(void))handler;
+- (uint)dispatchTask:(NSString *)taskName WithPeriod:(uint64_t)interval andController:(TSPlasterController *)controller;
 - (uint)stopTask:(NSString *)taskName;
                                                                
 @end

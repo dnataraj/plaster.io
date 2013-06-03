@@ -7,34 +7,34 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4136D1E81754D78800DA4D89 /* TSRedisSubscriptionContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 4136D1E71754D78800DA4D89 /* TSRedisSubscriptionContext.m */; };
+		4136D1E81754D78800DA4D89 /* TSRedisSubscriptionContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 4136D1E71754D78800DA4D89 /* TSRedisSubscriptionContext.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		4142E2E417425BC40091C7DF /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4142E2E317425BC40091C7DF /* Cocoa.framework */; };
 		4142E2EE17425BC40091C7DF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4142E2EC17425BC40091C7DF /* InfoPlist.strings */; };
-		4142E2F017425BC40091C7DF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4142E2EF17425BC40091C7DF /* main.m */; };
 		4142E2F417425BC40091C7DF /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 4142E2F217425BC40091C7DF /* Credits.rtf */; };
-		4142E2F717425BC40091C7DF /* TSAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4142E2F617425BC40091C7DF /* TSAppDelegate.m */; };
+		4142E2F717425BC40091C7DF /* TSAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4142E2F617425BC40091C7DF /* TSAppDelegate.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		4142E2FA17425BC50091C7DF /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4142E2F817425BC50091C7DF /* MainMenu.xib */; };
 		4142E30217425BC50091C7DF /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4142E30117425BC50091C7DF /* SenTestingKit.framework */; };
 		4142E30317425BC50091C7DF /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4142E2E317425BC40091C7DF /* Cocoa.framework */; };
 		4142E30B17425BC50091C7DF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4142E30917425BC50091C7DF /* InfoPlist.strings */; };
 		4142E30E17425BC50091C7DF /* PlasterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4142E30D17425BC50091C7DF /* PlasterTests.m */; };
-		4142E31B174262B20091C7DF /* TSPasteboardPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 4142E31A174262B20091C7DF /* TSPasteboardPacket.m */; };
-		4142E31E174280740091C7DF /* TSStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 4142E31D174280740091C7DF /* TSStack.m */; };
+		4142E31B174262B20091C7DF /* TSPasteboardPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 4142E31A174262B20091C7DF /* TSPasteboardPacket.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		4142E31E174280740091C7DF /* TSStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 4142E31D174280740091C7DF /* TSStack.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		4142E4941743F9860091C7DF /* libhiredis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4142E4931743F9860091C7DF /* libhiredis.a */; };
 		4142E4991743FED30091C7DF /* libevent_core.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4142E4951743FED30091C7DF /* libevent_core.a */; };
 		4142E49A1743FED30091C7DF /* libevent_openssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4142E4961743FED30091C7DF /* libevent_openssl.a */; };
 		4142E49B1743FED30091C7DF /* libevent_pthreads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4142E4971743FED30091C7DF /* libevent_pthreads.a */; };
 		4142E49C1743FED30091C7DF /* libevent.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4142E4981743FED30091C7DF /* libevent.a */; };
 		4142E4A417460E140091C7DF /* TSEventDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 4142E4A317460E140091C7DF /* TSEventDispatcher.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		41A057B51753B4FA00164521 /* TSRedisController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4142E3561743C1630091C7DF /* TSRedisController.m */; };
+		41A057B51753B4FA00164521 /* TSRedisController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4142E3561743C1630091C7DF /* TSRedisController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		41B68C22175B96540090A108 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4142E2EF17425BC40091C7DF /* main.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		41FE1392174BB40A00511395 /* libTSBase64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41FE1385174BA99B00511395 /* libTSBase64.a */; };
-		41FE1395174BB9DB00511395 /* TSPacketSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FE1394174BB9DB00511395 /* TSPacketSerializer.m */; };
+		41FE1395174BB9DB00511395 /* TSPacketSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FE1394174BB9DB00511395 /* TSPacketSerializer.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		41FE1397174CBFB600511395 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 41FE1396174CBFB600511395 /* Preferences.xib */; };
-		41FE139A174CC60C00511395 /* TSClientPreferenceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FE1399174CC60C00511395 /* TSClientPreferenceController.m */; };
-		41FE139D174CCC6000511395 /* TSClientIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FE139C174CCC6000511395 /* TSClientIdentifier.m */; };
+		41FE139A174CC60C00511395 /* TSClientPreferenceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FE1399174CC60C00511395 /* TSClientPreferenceController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		41FE139D174CCC6000511395 /* TSClientIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FE139C174CCC6000511395 /* TSClientIdentifier.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		41FE139F174D0D2100511395 /* TSClientStartPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 41FE139E174D0D2100511395 /* TSClientStartPanel.xib */; };
-		41FE13A5174D0DAB00511395 /* TSClientStartPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FE13A4174D0DAB00511395 /* TSClientStartPanelController.m */; };
-		41FE13A8174E432800511395 /* TSPlasterController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FE13A7174E432800511395 /* TSPlasterController.m */; };
+		41FE13A5174D0DAB00511395 /* TSClientStartPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FE13A4174D0DAB00511395 /* TSClientStartPanelController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		41FE13A8174E432800511395 /* TSPlasterController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FE13A7174E432800511395 /* TSPlasterController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		41FE13AF17528AC800511395 /* TSStopWatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FE13AE17528AC800511395 /* TSStopWatch.m */; };
 /* End PBXBuildFile section */
 
@@ -495,8 +495,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				41B68C22175B96540090A108 /* main.m in Sources */,
 				41A057B51753B4FA00164521 /* TSRedisController.m in Sources */,
-				4142E2F017425BC40091C7DF /* main.m in Sources */,
 				4142E2F717425BC40091C7DF /* TSAppDelegate.m in Sources */,
 				4142E31B174262B20091C7DF /* TSPasteboardPacket.m in Sources */,
 				4142E31E174280740091C7DF /* TSStack.m in Sources */,

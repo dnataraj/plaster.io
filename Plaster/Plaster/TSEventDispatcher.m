@@ -75,7 +75,7 @@ void redisClean(void *privateData) {
     self = [super init];
     if (self) {
         _queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-        dispatch_retain(_queue);
+        //dispatch_retain(_queue); Note: No need to retain global queues.
         _timers = [[NSMutableDictionary alloc] init];
     }
     
@@ -133,15 +133,17 @@ void redisClean(void *privateData) {
         return TS_DISPATCH_ERR;
     }
     if ([_timers objectForKey:taskName]) {
-        DLog(@"DISPATCHER: Timer already exists, stop it first.");
+        //NSLog(@"DISPATCHER: Timer already exists, stop it first.");
+        printf("DISPATCHER: Timer already exists, stop it first.\n");
         return TS_DISPATCH_ERR;
     }
     uint64_t leeway = ((uint64_t)(DEFAULT_TIMER_LEEWAY_PERCENTAGE / 100)) * interval;
     dispatch_source_t timer = [self createTimerWithInterval:interval andLeeway:leeway];
     if (timer) {
+        dispatch_retain(timer);
         dispatch_source_set_event_handler(timer, handler);
         dispatch_resume(timer);
-        DLog(@"DISPATCHER: Adding timer to list...");
+        printf("DISPATCHER: Adding timer to list...\n");
         [_timers setObject:timer forKey:taskName];
         return TS_DISPATCH_OK;
     }
@@ -149,13 +151,42 @@ void redisClean(void *privateData) {
     return TS_DISPATCH_ERR;
 }
 
+- (uint)dispatchTask:(NSString *)taskName WithPeriod:(uint64_t)interval andController:(TSPlasterController *)controller {
+    if (!taskName || !controller) {
+        return TS_DISPATCH_ERR;
+    }
+    if ([_timers objectForKey:taskName]) {
+        //NSLog(@"DISPATCHER: Timer already exists, stop it first.");
+        printf("DISPATCHER: Timer already exists, stop it first.\n");
+        return TS_DISPATCH_ERR;
+    }
+    uint64_t leeway = ((uint64_t)(DEFAULT_TIMER_LEEWAY_PERCENTAGE / 100)) * interval;
+    //dispatch_source_t timer = [self createTimerWithInterval:interval andLeeway:leeway];
+    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, _queue);
+    if (timer) {
+        dispatch_source_set_timer(timer, dispatch_time(DISPATCH_TIME_NOW, 0), interval, leeway);
+        //dispatch_retain(timer);
+        __block id unretained_cont = controller;
+        dispatch_source_set_event_handler(timer, ^{
+            [unretained_cont onTimer];
+        });
+        dispatch_resume(timer);
+        printf("DISPATCHER: Adding timer to list...\n");
+        [_timers setObject:timer forKey:taskName];
+        return TS_DISPATCH_OK;
+    }
+    
+    return TS_DISPATCH_ERR;
+    
+}
+
 - (uint)stopTask:(NSString *)taskName {
     dispatch_source_t timer = [_timers objectForKey:taskName];
     if (!timer) {
-        DLog(@"DISPATCHER: No task with name %@ is availble.", taskName);
+        printf("DISPATCHER: No task with name %s is availble.\n", [taskName UTF8String]);
         return TS_DISPATCH_ERR;
     }
-    DLog(@"DISPATCHER: Cancelling task : %@", taskName);
+    printf("DISPATCHER: Cancelling task : %s\n", [taskName UTF8String]);
     dispatch_source_cancel(timer);
     dispatch_release(timer);
     [_timers removeObjectForKey:taskName];
@@ -163,20 +194,23 @@ void redisClean(void *privateData) {
     return TS_DISPATCH_OK;
 }
 
+/*
 - (dispatch_source_t) createTimerWithInterval:(uint64_t)interval andLeeway:(uint64_t)leeway {
-    DLog(@"DISPATCHER: Creating a dispatch timer...");
+    //NSLog(@"DISPATCHER: Creating a dispatch timer...");
+    printf("DISPATCHER: Creating a dispatch timer...\n");
     dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, _queue);
     if (timer) {
         dispatch_source_set_timer(timer, dispatch_time(DISPATCH_TIME_NOW, 0), interval, leeway);
     }
-    
+    //dispatch_retain(timer);
     return timer;
 }
+*/
 
 - (void)dealloc {
     [_timers release];
     _timers = nil;
-    dispatch_release(_queue);
+    //dispatch_release(_queue);
     [super dealloc];
 }
 

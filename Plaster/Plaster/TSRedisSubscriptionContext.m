@@ -17,7 +17,7 @@
     self = [super init];
     if (self) {
         _subscriptionContext = redisContext;
-        _channels = channels;
+        [self setChannels:channels];
         _bundle = bundle;
     }
     return self;
@@ -28,14 +28,21 @@
 }
 
 - (void)freeBundle {
-    if (_bundle) {
-        DLog(@"Freeing associated bundle...");
-        if (_bundle->data) {
+    if (_bundle != NULL) {
+        NSLog(@"Freeing associated bundle...");
+        if (_bundle->data != NULL) {
             free(_bundle->data);
         }
         free(_bundle);
     }
 }
 
+- (void)dealloc {
+    _subscriptionContext = nil;
+    [_channels release];
+    _bundle = nil;
+    //[self freeBundle];
+    [super dealloc];
+}
 
 @end

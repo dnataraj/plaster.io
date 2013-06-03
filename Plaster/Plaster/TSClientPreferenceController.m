@@ -11,7 +11,7 @@
 
 @interface TSClientPreferenceController ()
 
-@property (readwrite, copy) NSString *sessionID;
+@property (readwrite, retain) NSString *sessionID;
 
 @end
 

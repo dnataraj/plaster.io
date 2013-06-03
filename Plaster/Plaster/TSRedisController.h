@@ -16,11 +16,11 @@
 typedef void (*tsSubcriptionHandler)(redisAsyncContext *c, void *reply, void *privateData);
 typedef void (*tsPublishHandler)(redisAsyncContext *c, void *reply, void *privateData);
 
-typedef struct {
+typedef struct _handlerbundle {
     long long int_data;
     void *data;
-    void (*handler)(char *reply, void *);
-    const __unsafe_unretained dispatch_semaphore_t *semaphore;
+    mpCallbackC handler;
+    //const __unsafe_unretained dispatch_semaphore_t *semaphore;
 } *HandlerBundle;
 
 HandlerBundle makeHandlerBundleObjC(mpCallback callback, id data, dispatch_semaphore_t *sema);
@@ -28,7 +28,7 @@ HandlerBundle makeHandlerBundle(mpCallback callback, void *data, dispatch_semaph
 
 @interface TSRedisController : NSObject <TSMessagingProvider, TSDataStoreProvider>
 
-@property (readwrite) NSHost *redisHost;
+@property (readwrite, retain) NSHost *redisHost;
 @property (readwrite) NSUInteger redisPort;
 
 - (id)initWithIPAddress:(NSString *)ip port:(NSUInteger)port;

@@ -14,6 +14,7 @@
 
 - (id)initWithPasteboard:(NSPasteboard *)pasteboard provider:(id<TSMessagingProvider, TSDataStoreProvider>)provider;
 
+- (void)onTimer;
 - (void)start;
 - (void)stop;
 

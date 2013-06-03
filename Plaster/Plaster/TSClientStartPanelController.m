@@ -26,8 +26,10 @@
 - (id)init {
     self = [super initWithWindowNibName:@"TSClientStartPanel"];
     if (self) {
+        NSLog(@"Initializing client start panel controller...");
         TSClientStartPanelValueTransformer *transformer = [[TSClientStartPanelValueTransformer alloc] init];
         [NSValueTransformer setValueTransformer:transformer forName:@"TSClientStartPanelValueTransformer"];
+        [transformer release];
     }
     
     return self;
@@ -35,7 +37,7 @@
 
 - (void)windowDidLoad {
     [super windowDidLoad];
-    
+    NSLog(@"Window did load...");
     // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
     /*
     [_sharedKeyTextField setTextColor:[NSColor disabledControlTextColor]];
@@ -82,6 +84,10 @@
     }
     
     return [NSNumber numberWithBool:NO];
+}
+
+- (void)dealloc {
+    [super dealloc];
 }
 
 

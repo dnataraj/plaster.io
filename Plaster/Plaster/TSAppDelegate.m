@@ -28,7 +28,7 @@
 - (id)init {
     self = [super init];
     if (self) {
-        DLog(@"AD: Delegate initializing...");
+        NSLog(@"AD: Delegate initializing...");
         _redisController = [[TSRedisController alloc] init];
         _plaster = [[TSPlasterController alloc] initWithPasteboard:[NSPasteboard generalPasteboard] provider:_redisController];
     }
@@ -49,12 +49,12 @@
     
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaultPreferences];
     
-    DLog(@"AD: Application Launched.");
+    NSLog(@"AD: Application Launched.");
 }
 
 
 - (void)awakeFromNib {
-    _plasterStatusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
+    _plasterStatusItem = [[[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength] retain];
     [_plasterStatusItem setTitle:@"P"];
     [_plasterStatusItem setHighlightMode:YES];
     [_plasterStatusItem setMenu:[self plasterMenu]];
@@ -62,15 +62,16 @@
     [self.plasterMenu setAutoenablesItems:NO];
     [self.startMenuItem setEnabled:YES];
     [self.stopMenuItem setEnabled:NO];
-    DLog(@"AD: Awakening from NIB...");
+    //NSLog(@"AD: Awakening from NIB...");
 }
 
 - (IBAction)start:(id)sender {
     BOOL initialized = [[NSUserDefaults standardUserDefaults] boolForKey:@"plaster-init"];
     if (!initialized) {
         TSClientStartPanelController *startPanelController = [[TSClientStartPanelController alloc] init];
-        DLog(@"Starting modal configuration panel for Plaster...");
+        NSLog(@"Starting modal configuration panel for Plaster...");
         [NSApp runModalForWindow:[startPanelController window]];
+        [startPanelController release];
     }
     [_plaster start];
     
@@ -94,10 +95,20 @@
 
  
 - (void)applicationWillTerminate:(NSNotification *)notification {
-    DLog(@"AD: Quitting...");
+    NSLog(@"AD: Quitting...");
     if ([self.stopMenuItem isEnabled]) {
         [_plaster stop];
     }
+}
+
+- (void)dealloc {
+    NSLog(@"DELEGATE DEALLOC!!!");
+    [_plaster release];
+    [_redisController release];
+    [_plasterStatusItem release];
+    [_preferenceController release];
+    
+    [super dealloc];
 }
 
 @end

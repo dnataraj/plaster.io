@@ -54,11 +54,11 @@ NSString * const PLAIN_TEXT_UTI = @"public.utf8-plain-text";
 - (id)initWithPasteboardPropertyList:(id)propertyList ofType:(NSString *)type {
     self = [self init];
     if (self) {
-        DLog(@"PACKET: Initializing with property list %@", [propertyList class]);
-        DLog(@"PACKET: and type %@", type);
+        NSLog(@"PACKET: Initializing with property list %@", [propertyList class]);
+        NSLog(@"PACKET: and type %@", type);
         if ([type isEqualToString:PLASTER_UTI]) {
             _packet = [[NSString alloc] initWithPasteboardPropertyList:propertyList ofType:NSPasteboardTypeString];
-            DLog(@"PACKET: Initialized packet after peer copy [%@]", _packet);
+            NSLog(@"PACKET: Initialized packet after peer copy [%@]", _packet);
         }
     }
     return self;
@@ -82,21 +82,21 @@ NSString * const PLAIN_TEXT_UTI = @"public.utf8-plain-text";
     if (!writeableTypes) {
         writeableTypes = [[NSArray alloc] initWithObjects:PLASTER_UTI, NSPasteboardTypeString, PLAIN_TEXT_UTI, nil];
     }
-    //DLog(@"Returning writeable types...");
-    return writeableTypes;
+    //NSLog(@"Returning writeable types...");
+    return [writeableTypes autorelease];
 }
 
 - (id)pasteboardPropertyListForType:(NSString *)type {
     if ([type isEqualToString:PLASTER_UTI]) {
-        DLog(@"PACKET: Returning packet for type [%@]", PLASTER_UTI);
+        NSLog(@"PACKET: Returning packet for type [%@]", PLASTER_UTI);
         return _packet;
     }
     if ([type isEqualToString:NSPasteboardTypeString]) {
-        DLog(@"PACKET: Returning packet for type [%@]", NSPasteboardTypeString);
+        NSLog(@"PACKET: Returning packet for type [%@]", NSPasteboardTypeString);
         return _packet;
     }
     if ([type isEqualToString:PLAIN_TEXT_UTI]) {
-        DLog(@"PACKET: Returning packet for type [%@]", PLAIN_TEXT_UTI);
+        NSLog(@"PACKET: Returning packet for type [%@]", PLAIN_TEXT_UTI);
         return _packet;
     }
     
@@ -108,8 +108,8 @@ NSString * const PLAIN_TEXT_UTI = @"public.utf8-plain-text";
     if (!readableTypes) {
         readableTypes = [[NSArray alloc] initWithObjects:PLASTER_UTI, NSPasteboardTypeString, PLAIN_TEXT_UTI, nil];
     }
-    //DLog(@"Returning readable types...");
-    return readableTypes;
+    //NSLog(@"Returning readable types...");
+    return [readableTypes autorelease];
 }
 
 
@@ -138,6 +138,12 @@ NSString * const PLAIN_TEXT_UTI = @"public.utf8-plain-text";
     }
     
     return @"PACKET: Not Ready.";
+}
+
+- (void)dealloc {
+    free(__packet);
+    [_packet release];
+    [super dealloc];
 }
 
 @end

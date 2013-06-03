@@ -10,7 +10,7 @@
 
 @interface TSClientStartPanelController : NSWindowController
 
-@property (weak) IBOutlet NSTextField *sessionKeyTextField;
+@property (assign) IBOutlet NSTextField *sessionKeyTextField;
 @property (readwrite, copy) NSString *sessionKey;
 
 - (IBAction)useSessionKey:(id)sender;

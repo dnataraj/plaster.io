@@ -10,11 +10,11 @@
 
 @interface TSClientPreferenceController : NSWindowController <NSWindowDelegate>
 
-@property (weak) IBOutlet NSTextField *sessionIDTextField;
-@property (weak) IBOutlet NSButton *handleTextTypeButton;
-@property (weak) IBOutlet NSButton *handleImageTypeButton;
+@property (assign) IBOutlet NSTextField *sessionIDTextField;
+@property (assign) IBOutlet NSButton *handleTextTypeButton;
+@property (assign) IBOutlet NSButton *handleImageTypeButton;
 
-@property (readonly, copy) NSString *sessionID;
+@property (readonly, retain) NSString *sessionID;
 @property (readwrite) BOOL handlesTextType, handlesImageType;
 
 - (IBAction)generateSessionID:(id)sender;

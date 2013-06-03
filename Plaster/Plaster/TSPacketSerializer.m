@@ -11,12 +11,14 @@
 
 @implementation TSPacketSerializer
 
-+ (const void *)JSONWithStringPacket:(NSString *)packet {
-    NSMutableDictionary *kvDictionary = [[NSMutableDictionary alloc] init];
++ (const char *)JSONWithStringPacket:(NSString *)packet {
+    //NSMutableDictionary *kvDictionary = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *kvDictionary = [NSMutableDictionary dictionary];
     [kvDictionary setObject:@"plaster-text" forKey:@"plaster-type"];
-    NSString *b64 = [packet base64String];
+    NSString *b64 = [[NSString alloc] initWithString:[packet base64String]];
     //NSLog(@"BASE 64 ENCODED : [%@]", b64);
     [kvDictionary setObject:b64 forKey:@"plaster-data"];
+    [b64 release];
     
     NSError *error = nil;
     NSData *json = [NSJSONSerialization dataWithJSONObject:kvDictionary options:0 error:&error];
@@ -32,7 +34,7 @@
     id kvStore = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
     //NSLog(@"Retrieved id of type [%@]", [json class]);
     if (error) {
-        DLog(@"SERIALIZER: Error occured : %@", error);
+        //NSLog(@"SERIALIZER: Error occured : %@", error);
     }
     if ([kvStore isKindOfClass:[NSMutableDictionary class]]) {
         NSMutableDictionary *dictionary = (NSMutableDictionary *)kvStore;
@@ -44,8 +46,9 @@
                 NSString *type = (NSString *)[dictionary objectForKey:@"plaster-type"];
                 if ([type isEqualToString:@"plaster-text"]) {
                     NSString *cleared = [[NSString alloc] initWithData:packet encoding:NSUTF8StringEncoding];
-                    NSLog(@"Obtained text packet : %@", cleared);
+                    //NSLog(@"Obtained text packet : %@", cleared);
                     [dictionary setObject:cleared forKey:@"plaster-packet-string"];
+                    [cleared release];
                 }
             }
         }
