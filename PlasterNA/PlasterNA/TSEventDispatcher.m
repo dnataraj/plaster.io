@@ -10,7 +10,7 @@
 
 #define DEFAULT_TIMER_LEEWAY_PERCENTAGE 30
 
-typedef struct {
+typedef struct _tsDispatchContext {
     redisAsyncContext *context;
     BOOL _isReading, _isWriting;
     dispatch_source_t _readEvent, _writeEvent;
@@ -19,32 +19,40 @@ typedef struct {
 void redisRead(void *privateData) {
     tsDispatchContext *dc = (tsDispatchContext *)privateData;
     if (!dc->_isReading) {
-        dc->_isReading = YES;
-        dispatch_resume(dc->_readEvent);
+        if (dc->_readEvent) {
+            dc->_isReading = YES;
+            dispatch_resume(dc->_readEvent);
+        }
     }
 }
 
 void redisDeleteRead(void *privateData) {
     tsDispatchContext *dc = (tsDispatchContext *)privateData;
     if (dc->_isReading) {
-        dc->_isReading = NO;
-        dispatch_suspend(dc->_readEvent);
+        if (dc->_readEvent) {
+            dc->_isReading = NO;
+            dispatch_suspend(dc->_readEvent);
+        }
     }
 }
 
 void redisWrite(void *privateData) {
     tsDispatchContext *dc = (tsDispatchContext *)privateData;
     if (!dc->_isWriting) {
-        dc->_isWriting = YES;
-        dispatch_resume(dc->_writeEvent);
+        if (dc->_writeEvent) {
+            dc->_isWriting = YES;
+            dispatch_resume(dc->_writeEvent);
+        }
     }
 }
 
 void redisDeleteWrite(void *privateData) {
     tsDispatchContext *dc = (tsDispatchContext *)privateData;
     if (dc->_isWriting) {
-        dc->_isWriting = NO;
-        dispatch_suspend(dc->_writeEvent);
+        if (dc->_writeEvent) {
+            dc->_isWriting = NO;
+            dispatch_suspend(dc->_writeEvent);            
+        }
     }
 }
 
@@ -55,12 +63,14 @@ void redisClean(void *privateData) {
         redisRead(privateData);
         dispatch_source_cancel(dc->_readEvent);
         dispatch_release(dc->_readEvent);
+        dc->_readEvent = nil;
     }
     
     if (dc->_writeEvent != NULL && dispatch_source_testcancel(dc->_writeEvent) == 0) {
         redisWrite(privateData);
         dispatch_source_cancel(dc->_writeEvent);
         dispatch_release(dc->_writeEvent);
+        dc->_writeEvent = nil;
     }
     
     free(dc);
@@ -74,8 +84,8 @@ void redisClean(void *privateData) {
 - (id)init {
     self = [super init];
     if (self) {
-        _queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-        //dispatch_retain(_queue); Note: No need to retain global queues.
+        _queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
+        //_queue = dispatch_queue_create("PLASTER", DISPATCH_QUEUE_CONCURRENT);
         _timers = [[NSMutableDictionary alloc] init];
     }
     
@@ -111,9 +121,11 @@ void redisClean(void *privateData) {
     });
     
     // Create container for context and r/w events
-    tsDispatchContext *dc = (tsDispatchContext *)malloc(sizeof(*dc));
+    tsDispatchContext *dc = (tsDispatchContext *)malloc(sizeof(struct _tsDispatchContext));
     dc->context = asyncContext;
     dc->_isReading = dc->_isWriting = 0;
+    dc->_readEvent = readEvent;
+    dc->_writeEvent = writeEvent;
     
     // Register functions to start/stop listening for events
     asyncContext->ev.addRead = redisRead;
@@ -122,8 +134,6 @@ void redisClean(void *privateData) {
     asyncContext->ev.delWrite = redisDeleteWrite;
     asyncContext->ev.cleanup = redisClean;
     asyncContext->ev.data = dc;  // Do we need this?
-    dc->_readEvent = readEvent;
-    dc->_writeEvent = writeEvent;
     
     return REDIS_OK;    
 }
@@ -133,14 +143,13 @@ void redisClean(void *privateData) {
         return TS_DISPATCH_ERR;
     }
     if ([_timers objectForKey:taskName]) {
-        //NSLog(@"DISPATCHER: Timer already exists, stop it first.");
         printf("DISPATCHER: Timer already exists, stop it first.\n");
         return TS_DISPATCH_ERR;
     }
     uint64_t leeway = ((uint64_t)(DEFAULT_TIMER_LEEWAY_PERCENTAGE / 100)) * interval;
-    dispatch_source_t timer = [self createTimerWithInterval:interval andLeeway:leeway];
+    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, _queue);
     if (timer) {
-        dispatch_retain(timer);
+        dispatch_source_set_timer(timer, dispatch_time(DISPATCH_TIME_NOW, 0), interval, leeway);
         dispatch_source_set_event_handler(timer, handler);
         dispatch_resume(timer);
         printf("DISPATCHER: Adding timer to list...\n");
@@ -156,16 +165,13 @@ void redisClean(void *privateData) {
         return TS_DISPATCH_ERR;
     }
     if ([_timers objectForKey:taskName]) {
-        //NSLog(@"DISPATCHER: Timer already exists, stop it first.");
         printf("DISPATCHER: Timer already exists, stop it first.\n");
         return TS_DISPATCH_ERR;
     }
     uint64_t leeway = ((uint64_t)(DEFAULT_TIMER_LEEWAY_PERCENTAGE / 100)) * interval;
-    //dispatch_source_t timer = [self createTimerWithInterval:interval andLeeway:leeway];
     dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, _queue);
     if (timer) {
         dispatch_source_set_timer(timer, dispatch_time(DISPATCH_TIME_NOW, 0), interval, leeway);
-        //dispatch_retain(timer);
         __block id unretained_cont = controller;
         dispatch_source_set_event_handler(timer, ^{
             [unretained_cont onTimer];
@@ -194,23 +200,9 @@ void redisClean(void *privateData) {
     return TS_DISPATCH_OK;
 }
 
-/*
-- (dispatch_source_t) createTimerWithInterval:(uint64_t)interval andLeeway:(uint64_t)leeway {
-    //NSLog(@"DISPATCHER: Creating a dispatch timer...");
-    printf("DISPATCHER: Creating a dispatch timer...\n");
-    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, _queue);
-    if (timer) {
-        dispatch_source_set_timer(timer, dispatch_time(DISPATCH_TIME_NOW, 0), interval, leeway);
-    }
-    //dispatch_retain(timer);
-    return timer;
-}
-*/
-
 - (void)dealloc {
     [_timers release];
     _timers = nil;
-    //dispatch_release(_queue);
     [super dealloc];
 }
 

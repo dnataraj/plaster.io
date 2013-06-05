@@ -30,52 +30,53 @@ void _signal(const char *caller, void *bundle) {
 BOOL rcProcessReply(redisAsyncContext *ctx, void *r, void *data) {
     redisReply *reply = r;
     if (reply == NULL) {
-        printf("REDIS: The reply was null, checking context...");
+        printf("REDIS: The reply was null, checking context...\n");
         if (ctx) {
             switch (ctx->err) {
                 case REDIS_ERR_IO:
-                    printf("REDIS: Error occured : %s", strerror(errno));
+                    printf("REDIS: Error occured : %s\n", strerror(errno));
                     break;
                 case REDIS_ERR_EOF:
-                    printf("REDIS:  The server closed the connection which resulted in an empty read. : %s", ctx->errstr);
+                    printf("REDIS:  The server closed the connection which resulted in an empty read. : %s\n", ctx->errstr);
                     break;
                 case REDIS_ERR_PROTOCOL:
-                    printf("REDIS:  There was an error while parsing the protocol. : %s", ctx->errstr);
+                    printf("REDIS:  There was an error while parsing the protocol. : %s\n", ctx->errstr);
                     break;
                 case REDIS_ERR_OTHER:
-                    printf("REDIS:  Possible error when resolving hostname. : %s", ctx->errstr);
+                    printf("REDIS:  Possible error when resolving hostname. : %s\n", ctx->errstr);
                     break;
                     
                 default:
-                    printf("REDIS: Unknown error. : %s", ctx->errstr);
+                    printf("REDIS: Unknown error. : %s\n", ctx->errstr);
                     break;
             }
         } else {
-            printf("Context is null as well. Aborting.");
+            printf("Context is null as well. Aborting.\n");
         }
         return NO;
     }
     
     switch (reply->type) {
-        case REDIS_REPLY_STATUS:
-            printf("REDIS: REDIS_REPLY_STATUS : %s", reply->str);
-            break;
         case REDIS_REPLY_ERROR:
-            printf("REDIS: ERROR! :REDIS_REPLY_ERROR : %s", reply->str);
+            printf("REDIS: ERROR! :REDIS_REPLY_ERROR : %s\n", reply->str);
+            break;
+        /*
+        case REDIS_REPLY_STATUS:
+            printf("REDIS: REDIS_REPLY_STATUS : %s\n", reply->str);
             break;
         case REDIS_REPLY_INTEGER:
-            printf("REDIS: REDIS_REPLY_INTEGER : %lld", reply->integer);
+            printf("REDIS: REDIS_REPLY_INTEGER : %lld\n", reply->integer);
             break;
         case REDIS_REPLY_NIL:
-            printf("REDIS: REDIS_REPLY_NIL : no data.");
+            printf("REDIS: REDIS_REPLY_NIL : no data.\n");
             break;
         case REDIS_REPLY_STRING:
-            printf("REDIS: REDIS_REPLY_STRING : %s", reply->str);
+            printf("REDIS: REDIS_REPLY_STRING : %s\n", reply->str);
             break;
         case REDIS_REPLY_ARRAY:
-            printf("REDIS: REDIS_REPLY_ARRAY : Number of elements : %zd", reply->elements);
+            printf("REDIS: REDIS_REPLY_ARRAY : Number of elements : %zd\n", reply->elements);
             break;
-            
+        */    
         default:
             break;
     }
@@ -88,21 +89,21 @@ void rcSet(redisAsyncContext *ctx, void *r, void *data) {
         redisReply *reply = r;
         if (reply->type == REDIS_REPLY_STATUS) {
             if (strcmp(reply->str, "OK")) {
-                printf("REDIS: SET replied with OK.");
+                printf("REDIS: SET replied with OK.\n");
                 if (data) {
                     HandlerBundle hb = (HandlerBundle)data;
                     hb->int_data = 1;
                 }
             }
         } else if (reply->type == REDIS_REPLY_NIL) {
-            printf("REDIS: SET replied with (nil).");
+            printf("REDIS: SET replied with (nil).\n");
             if (data) {
                 HandlerBundle hb = (HandlerBundle)data;
                 hb->int_data = 0;
             }
             
         }
-        printf("REDIS: SET : Disconnecting...");
+        printf("REDIS: SET : Disconnecting...\n");
         redisAsyncDisconnect(ctx);
     }
     //_signal("SET", data);
@@ -114,14 +115,14 @@ void rcGet(redisAsyncContext *ctx, void *r, void *data) {
         redisReply *reply = r;
         if (reply->type == REDIS_REPLY_STRING) {
             if (data) {
-                printf("REDIS: GET : Processing GET reply..");
+                printf("REDIS: GET : Processing GET reply..\n");
                 HandlerBundle hb = (HandlerBundle)data;
                 hb->data = (char *)malloc(strlen(reply->str));
                 strcpy(hb->data, reply->str);
             }
         }
         
-        printf("REDIS: GET : Disconnecting...");
+        printf("REDIS: GET : Disconnecting...\n");
         redisAsyncDisconnect(ctx);        
     }
     
@@ -134,13 +135,13 @@ void rcIncr(redisAsyncContext *ctx, void *r, void *data) {
         redisReply *reply = r;
         if (reply->type == REDIS_REPLY_INTEGER) {
             if (data) {
-                printf("REDIS: INCR : Processing INCR reply..");
+                printf("REDIS: INCR : Processing INCR reply..\n");
                 HandlerBundle hb = (HandlerBundle)data;
                 hb->int_data = reply->integer;
             }
         }
         
-        printf("REDIS: INCR : Disconnecting...");
+        printf("REDIS: INCR : Disconnecting...\n");
         redisAsyncDisconnect(ctx);
     }
     
@@ -153,13 +154,13 @@ void rcDel(redisAsyncContext *ctx, void *r, void *data) {
         redisReply *reply = r;
         if (reply->type == REDIS_REPLY_INTEGER) {
             if (data) {
-                printf("REDIS: DEL : Processing DEL reply..");
+                printf("REDIS: DEL : Processing DEL reply..\n");
                 HandlerBundle hb = (HandlerBundle)data;
                 hb->int_data = reply->integer;
             }
         }
         
-        printf("REDIS: DEL : Disconnecting...");
+        printf("REDIS: DEL : Disconnecting...\n");
         redisAsyncDisconnect(ctx);
     }
     
@@ -171,32 +172,143 @@ void rcSubscribe(redisAsyncContext *ctx, void *r, void *data) {
     if (rcProcessReply(ctx, r, data)) {
         redisReply *reply = r;
         if (reply->type == REDIS_REPLY_ARRAY) {
+            /*
             for (int j = 0; j < reply->elements; j++) {
                 printf("%u) %s\n", j, reply->element[j]->str);
             }
-            if (reply->elements > 2) {
-                if (strcmp(reply->element[0]->str, "unsubscribe") == 0) {
-                    printf("REDIS: UNSUBSCRIBE : Disconnecting...");
-                    redisAsyncDisconnect(ctx);
-                    return;
-                }
+            */
+            if (strcmp(reply->element[0]->str, "UNSUBSCRIBE") == 0) {
+                printf("REDIS: UNSUBSCRIBE : Disconnecting...\n");
+                redisAsyncDisconnect(ctx);
+                return;
+            }
+            if (reply->elements > 2 && reply->element[2]->str) {
                 if (data != NULL) {
                     HandlerBundle hb = (HandlerBundle)data;
-                    (hb->handler)(reply->element[2]->str, hb->data);
+                    if (hb->handler) {
+                        printf("Handling incoming message : %s\n", reply->element[2]->str);
+                        (*hb->handler)(reply->element[2]->str, hb->data);
+                    }
                 } else {
-                    printf("REDIS: SUBSCRIBE : Invalid handler : %p", data);
+                    printf("REDIS: SUBSCRIBE : Invalid handler : %p\n", data);
                 }
             }
         }
     }
 }
 
+void rcSubscribeWithInvocation(redisAsyncContext *ctx, void *r, void *data) {
+    if (rcProcessReply(ctx, r, data)) {
+        redisReply *reply = r;
+        if (reply->type == REDIS_REPLY_ARRAY) {
+            if (strcmp(reply->element[0]->str, "UNSUBSCRIBE") == 0) {
+                printf("REDIS: UNSUBSCRIBE : Disconnecting...\n");
+                redisAsyncDisconnect(ctx);
+                return;
+            }
+            if (reply->elements > 2 && reply->element[2]->str) {
+                if (data != NULL) {
+                    TSPlasterHandler *handler = (TSPlasterHandler *)data;
+                    if (handler) {
+                        NSInvocation *invocation = [handler invocation];
+                        if (invocation) {
+                            //printf("REDIS: SUB INV : Handling incoming message : %s\n", reply->element[2]->str);
+                            NSLog(@"REDIS: SUB INV : Invoking on : %@", [[handler target] class]);
+                            NSLog(@"REDIS: SUB INV : With selector : %@", NSStringFromSelector([invocation selector]));
+                            [invocation setTarget:[handler target]];
+                            char *arg = (char *)malloc(sizeof(char) * strlen(reply->element[2]->str));
+                            strcpy(arg, reply->element[2]->str);
+                            [invocation setArgument:&arg atIndex:2];
+                            [invocation invoke];
+                        }
+                        
+                    }
+                } else {
+                    printf("REDIS: SUBSCRIBE : Invalid handler : %p\n", data);
+                }
+            }
+        }
+    }
+}
+
+
+void rcSubscribeWithOptions(redisAsyncContext *ctx, void *r, void *data) {
+    if (rcProcessReply(ctx, r, data)) {
+        redisReply *reply = r;
+        if (reply->type == REDIS_REPLY_ARRAY) {
+            if (strcmp(reply->element[0]->str, "UNSUBSCRIBE") == 0) {
+                printf("REDIS: UNSUBSCRIBE : Disconnecting...\n");
+                redisAsyncDisconnect(ctx);
+                return;
+            }
+            if (reply->elements > 2 && reply->element[2]->str) {
+                if (data != NULL) {
+                    NSDictionary *options = (NSDictionary *)data;
+                    if (options) {
+                        NSString *handlerName = [options objectForKey:@"HANDLER_NAME"];
+                        NSDictionary *handlerTable = [options objectForKey:@"HANDLER_TABLE"];
+                        NSDictionary *handlerOptions = [handlerTable objectForKey:handlerName];
+                        if (handlerOptions) {
+                            id target = [handlerOptions objectForKey:@"target"];
+                            NSInvocation *invocation = [handlerOptions objectForKey:@"invocation"];
+                            if (invocation) {
+                                //printf("REDIS: SUB INV : Handling incoming message : %s\n", reply->element[2]->str);
+                                NSLog(@"REDIS: SUB INV : Invoking on : %@", [target class]);
+                                NSLog(@"REDIS: SUB INV : With selector : %@", NSStringFromSelector([invocation selector]));
+                                [invocation setTarget:target];
+                                char *arg = (char *)malloc(sizeof(char) * strlen(reply->element[2]->str));
+                                strcpy(arg, reply->element[2]->str);
+                                [invocation setArgument:&arg atIndex:2];
+                                [invocation invoke];
+                            }
+                            
+                        }
+                    }
+                } else {
+                    printf("REDIS: SUBSCRIBE : Invalid handler : %p\n", data);
+                }
+            }
+        }
+    }
+}
+
+/*
+void rcSubscribeWithHandler(redisAsyncContext *ctx, void *r, void *data) {
+    if (rcProcessReply(ctx, r, data)) {
+        redisReply *reply = r;
+        if (reply->type == REDIS_REPLY_ARRAY) {
+            if (strcmp(reply->element[0]->str, "UNSUBSCRIBE") == 0) {
+                printf("REDIS: UNSUBSCRIBE : Disconnecting...\n");
+                redisAsyncDisconnect(ctx);
+                return;
+            }
+            if (reply->elements > 2 && reply->element[2]->str) {
+                if (data != NULL) {
+                    TSPlasterHandler *handler = (TSPlasterHandler *)data;
+                    if (handler) {
+                        printf("Handling incoming message : %s\n", reply->element[2]->str);
+                        id object = [handler object];
+                        SEL handlerSelector = NSSelectorFromString([handler handler]);
+                        if ([object respondsToSelector:handlerSelector]) {
+                            printf("Invoking selector on object...\n");
+                            [object performSelector:handlerSelector];
+                        }
+                    }
+                } else {
+                    printf("REDIS: SUBSCRIBE : Invalid handler : %p\n", data);
+                }
+            }
+        }
+    }
+}
+*/
+
 void connectCallback(const redisAsyncContext *c, int status) {
     if (status != REDIS_OK) {
         printf("REDIS: CONNECT : Error: %s\n", c->errstr);
         return;
     }
-    printf("REDIS: CONNECT : Connected...\n");
+    //printf("REDIS: CONNECT : Connected...\n");
 }
 
 void disconnectCallback(const redisAsyncContext *c, int status) {
@@ -204,31 +316,29 @@ void disconnectCallback(const redisAsyncContext *c, int status) {
         printf("REDIS: DISCONNECT : Error: %s\n", c->errstr);
         return;
     }
-    printf("REDIS : DISCONNECT : Disconnected.");
+    printf("REDIS : DISCONNECT : Disconnected.\n");
 }
 
 HandlerBundle makeHandlerBundleC(mpCallbackC callback, void *data, dispatch_semaphore_t *sema) {
     HandlerBundle hb = (HandlerBundle)malloc(sizeof(HandlerBundle));
-    hb->data = data;
-    hb->handler = NULL;
-    if (callback) {
-        //NSLog(@"Setting callback in bundle...");
-        hb->handler = callback;
+    if (hb) {
+        hb->data = data;
+        hb->handler = NULL;
+        if (callback) {
+            //NSLog(@"Setting callback in bundle...");
+            hb->handler = callback;
+        }
+        return hb;
     }
-    /*
-    hb->semaphore = nil;
-    if (sema) {
-        hb->semaphore = sema;
-    }
-    */
-    return hb;
+    
+    return NULL;
 }
 
 HandlerBundle makeHandlerBundleObjC(mpCallback callback, id data, dispatch_semaphore_t *sema) {
-    HandlerBundle hb = (HandlerBundle)malloc(sizeof(HandlerBundle));
-    hb->data = (__bridge void *)(data);
+    HandlerBundle hb = (HandlerBundle)malloc(sizeof(struct _handlerbundle));
+    hb->data = (void *)(data);
     if (callback) {
-        hb->handler = (__bridge void *) callback;
+        hb->handler = (void *) callback;
     }
     //hb->semaphore = sema;
     return hb;
@@ -314,11 +424,12 @@ void freeBundle(HandlerBundle hb) {
     }
     
     switch (reply->type) {
-        case REDIS_REPLY_STATUS:
-            NSLog(@"REDIS: REDIS_REPLY_STATUS : %s", reply->str);
-            break;
         case REDIS_REPLY_ERROR:
             NSLog(@"REDIS: ERROR! :REDIS_REPLY_ERROR : %s", reply->str);
+            break;
+        /*
+        case REDIS_REPLY_STATUS:
+            NSLog(@"REDIS: REDIS_REPLY_STATUS : %s", reply->str);
             break;
         case REDIS_REPLY_INTEGER:
             NSLog(@"REDIS: REDIS_REPLY_INTEGER : %lld", reply->integer);
@@ -332,7 +443,7 @@ void freeBundle(HandlerBundle hb) {
         case REDIS_REPLY_ARRAY:
             NSLog(@"REDIS: REDIS_REPLY_ARRAY : Number of elements : %zd", reply->elements);
             break;
-            
+        */
         default:
             break;
     }
@@ -357,27 +468,30 @@ void freeBundle(HandlerBundle hb) {
     NSString *address = [[self redisHost] address];
     const char *temp = [address UTF8String];
     char *addr = malloc(sizeof(char) * strlen(temp));
-    NSAssert(addr != NULL, @"REDIS: ERROR: Unable to malloc for string!");
+    //NSAssert(addr != NULL, @"REDIS: ERROR: Unable to malloc for string!");
     strcpy(addr, temp);
     redisAsyncContext *localAsyncCtx = redisAsyncConnect(addr, (uint)[self redisPort]);
     if (localAsyncCtx->err) {
         NSLog(@"REDIS: Error establishing connection : %s\n", localAsyncCtx->errstr);
+        free(addr);
         return NULL;
     } else {
-        NSLog(@"REDIS: Establishing connection to %@\n", [[self redisHost] address]);
+        //NSLog(@"REDIS: Establishing connection to %@\n", [[self redisHost] address]);
     }
-    NSLog(@"REDIS: Dispatching context...");
+    //NSLog(@"REDIS: Dispatching context...");
     uint result = [_dispatcher dispatchWithContext:localAsyncCtx];
     if (result != REDIS_OK) {
         NSLog(@"REDIS: Error dispatching Redis context to event loop : %s", localAsyncCtx->errstr);
         redisAsyncDisconnect(localAsyncCtx);
+        free(addr);
         return NULL;
     }
-    NSLog(@"REDIS: Setting disconnect callback...");
+    //NSLog(@"REDIS: Setting disconnect callback...");
     result = redisAsyncSetDisconnectCallback(localAsyncCtx, disconnectCallback);
     if (result != REDIS_OK) {
         NSLog(@"REDIS: Error setting disconnect callback : %s", localAsyncCtx->errstr);
         redisAsyncDisconnect(localAsyncCtx);
+        free(addr);
         return NULL;
     }
     
@@ -386,11 +500,11 @@ void freeBundle(HandlerBundle hb) {
 }
 
 - (NSString *)subscribeToChannels:(NSArray *)someChannels withCallback:(mpCallbackC)callback andContext:(void *)context {
-    //NSString *channels = [someChannels componentsJoinedByString:@" "];
-    NSString *channels = [[NSString alloc] initWithString:[someChannels componentsJoinedByString:@" "]];
-    //NSString *subCmd = [NSString stringWithFormat:@"SUBSCRIBE %@", channels];
-    NSString *command = [[NSString alloc] initWithFormat:@"SUBSCRIBE %@", channels];
-    NSLog(@"REDIS: Subscription command [%@]", command);
+    NSString *channels = [someChannels componentsJoinedByString:@" "];
+    //NSString *channels = [[NSString alloc] initWithString:[someChannels componentsJoinedByString:@" "]];
+    NSString *command = [NSString stringWithFormat:@"SUBSCRIBE %@", channels];
+    //NSString *command = [[NSString alloc] initWithFormat:@"SUBSCRIBE %@", channels];
+    //NSLog(@"REDIS: Subscription command [%@]", command);
     redisAsyncContext *localAsyncCtx = [self connectAndDispatch];
     HandlerBundle bundle = NULL;
     NSString *subscriberID = nil;
@@ -405,14 +519,14 @@ void freeBundle(HandlerBundle hb) {
             redisAsyncDisconnect(localAsyncCtx);
             freeBundle(bundle);
             free(cmd);  //TODO : Analyse this.
-            [channels release];
-            [command release];
+            //[channels release];
+            //[command release];
             return nil;
         }
         subscriberID = [TSClientIdentifier createUUID];
         NSLog(@"REDIS: Registering new subscriber...");
         TSRedisSubscriptionContext *subscription = [[TSRedisSubscriptionContext alloc] initWithRedisContext:localAsyncCtx
-                                                                                                   channels:someChannels bundle:bundle];
+                                                                                                   channels:nil bundle:bundle];
         [_subscribers setObject:subscription forKey:subscriberID];
         [subscription release];
         //[subscriberID release];
@@ -421,11 +535,82 @@ void freeBundle(HandlerBundle hb) {
     }
     
     free(cmd);  //TODO : Analyse this.
-    [channels release];
-    [command release];
+    //[channels release];
+    //[command release];
     
     return nil;
 }
+
+//- (NSString *)subscribeToChannels:(NSArray *)someChannels handler:(TSPlasterHandler *)aHandler {
+- (NSString *)subscribeToChannels:(NSArray *)someChannels options:(NSDictionary *)someOptions {
+    NSString *channels = [someChannels componentsJoinedByString:@" "];
+    NSString *command = [NSString stringWithFormat:@"SUBSCRIBE %@", channels];
+    //NSLog(@"REDIS: Subscription command [%@]", command);
+    redisAsyncContext *localAsyncCtx = [self connectAndDispatch];
+    NSString *subscriberID = nil;
+    const char *temp = [command UTF8String];
+    char *cmd = malloc((sizeof(char)) * strlen(temp));
+    strcpy(cmd, temp);
+    if (localAsyncCtx) {
+        uint result = redisAsyncCommand(localAsyncCtx, rcSubscribeWithOptions, [someOptions retain], cmd);
+        if (result != REDIS_OK) {
+            NSLog(@"REDIS: Error buffering SUBSCRIBE command for this session : %s", localAsyncCtx->errstr);
+            redisAsyncDisconnect(localAsyncCtx);
+            free(cmd);  //TODO : Analyse this.
+            return nil;
+        }
+        subscriberID = [TSClientIdentifier createUUID];
+        NSLog(@"REDIS: Registering new subscriber...");
+        TSRedisSubscriptionContext *subscription = [[TSRedisSubscriptionContext alloc] initWithRedisContext:localAsyncCtx];
+        [_subscribers setObject:subscription forKey:subscriberID];
+        [subscription release];
+        //[subscriberID release];
+    } else {
+        NSLog(@"REDIS: Unable to complete SUBSCRIBE.");
+    }
+    
+    free(cmd);  //TODO : Analyse this.
+    //[channels release];
+    //[command release];
+    
+    return nil;
+}
+
+
+/*
+- (NSString *)subscribeToChannels:(NSArray *)someChannels withHandler:(TSPlasterHandler *)handler andContext:(void *)context {
+    NSString *channels = [someChannels componentsJoinedByString:@" "];
+    NSString *command = [NSString stringWithFormat:@"SUBSCRIBE %@", channels];
+    //NSLog(@"REDIS: Subscription command [%@]", command);
+    redisAsyncContext *localAsyncCtx = [self connectAndDispatch];
+    NSString *subscriberID = nil;
+    const char *temp = [command UTF8String];
+    char *cmd = malloc((sizeof(char)) * strlen(temp));
+    strcpy(cmd, temp);
+    if (localAsyncCtx) {
+        uint result = redisAsyncCommand(localAsyncCtx, rcSubscribeWithHandler, handler, cmd);
+        if (result != REDIS_OK) {
+            NSLog(@"REDIS: Error buffering SUBSCRIBE command for this session : %s", localAsyncCtx->errstr);
+            redisAsyncDisconnect(localAsyncCtx);
+            free(cmd);  //TODO : Analyse this.
+            return nil;
+        }
+        subscriberID = [TSClientIdentifier createUUID];
+        NSLog(@"REDIS: Registering new subscriber...");
+        TSRedisSubscriptionContext *subscription = [[TSRedisSubscriptionContext alloc] initWithRedisContext:localAsyncCtx];
+        [_subscribers setObject:subscription forKey:subscriberID];
+        [subscription release];
+        //[subscriberID release];
+    } else {
+        NSLog(@"REDIS: Unable to complete SUBSCRIBE.");
+    }
+    
+    free(cmd);  //TODO : Analyse this.
+    
+    return nil;
+}
+*/
+
 
 - (void)unsubscribe:(NSString *)subscriptionID {
     TSRedisSubscriptionContext *context = [_subscribers objectForKey:subscriptionID];
@@ -447,8 +632,8 @@ void freeBundle(HandlerBundle hb) {
     for (id obj in [_subscribers objectEnumerator]) {
         TSRedisSubscriptionContext *context = (TSRedisSubscriptionContext *)obj;
         redisAsyncContext *redisContext = [context context];
-        NSLog(@"REDIS: Unsubscribing from : %@", [[context channels] componentsJoinedByString:@" "]);
-        redisAsyncCommand(redisContext, NULL, NULL, "UNSUBSCRIBE");  // TODO: Check return!
+        NSLog(@"REDIS: Unsubscribing from : %@", [context channels]);
+        redisAsyncCommand(redisContext, rcSubscribe, NULL, "UNSUBSCRIBE");  // TODO: Check return!
         //redisAsyncDisconnect(redisContext); // TODO: Check return!
         [context freeBundle];
     }
@@ -463,12 +648,12 @@ void freeBundle(HandlerBundle hb) {
     char *obj = malloc(sizeof(char) * strlen(temp1));
     NSAssert(obj != NULL, @"REDIS: ERROR: String allocation failed!");
     strcpy(obj, temp1);
-    printf("obj : %s\n", obj);
+    //printf("obj : %s\n", obj);
     const char *temp2 = [command UTF8String];
     char *publish = malloc(sizeof(char) * (strlen(temp2)));
-    NSAssert(publish != NULL, @"REDIS: ERROR: String allocation failed!");
+    //NSAssert(publish != NULL, @"REDIS: ERROR: String allocation failed!");
     strcpy(publish, temp2);
-    printf("publish : %s\n", publish);
+    //printf("publish : %s\n", publish);
     redisAsyncCommand(_asyncPubSessionContext, NULL, NULL, publish, obj, strlen(obj));
     free(obj);
     free(publish);
@@ -573,8 +758,9 @@ void freeBundle(HandlerBundle hb) {
 
 -(NSUInteger)deleteKey:(NSString *)aKey {
     NSLog(@"REDIS: Deleting key [%@]...", aKey);
-    char *key = (char *)malloc((sizeof(char) * strlen([aKey UTF8String])));
-    strcpy(key, [aKey UTF8String]);
+    const char *temp = [aKey UTF8String];
+    char *key = (char *)malloc((sizeof(char) * strlen(temp)));
+    strcpy(key, temp);
     redisReply *reply = NULL;
     NSUInteger deleted = 0;
     
@@ -593,8 +779,8 @@ void freeBundle(HandlerBundle hb) {
     NSLog(@"REDIS: DEL : Finishing...");
     if (reply) {
         freeReplyObject(reply);
-        free(key);
     }
+    free(key);
     
     return deleted;
 }

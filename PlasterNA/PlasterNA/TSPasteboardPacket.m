@@ -14,7 +14,6 @@ NSString * const PLAIN_TEXT_UTI = @"public.utf8-plain-text";
 @implementation TSPasteboardPacket {
     // The pasteboard item represented as a byte array (possibly null terminated?)
     char *__packet;
-    NSString *_packet;
 }
 
 - (id)init {
@@ -34,7 +33,6 @@ NSString * const PLAIN_TEXT_UTI = @"public.utf8-plain-text";
         _tag = aTag;
         [self _setPacket:bytes];
         _packet = [[NSString alloc] initWithUTF8String:bytes];
-        //NSLog(@"Initialized packet with content [%@]", _packet);
     }
     
     return self;
@@ -45,7 +43,6 @@ NSString * const PLAIN_TEXT_UTI = @"public.utf8-plain-text";
     if (self) {
         _tag = aTag;
         _packet = [aString copy];
-        //NSLog(@"Initialized packet with content [%@]", _packet);
     }
     
     return self;
@@ -82,7 +79,6 @@ NSString * const PLAIN_TEXT_UTI = @"public.utf8-plain-text";
     if (!writeableTypes) {
         writeableTypes = [[NSArray alloc] initWithObjects:PLASTER_UTI, NSPasteboardTypeString, PLAIN_TEXT_UTI, nil];
     }
-    //NSLog(@"Returning writeable types...");
     return [writeableTypes autorelease];
 }
 
@@ -108,7 +104,6 @@ NSString * const PLAIN_TEXT_UTI = @"public.utf8-plain-text";
     if (!readableTypes) {
         readableTypes = [[NSArray alloc] initWithObjects:PLASTER_UTI, NSPasteboardTypeString, PLAIN_TEXT_UTI, nil];
     }
-    //NSLog(@"Returning readable types...");
     return [readableTypes autorelease];
 }
 

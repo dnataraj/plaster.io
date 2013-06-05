@@ -11,6 +11,7 @@
 @interface TSPasteboardPacket : NSObject <NSPasteboardWriting, NSPasteboardReading>
 
 @property (readwrite, copy) NSString *tag;
+@property (readwrite, copy) NSString *packet;
 
 - (id)initWithTag:(NSString *)aTag bytes:(const char *)bytes;
 - (id)initWithTag:(NSString *)aTag string:(NSString *)aString;

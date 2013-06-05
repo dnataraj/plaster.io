@@ -103,6 +103,8 @@
 		41B68D7A175CE4A00090A108 /* hiredis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hiredis.h; sourceTree = "<group>"; };
 		41B68D7B175CE4AE0090A108 /* libhiredis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libhiredis.a; sourceTree = "<group>"; };
 		41B68D7D175CE4C20090A108 /* libTSBase64.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libTSBase64.a; path = ../../DerivedData/plaster/Build/Products/Debug/libTSBase64.a; sourceTree = "<group>"; };
+		41B68D84175DD9930090A108 /* NSString+TSBase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+TSBase64.h"; sourceTree = "<group>"; };
+		41B68D85175DD9930090A108 /* TSBase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSBase64.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -238,6 +240,7 @@
 		41B68D76175CE4860090A108 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				41B68D83175DD9930090A108 /* TSBase64 */,
 				41B68D7D175CE4C20090A108 /* libTSBase64.a */,
 				41B68D7B175CE4AE0090A108 /* libhiredis.a */,
 				41B68D77175CE4A00090A108 /* adapters */,
@@ -254,6 +257,15 @@
 				41B68D78175CE4A00090A108 /* libevent.h */,
 			);
 			path = adapters;
+			sourceTree = "<group>";
+		};
+		41B68D83175DD9930090A108 /* TSBase64 */ = {
+			isa = PBXGroup;
+			children = (
+				41B68D84175DD9930090A108 /* NSString+TSBase64.h */,
+				41B68D85175DD9930090A108 /* TSBase64.h */,
+			);
+			path = TSBase64;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -507,6 +519,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../..\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PlasterNA/PlasterNA-Prefix.pch";
 				INFOPLIST_FILE = "PlasterNA/PlasterNA-Info.plist";
@@ -516,6 +532,7 @@
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/PlasterNA\"",
 				);
+				"OTHER_LDFLAGS[arch=*]" = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -525,6 +542,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../..\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PlasterNA/PlasterNA-Prefix.pch";
 				INFOPLIST_FILE = "PlasterNA/PlasterNA-Info.plist";
@@ -588,6 +609,7 @@
 				41B68C88175CD7710090A108 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		41B68C89175CD7710090A108 /* Build configuration list for PBXNativeTarget "PlasterNATests" */ = {
 			isa = XCConfigurationList;
@@ -596,6 +618,7 @@
 				41B68C8B175CD7710090A108 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

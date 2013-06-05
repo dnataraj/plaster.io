@@ -12,9 +12,10 @@
 
 @interface TSRedisSubscriptionContext : NSObject
 
-@property (readwrite, copy) NSArray *channels;
+@property (readwrite, retain) NSString *channels;
 
-- (id)initWithRedisContext:(redisAsyncContext *)redisContext channels:(NSArray *)channels bundle:(HandlerBundle)bundle;
+- (id)initWithRedisContext:(redisAsyncContext *)redisContext channels:(NSString *)channels bundle:(HandlerBundle)bundle;
+- (id)initWithRedisContext:(redisAsyncContext *)redisContext;
 
 - (redisAsyncContext *)context;
 - (void)freeBundle;

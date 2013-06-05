@@ -13,14 +13,19 @@
     HandlerBundle _bundle;
 }
 
-- (id)initWithRedisContext:(redisAsyncContext *)redisContext channels:(NSArray *)channels bundle:(HandlerBundle)bundle {
+- (id)initWithRedisContext:(redisAsyncContext *)redisContext channels:(NSString *)someChannels bundle:(HandlerBundle)bundle {
     self = [super init];
     if (self) {
         _subscriptionContext = redisContext;
-        [self setChannels:channels];
         _bundle = bundle;
+        //NSLog(@"Setting channels to [%@].", someChannels);
+        [self setChannels:someChannels];
     }
     return self;
+}
+
+- (id)initWithRedisContext:(redisAsyncContext *)redisContext {
+    return [self initWithRedisContext:redisContext channels:nil bundle:NULL];
 }
 
 - (redisAsyncContext *)context {

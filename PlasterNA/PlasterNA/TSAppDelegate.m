@@ -37,6 +37,7 @@
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
+    
     // Register application default preferences
     NSMutableDictionary *defaultPreferences = [NSMutableDictionary dictionary];
     [defaultPreferences setObject:[TSClientIdentifier createUUID] forKey:@"plaster-session-id"];
@@ -46,6 +47,7 @@
     // This let's us know (I hope) whether the client is being installed/started for the first time.
     // This will be flipped when the User dismisses the start configuration panel.
     [defaultPreferences setObject:[NSNumber numberWithBool:NO] forKey:@"plaster-init"];
+    [defaultPreferences setObject:[NSNumber numberWithBool:NO] forKey:@"plaster-test-mode"];
     
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaultPreferences];
     
@@ -62,7 +64,6 @@
     [self.plasterMenu setAutoenablesItems:NO];
     [self.startMenuItem setEnabled:YES];
     [self.stopMenuItem setEnabled:NO];
-    //NSLog(@"AD: Awakening from NIB...");
 }
 
 - (IBAction)start:(id)sender {
