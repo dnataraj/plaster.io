@@ -18,6 +18,7 @@
 #define SESSION_PEER_CHANNEL "plaster:session:%@:%@"
 
 #define TEST_LOG_FILE "plaster_in.log"
+#define JSON_LOG_FILE "plaster_json_out.log"
 
 @implementation TSPlasterController {
     NSString *_clientID;
@@ -48,8 +49,9 @@
         _dispatcher = [[TSEventDispatcher alloc] init];
         _changeCount = [_pb changeCount];
         //_readables = [NSArray arrayWithObjects:[TSPasteboardPacket class] ,[NSString class], nil];
-        //_readables = [NSArray arrayWithObjects:[NSString class], nil];
-        _readables = [[NSArray alloc] initWithObjects:[NSString class], nil];
+        _readables = @[[NSString class], [NSAttributedString class]];
+        [_readables retain];
+        //_readables = [[NSArray alloc] initWithObjects:[NSString class], nil];
         
         // Initialize an empty list of peers.
         _peers = [[NSMutableSet alloc] init];
@@ -90,6 +92,12 @@
                 NSLog(@"PLASTER: BOOT : TEST MODE : Creating log file at path : [%@]", _testLog);
                 [fileManager createFileAtPath:_testLog contents:nil attributes:nil];
             }
+            NSString *jsonLog = [NSString stringWithFormat:@"%@/%@", NSHomeDirectory(), @JSON_LOG_FILE];
+            if (![fileManager fileExistsAtPath:jsonLog]) {
+                NSLog(@"PLASTER: BOOT : TEST MODE : Creating json log file at path : [%@]", jsonLog);
+                [fileManager createFileAtPath:jsonLog contents:nil attributes:nil];
+            }
+            
         }
     }
     
@@ -108,7 +116,7 @@
     }
     _changeCount = newChangeCount;
     
-    BOOL isPeerPaste = [_pb canReadItemWithDataConformingToTypes:[NSArray arrayWithObject:@"com.trilobytesystems.plaster.uti"]];
+    BOOL isPeerPaste = [_pb canReadItemWithDataConformingToTypes:@[@"com.trilobytesystems.plaster.uti"]];
     if (isPeerPaste) {
         NSLog(@"PLASTER : PLASTER OUT : Packet is from a peer, discarding publish..");
         return;
@@ -117,13 +125,18 @@
     
     //NSLog(@"PLASTER : PLASTER OUT : Reading the general pasteboard...");
     NSArray *pbContents = [_pb readObjectsForClasses:_readables options:nil];
-    NSLog(@"PLASTER : PLASTER OUT : Found in pasteboard : [%@]" , [pbContents objectAtIndex:0]);
-    // Now we have to extract the bytes
-    id packet = [pbContents objectAtIndex:0];
-    if ([packet isKindOfClass:[NSString class]]) {
-        NSLog(@"PLASTER : PLASTER OUT : Processing NSString packet and publishing...");
-        const char *jsonBytes = [TSPacketSerializer JSONWithStringPacket:[NSString stringWithString:packet]];
-        [_provider publish:jsonBytes toChannel:_clientID];
+    if ([pbContents count] > 0) {
+        NSLog(@"PLASTER : PLASTER OUT : Found in pasteboard : [%@]" , [pbContents objectAtIndex:0]);
+        // Now we have to extract the bytes
+        id packet = [pbContents objectAtIndex:0];
+        if ([packet isKindOfClass:[NSString class]]) {
+            NSLog(@"PLASTER : PLASTER OUT : Processing NSString packet and publishing...");
+            const char *jsonBytes = [TSPacketSerializer JSONWithStringPacket:[NSString stringWithString:packet]];
+            [_provider publish:jsonBytes toChannel:_clientID];
+        }
+        
+    } else {
+        NSLog(@"PLASTER: PLASTER OUT : Nothing retrieved from pasteboard.");
     }
 }
 
@@ -139,7 +152,7 @@
         
     // Subscribe to the plaster broadcast channel to listen to broadcasts from new participants
     NSLog(@"PLASTER: BOOT : Subscribing to broadcast channel to accept new peers.");
-    [_provider subscribeToChannels:[NSArray arrayWithObject:broadcastChannel]
+    [_provider subscribeToChannels:@[broadcastChannel]
                            options:[self createHandlerOptionsForHandler:NSStringFromSelector(@selector(handlePeerAttachWithData:))]];
         
     // Get the list of participants already in the current session
@@ -168,7 +181,7 @@
 
     if (_testMode) {
         NSLog(@"PLASTER : BOOT : Test mode : Subscribing to self's plaster board");
-        [_provider subscribeToChannels:[NSArray arrayWithObject:_clientID]
+        [_provider subscribeToChannels:@[_clientID]
                                options:[self createHandlerOptionsForHandler:NSStringFromSelector(@selector(testHandlePlasterInWithData:))]];
     }
     
@@ -248,7 +261,7 @@
 
 // Handlers
 - (void)testHandlePlasterInWithData:(char *)data {
-    NSLog(@"PLASTER: TESTING : HANDLE PLASTER IN: ...");
+    NSLog(@"PLASTER: TESTING : HANDLE PLASTER IN:...");
     if (data) {
         NSDictionary *payload = [TSPacketSerializer dictionaryFromJSON:data];
         TSPasteboardPacket *packet = [[TSPasteboardPacket alloc] initWithTag:@"plaster-packet-string"
@@ -279,7 +292,8 @@
 }
 
 - (void)handlePlasterInWithData:(char *)data {
-    NSLog(@"PLASTER: HANDLE PLASTER IN: ...");
+    printf("PLASTER: HANDLE PLASTER IN: %s\n", data);
+    
     if (data) {
         NSDictionary *payload = [TSPacketSerializer dictionaryFromJSON:data];
         TSPasteboardPacket *packet = [[TSPasteboardPacket alloc] initWithTag:@"plaster-packet-string"
@@ -294,7 +308,7 @@
         }
         NSLog(@"Pasting...");
         [pb clearContents];
-        BOOL ok = [pb writeObjects:[NSArray arrayWithObject:packet]];
+        BOOL ok = [pb writeObjects:@[packet]];
         if (ok) {
             NSLog(@"PLASTER: PLASTER IN : Peer copy successfully written to local pasteboard.");
         }
@@ -317,19 +331,16 @@
  
  It enables the plaster client to be aware of future additions
  to the plaster session.
- 
- */
+*/
 - (void)handlePeerAttachWithData:(char *)data {
     if (data) {
         NSString *peer = [NSString stringWithCString:data encoding:NSUTF8StringEncoding];
-        printf("PLASTER: HANDLE PEER : Processing HELLO from peer with ID [%s].\n", [peer UTF8String]);
-        //NSMutableSet *peers = (__bridge NSMutableSet *)data;
-        printf("PLASTER: HANDLE PEER : Adding peer to set...\n");
-        [_peers addObject:peer];
-     
+        NSLog(@"PLASTER: HANDLE PEER : Processing HELLO from peer with ID [%s].", [peer UTF8String]);
+        NSLog(@"PLASTER: HANDLE PEER : Subscribing and adding peer to set...");
         // Now subscribe to this new peer...
+        [_provider subscribeToChannels:@[peer] options:[self createHandlerOptionsForHandler:NSStringFromSelector(@selector(handlePlasterInWithData:))]];
+        [_peers addObject:peer];
      }
-    
     return;
 }
 

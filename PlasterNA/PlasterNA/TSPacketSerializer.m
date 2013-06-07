@@ -25,6 +25,7 @@
     //NSString *string = [[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding];
     //NSLog(@"JSON data : %@", string);
     // TODO : Trap error
+    [TSPacketSerializer logJSONToFile:json];
     return [json bytes];
 }
 
@@ -57,4 +58,18 @@
 
     return nil;
 }
+
++ (void)logJSONToFile:(NSData *)data {
+    NSString *jsonLog = [NSString stringWithFormat:@"%@/%@", NSHomeDirectory(), @"plaster_json_out.log"];
+    //NSLog(@"PLASTER: TESTING : Writing to [%@]", jsonLog);
+    NSFileHandle *log = [NSFileHandle fileHandleForWritingAtPath:jsonLog];
+    if (log) {
+        NSLog(@"Writing json to log...");
+        [log truncateFileAtOffset:[log seekToEndOfFile]];
+        [log writeData:data];
+        [log closeFile];
+    }
+    
+}
+
 @end

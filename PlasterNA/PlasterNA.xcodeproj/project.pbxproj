@@ -25,7 +25,6 @@
 		41B68D08175CD94C0090A108 /* TSClientIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68CFD175CD94C0090A108 /* TSClientIdentifier.m */; };
 		41B68D0A175CD94C0090A108 /* TSClientStartPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68D00175CD94C0090A108 /* TSClientStartPanelController.m */; };
 		41B68D0B175CD94C0090A108 /* TSPlasterController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68D02175CD94C0090A108 /* TSPlasterController.m */; };
-		41B68D0C175CD94C0090A108 /* TSRedisSubscriptionContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68D06175CD94C0090A108 /* TSRedisSubscriptionContext.m */; };
 		41B68D0E175CD9560090A108 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 41B68D0D175CD9560090A108 /* Preferences.xib */; };
 		41B68D11175CD9FC0090A108 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 41B68D0F175CD9FC0090A108 /* MainMenu.xib */; };
 		41B68D6A175CDDE70090A108 /* TSPasteboardPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68CEB175CD9410090A108 /* TSPasteboardPacket.m */; };
@@ -37,7 +36,6 @@
 		41B68D70175CDDE70090A108 /* TSClientIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68CFD175CD94C0090A108 /* TSClientIdentifier.m */; };
 		41B68D71175CDDE70090A108 /* TSClientStartPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68D00175CD94C0090A108 /* TSClientStartPanelController.m */; };
 		41B68D72175CDDE70090A108 /* TSPlasterController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68D02175CD94C0090A108 /* TSPlasterController.m */; };
-		41B68D73175CDDE70090A108 /* TSRedisSubscriptionContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68D06175CD94C0090A108 /* TSRedisSubscriptionContext.m */; };
 		41B68D75175CDF030090A108 /* TSClientStartPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 41B68D74175CDF030090A108 /* TSClientStartPanel.xib */; };
 		41B68D7C175CE4AE0090A108 /* libhiredis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41B68D7B175CE4AE0090A108 /* libhiredis.a */; };
 		41B68D7E175CE4C20090A108 /* libTSBase64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41B68D7D175CE4C20090A108 /* libTSBase64.a */; };
@@ -93,8 +91,6 @@
 		41B68D02175CD94C0090A108 /* TSPlasterController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSPlasterController.m; sourceTree = "<group>"; };
 		41B68D03175CD94C0090A108 /* TSMessagingProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSMessagingProvider.h; sourceTree = "<group>"; };
 		41B68D04175CD94C0090A108 /* TSDataStoreProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSDataStoreProvider.h; sourceTree = "<group>"; };
-		41B68D05175CD94C0090A108 /* TSRedisSubscriptionContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSRedisSubscriptionContext.h; sourceTree = "<group>"; };
-		41B68D06175CD94C0090A108 /* TSRedisSubscriptionContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSRedisSubscriptionContext.m; sourceTree = "<group>"; };
 		41B68D0D175CD9560090A108 /* Preferences.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Preferences.xib; sourceTree = "<group>"; };
 		41B68D10175CD9FC0090A108 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		41B68D74175CDF030090A108 /* TSClientStartPanel.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TSClientStartPanel.xib; sourceTree = "<group>"; };
@@ -200,8 +196,6 @@
 				41B68D02175CD94C0090A108 /* TSPlasterController.m */,
 				41B68D03175CD94C0090A108 /* TSMessagingProvider.h */,
 				41B68D04175CD94C0090A108 /* TSDataStoreProvider.h */,
-				41B68D05175CD94C0090A108 /* TSRedisSubscriptionContext.h */,
-				41B68D06175CD94C0090A108 /* TSRedisSubscriptionContext.m */,
 			);
 			path = PlasterNA;
 			sourceTree = "<group>";
@@ -388,7 +382,6 @@
 				41B68D70175CDDE70090A108 /* TSClientIdentifier.m in Sources */,
 				41B68D71175CDDE70090A108 /* TSClientStartPanelController.m in Sources */,
 				41B68D72175CDDE70090A108 /* TSPlasterController.m in Sources */,
-				41B68D73175CDDE70090A108 /* TSRedisSubscriptionContext.m in Sources */,
 				41B68C65175CD7700090A108 /* main.m in Sources */,
 				41B68CE9175CD9370090A108 /* TSAppDelegate.m in Sources */,
 			);
@@ -408,7 +401,6 @@
 				41B68D08175CD94C0090A108 /* TSClientIdentifier.m in Sources */,
 				41B68D0A175CD94C0090A108 /* TSClientStartPanelController.m in Sources */,
 				41B68D0B175CD94C0090A108 /* TSPlasterController.m in Sources */,
-				41B68D0C175CD94C0090A108 /* TSRedisSubscriptionContext.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

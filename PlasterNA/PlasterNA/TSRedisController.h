@@ -13,23 +13,19 @@
 
 @class TSEventDispatcher;
 
-typedef void (*tsSubcriptionHandler)(redisAsyncContext *c, void *reply, void *privateData);
-typedef void (*tsPublishHandler)(redisAsyncContext *c, void *reply, void *privateData);
-
 typedef struct _handlerbundle {
     long long int_data;
     void *data;
-    mpCallbackC handler;
-    //const __unsafe_unretained dispatch_semaphore_t *semaphore;
+    mpCallback handler;
 } *HandlerBundle;
 
-HandlerBundle makeHandlerBundleObjC(mpCallback callback, id data, dispatch_semaphore_t *sema);
-HandlerBundle makeHandlerBundle(mpCallback callback, void *data, dispatch_semaphore_t *sema);
+HandlerBundle makeHandlerBundle(mpCallback callback, void *data);
 
 @interface TSRedisController : NSObject <TSMessagingProvider, TSDataStoreProvider>
 
 @property (readwrite, retain) NSHost *redisHost;
 @property (readwrite) NSUInteger redisPort;
+@property (readwrite, atomic) NSUInteger numSubscribers;
 
 - (id)initWithIPAddress:(NSString *)ip port:(NSUInteger)port;
 

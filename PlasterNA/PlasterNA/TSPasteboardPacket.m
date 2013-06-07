@@ -75,11 +75,15 @@ NSString * const PLAIN_TEXT_UTI = @"public.utf8-plain-text";
 }
 
 - (NSArray *)writableTypesForPasteboard:(NSPasteboard *)pasteboard {
+    /*
     static NSArray *writeableTypes = nil;
     if (!writeableTypes) {
-        writeableTypes = [[NSArray alloc] initWithObjects:PLASTER_UTI, NSPasteboardTypeString, PLAIN_TEXT_UTI, nil];
+        writeableTypes = @[PLASTER_UTI, NSPasteboardTypeString, PLAIN_TEXT_UTI];
     }
-    return [writeableTypes autorelease];
+    NSLog(@"PACKET: Writeable types : %@", writeableTypes);
+    return writeableTypes;
+    */
+    return @[PLASTER_UTI, NSPasteboardTypeString, PLAIN_TEXT_UTI];
 }
 
 - (id)pasteboardPropertyListForType:(NSString *)type {
@@ -102,8 +106,10 @@ NSString * const PLAIN_TEXT_UTI = @"public.utf8-plain-text";
 + (NSArray *)readableTypesForPasteboard:(NSPasteboard *)pasteboard {
     static NSArray *readableTypes = nil;
     if (!readableTypes) {
-        readableTypes = [[NSArray alloc] initWithObjects:PLASTER_UTI, NSPasteboardTypeString, PLAIN_TEXT_UTI, nil];
+        //readableTypes = [[NSArray alloc] initWithObjects:PLASTER_UTI, NSPasteboardTypeString, PLAIN_TEXT_UTI, nil];
+        readableTypes = @[PLASTER_UTI, NSPasteboardTypeString, PLAIN_TEXT_UTI];
     }
+    NSLog(@"PACKET: Readable types : %@", readableTypes);
     return [readableTypes autorelease];
 }
 
