@@ -10,11 +10,12 @@
 
 @interface TSClientPreferenceController : NSWindowController <NSWindowDelegate>
 
+@property (assign) IBOutlet NSTextField *deviceNameTextField;
 @property (assign) IBOutlet NSTextField *sessionIDTextField;
 @property (assign) IBOutlet NSButton *handleTextTypeButton;
 @property (assign) IBOutlet NSButton *handleImageTypeButton;
 
-@property (readonly, retain) NSString *sessionID;
+@property (readonly, copy) NSString *sessionID, *deviceName;
 @property (readwrite) BOOL handlesTextType, handlesImageType;
 
 - (IBAction)generateSessionID:(id)sender;

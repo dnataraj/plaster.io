@@ -16,6 +16,7 @@ typedef void (*mpCallback)(char *reply, void *data);
 - (void)publishObject:(NSString *)object toChannel:(NSString *)channel;
 - (void)publish:(const char *)bytes toChannel:(NSString *)channel;
 - (NSString *)subscribeToChannels:(NSArray *)channels options:(NSDictionary *)someOptions;
+- (void)subscribeToChannel:(NSString *)channel options:(NSDictionary *)someOptions;
 - (void)unsubscribeAll;
 
 @end

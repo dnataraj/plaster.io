@@ -435,6 +435,32 @@ void freeBundle(HandlerBundle hb) {
     return nil;
 }
 
+- (void)subscribeToChannel:(NSString *)channel options:(NSDictionary *)someOptions {
+    NSString *command = [NSString stringWithFormat:@"SUBSCRIBE %@", channel];
+    NSLog(@"REDIS: Subscription command [%@]", command);
+    redisAsyncContext *localAsyncCtx = [self connectAndDispatch];
+    const char *temp = [command UTF8String];
+    char *cmd = malloc((sizeof(char)) * strlen(temp));
+    strcpy(cmd, temp);
+    if (localAsyncCtx) {
+        uint result = redisAsyncCommand(localAsyncCtx, rcSubscribeWithOptions, [someOptions retain], cmd);
+        if (result != REDIS_OK) {
+            NSLog(@"REDIS: Error buffering SUBSCRIBE command for this session : %s", localAsyncCtx->errstr);
+            redisAsyncDisconnect(localAsyncCtx);
+            free(cmd);
+            return;
+        }
+        NSLog(@"REDIS: Registering new subscriber...");
+        _subscribers[[self numSubscribers]] = localAsyncCtx;
+        [self setNumSubscribers:[self numSubscribers] + 1];
+    } else {
+        NSLog(@"REDIS: Unable to complete SUBSCRIBE.");
+    }
+    
+    free(cmd);
+    return;
+}
+
 - (void)unsubscribeAll {
     NSLog(@"REDIS: Unsubscribing from all channels...");
     for (int i = 0; i < [self numSubscribers]; i++) {

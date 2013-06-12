@@ -13,6 +13,7 @@
 @property (assign) IBOutlet NSMenu *plasterMenu;
 @property (assign) IBOutlet NSMenuItem *stopMenuItem;
 @property (assign) IBOutlet NSMenuItem *startMenuItem;
+@property (assign) IBOutlet NSMenuItem *disconnectMenuItem;
 
 - (IBAction)start:(id)sender;
 - (IBAction)stop:(id)sender;

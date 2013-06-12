@@ -12,6 +12,7 @@
 #import "TSClientIdentifier.h"
 #import "TSPasteboardPacket.h"
 #import "TSBase64/NSString+TSBase64.h"
+#import "TSPlasterPeer.h"
 
 #define SESSION_BROADCAST_CHANNEL "plaster:session:%@:broadcast"
 #define SESSION_PARTICIPANTS_KEY "plaster:session:%@:participants"
@@ -20,16 +21,49 @@
 #define TEST_LOG_FILE "plaster_in.log"
 #define JSON_LOG_FILE "plaster_json_out.log"
 
+/*
+struct _TSPlasterPeer {
+    const char *peer;
+    const char *peerAlias;
+};
+
+void printPeer(struct _TSPlasterPeer peer) {
+    printf("Peer : %s\n", peer.peer);
+    printf("Peer Alias : %s\n", peer.peerAlias);
+}
+
+struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
+    struct _TSPlasterPeer *plasterPeer = (struct _TSPlasterPeer *)calloc(1, sizeof(struct _TSPlasterPeer));
+    const char *temp = [peerObj UTF8String];
+    char *peer = (char *)calloc(strlen(temp), sizeof(char));
+    if (peer == NULL) {
+        return nil;
+    }
+    strcpy(peer, temp);
+    
+    const char *peerCString = strtok(peer, "_");
+    const char *aliasCString = strtok(NULL, "_");
+    plasterPeer->peer = peerCString;
+    plasterPeer->peerAlias = aliasCString;
+    
+    return plasterPeer;
+}
+*/
+
 @implementation TSPlasterController {
     NSString *_clientID;
     NSPasteboard *_pb;
     NSInteger _changeCount;
     NSArray *_readables;
-    NSMutableSet *_peers;
+    //NSMutableSet *_peers;
+    NSMutableArray *_plasterPeers;
     
     TSEventDispatcher *_dispatcher;
     id <TSMessagingProvider, TSDataStoreProvider> _provider;
     NSMutableDictionary *_handlerTable;
+    
+    // Variables for menu access and manipulation
+    NSMenu *_plasterConnectedMenu;
     
     // Variables for test mode
     BOOL _testMode;
@@ -44,6 +78,7 @@
             return nil;
         }
         _clientID = [[TSClientIdentifier clientID] retain];
+        [self setAlias:nil];
         _provider = [provider retain];
         _pb = [pasteboard retain];
         _dispatcher = [[TSEventDispatcher alloc] init];
@@ -54,8 +89,9 @@
         //_readables = [[NSArray alloc] initWithObjects:[NSString class], nil];
         
         // Initialize an empty list of peers.
-        _peers = [[NSMutableSet alloc] init];
-        
+        //_peers = [[NSMutableSet alloc] init];
+        _plasterPeers = [[NSMutableArray alloc] init];
+        _plasterConnectedMenu = nil;
         _handlerTable = [[NSMutableDictionary alloc] init];
         
         // Handler : -testHandlePlasterInWithData:
@@ -106,7 +142,7 @@
 
 - (void)onTimer {
     // If there are no peers to publish to, don't do anything.
-    if ([_peers count] == 0) {
+    if ([_plasterPeers count] == 0) {
         return;
     }
     
@@ -148,7 +184,8 @@
     // Publish to the plaster broadcast channel to announce self to participating peers
     NSString *broadcastChannel = [NSString stringWithFormat:@SESSION_BROADCAST_CHANNEL, sessionID];
     NSLog(@"PLASTER: BOOT : Publishing HELLO to broadcast channel : %@", broadcastChannel);
-    [_provider publishObject:_clientID toChannel:broadcastChannel];
+    NSString *clientIdentifier = [NSString stringWithFormat:@"%@_%@", _clientID, [self alias]];
+    [_provider publishObject:clientIdentifier toChannel:broadcastChannel];
         
     // Subscribe to the plaster broadcast channel to listen to broadcasts from new participants
     NSLog(@"PLASTER: BOOT : Subscribing to broadcast channel to accept new peers.");
@@ -160,32 +197,51 @@
     NSString *participants = [_provider stringValueForKey:participantsKey];
     if (!participants) {
         NSLog(@"PLASTER: BOOT : First participant for session id [%@], registering...", sessionID);
-        [_provider setStringValue:_clientID forKey:participantsKey];
+        [_provider setStringValue:clientIdentifier forKey:participantsKey];
     } else {
         NSLog(@"PLASTER: BOOT : Found participants : [%@]", participants);
         NSArray *participantList = [participants componentsSeparatedByString:@":"];
-        [_peers addObjectsFromArray:participantList];
+        //[_peers addObjectsFromArray:participantList];
+        for (NSString *participant in participantList) {
+            TSPlasterPeer *peer = [[TSPlasterPeer alloc] initWithPeer:participant];
+            [_plasterPeers addObject:peer];
+            [peer release];
+        }
             
         // Add self to list, for the benefit of future participants joining this session
-        NSString *updatedParticipants = [participants stringByAppendingFormat:@":%@", _clientID];
+        NSString *updatedParticipants = [participants stringByAppendingFormat:@":%@", clientIdentifier];
         NSLog(@"PLASTER: BOOT : Updating peer list with value [%@]", updatedParticipants);
         [_provider setStringValue:updatedParticipants forKey:participantsKey];
     }
         
     // Subscribe to peers
-    if ([_peers count] > 0) {
+    if ([_plasterPeers count] > 0) {
         NSLog(@"PLASTER: BOOT : Subscribing to peers...");
-        [_provider subscribeToChannels:[_peers allObjects]
+        NSMutableString *peerIDs = [[NSMutableString alloc] init];
+        _plasterConnectedMenu = [[NSMenu alloc] initWithTitle:@"Connected Peers"];
+        for (TSPlasterPeer *peer in _plasterPeers) {
+            [peerIDs appendFormat:@" %@", [peer peerID]];
+            NSMenuItem *peerMenuItem = [[[NSMenuItem alloc] initWithTitle:[peer peerAlias] action:@selector(disconnect:) keyEquivalent:@""]     autorelease];
+            [peerMenuItem setTarget:self];
+            [_plasterConnectedMenu addItem:peerMenuItem];
+        }
+        // TODO: What if subscribing to channel fails?
+        [_provider subscribeToChannel:peerIDs
                                options:[self createHandlerOptionsForHandler:NSStringFromSelector(@selector(handlePlasterInWithData:))]];
+        [peerIDs release];
     }
 
     if (_testMode) {
-        NSLog(@"PLASTER : BOOT : Test mode : Subscribing to self's plaster board");
+        NSLog(@"PLASTER : BOOT : Test mode : Subscribing to our plaster board");
         [_provider subscribeToChannels:@[_clientID]
                                options:[self createHandlerOptionsForHandler:NSStringFromSelector(@selector(testHandlePlasterInWithData:))]];
     }
     
-    NSLog(@"PLASTER: BOOT : peers : %@", _peers);
+    //NSLog(@"PLASTER: BOOT : peers : %@", _peers);
+    /*
+        Set up the Plaster menu after boot so that the user can see
+        currently connected peers.
+    */
     NSLog(@"PLASTER: BOOT : Done.");
 }
 
@@ -205,44 +261,48 @@
 }
 
 - (void)stop {
-        /*
-         Stop monitoring the local pasteboard.
-         Unsubscribe from the broadcast channel, and from all peer paste channels.
-         Indicate you are leaving the plaster session by removing yourself from the
-         list of participants.
-         Also empty the list of peers.
-         */
-        NSLog(@"PLASTER: STOP : Stopping timer and cleaning up...");
-        [self invalidateMonitorWithID:_clientID];
+    /*
+        Stop monitoring the local pasteboard.
+        Unsubscribe from the broadcast channel, and from all peer paste channels.
+        Indicate you are leaving the plaster session by removing yourself from the
+        list of participants.
+        Also empty the list of peers.
+    */
+    NSLog(@"PLASTER: STOP : Stopping timer and cleaning up...");
+    [self invalidateMonitorWithID:_clientID];
         
-        NSString *sessionID = [[NSUserDefaults standardUserDefaults] objectForKey:@"plaster-session-id"];
-        NSLog(@"PLASTER: STOP : Stopping plaster session with client ID : [%@], and session ID [%@]", _clientID, sessionID);
+    NSString *sessionID = [[NSUserDefaults standardUserDefaults] objectForKey:@"plaster-session-id"];
+    NSLog(@"PLASTER: STOP : Stopping plaster session with client ID : [%@], and session ID [%@]", _clientID, sessionID);
+    
+    // Unsubscribe from both broadcast and peer channels...
+    [_provider unsubscribeAll];
+    NSString *participantsKey = [NSString stringWithFormat:@SESSION_PARTICIPANTS_KEY, sessionID];
+    NSString *participants = [_provider stringValueForKey:participantsKey];
+    if (!participants) {
+        // Something went wrong - you are supposed to be in a session...
+        NSLog(@"PLASTER: STOP : Unable to stop plaster session!");
+        return;
+    }
+    NSLog(@"PLASTER: STOP : Found participants : [%@]", participants);
+    NSMutableArray *participantList = [NSMutableArray arrayWithArray:[participants componentsSeparatedByString:@":"]];
+    // If this is the only participant, then remove the session key entirely.
+    if ([participantList count] == 1) {
+        NSLog(@"PLASTER: STOP : Only participant, removing session key...");
+        NSUInteger result = [_provider deleteKey:participantsKey];
+        NSLog(@"PLASTER: STOP : Removed %ld keys.", (unsigned long)result);
+    } else {
+        NSLog(@"PLASTER: STOP : Removing this client from participants...");
+        NSString *clientIdentifier = [NSString stringWithFormat:@"%@_%@", _clientID, [self alias]];
+        [participantList removeObject:clientIdentifier];
+        [_provider setStringValue:[participantList componentsJoinedByString:@":"] forKey:participantsKey];
+    }
         
-        // Unsubscribe from both broadcast and peer channels...
-        [_provider unsubscribeAll];
-        NSString *participantsKey = [NSString stringWithFormat:@SESSION_PARTICIPANTS_KEY, sessionID];
-        NSString *participants = [_provider stringValueForKey:participantsKey];
-        if (!participants) {
-            // Something went wrong - you are supposed to be in a session...
-            NSLog(@"PLASTER: STOP : Unable to stop plaster session!");
-            return;
-        }
-        NSLog(@"PLASTER: STOP : Found participants : [%@]", participants);
-        NSMutableArray *participantList = [NSMutableArray arrayWithArray:[participants componentsSeparatedByString:@":"]];
-        // If this is the only participant, then remove the session key entirely.
-        if ([participantList count] == 1) {
-            NSLog(@"PLASTER: STOP : Only participant, removing session key...");
-            NSUInteger result = [_provider deleteKey:participantsKey];
-            NSLog(@"PLASTER: STOP : Removed %ld keys.", (unsigned long)result);
-        } else {
-            NSLog(@"PLASTER: STOP : Removing this client from participants...");
-            [participantList removeObject:_clientID];
-            [_provider setStringValue:[participantList componentsJoinedByString:@":"] forKey:participantsKey];
-        }
-        
-        [_peers removeAllObjects];
-        
-        NSLog(@"PLASTER: STOP : Done.");
+    //[_peers removeAllObjects];
+    [_plasterPeers removeAllObjects];
+    [_plasterConnectedMenu release];
+    _plasterConnectedMenu = nil;
+    
+    NSLog(@"PLASTER: STOP : Done.");
 }
 
 - (void)scheduleMonitorWithID:(NSString *)id andTimeInterval:(NSTimeInterval)interval {
@@ -257,6 +317,14 @@
     if (ret == TS_DISPATCH_ERR) {
         NSLog(@"PLASTER: Error invalidating Plaster monitor : Unable to stop dispatch timer, id : %@", id);
     }
+}
+
+- (NSMenu *)connectedPeers {
+    return _plasterConnectedMenu;
+}
+
+- (void)disconnect:(id)sender {
+    NSLog(@"PLASTER: Disconnect called!");
 }
 
 // Handlers
@@ -337,16 +405,36 @@
         NSString *peer = [NSString stringWithCString:data encoding:NSUTF8StringEncoding];
         NSLog(@"PLASTER: HANDLE PEER : Processing HELLO from peer with ID [%s].", [peer UTF8String]);
         NSLog(@"PLASTER: HANDLE PEER : Subscribing and adding peer to set...");
+        
+        TSPlasterPeer *plpeer = [[TSPlasterPeer alloc] initWithPeer:peer];
+        if ([[plpeer peerAlias] isEqualToString:[self alias]]) {
+            NSLog(@"Ignoring hello from self.");
+            return;
+        }
+        
         // Now subscribe to this new peer...
-        [_provider subscribeToChannels:@[peer] options:[self createHandlerOptionsForHandler:NSStringFromSelector(@selector(handlePlasterInWithData:))]];
-        [_peers addObject:peer];
+        [_provider subscribeToChannel:[plpeer peerID]
+                              options:[self createHandlerOptionsForHandler:NSStringFromSelector(@selector(handlePlasterInWithData:))]];
+        //[_peers addObject:peer];
+        
+        [_plasterPeers addObject:plpeer];
+        
+        
+        NSMenuItem *peerMenuItem = [[[NSMenuItem alloc] initWithTitle:[plpeer peerAlias]
+                                                               action:@selector(disconnect:) keyEquivalent:@""] autorelease];
+        [peerMenuItem setTarget:self];
+        [_plasterConnectedMenu addItem:peerMenuItem];
+        
+        [plpeer release];
      }
     return;
 }
 
 - (void)dealloc {
     [_clientID release];
-    [_peers release];
+    //[_peers release];
+    [_plasterConnectedMenu release];
+    [_plasterPeers release];
     [_provider release];
     [_pb release];
     [_dispatcher release];

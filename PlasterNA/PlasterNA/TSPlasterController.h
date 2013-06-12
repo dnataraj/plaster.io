@@ -12,10 +12,14 @@
 
 @interface TSPlasterController : NSObject
 
+@property (nonatomic, copy) NSString *alias;
+
 - (id)initWithPasteboard:(NSPasteboard *)pasteboard provider:(id<TSMessagingProvider, TSDataStoreProvider>)provider;
 
 - (void)onTimer;
 - (void)start;
 - (void)stop;
+- (NSMenu *)connectedPeers;
+- (IBAction)disconnect:(id)sender;
 
 @end

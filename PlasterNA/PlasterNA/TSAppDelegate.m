@@ -40,6 +40,7 @@
     
     // Register application default preferences
     NSMutableDictionary *defaultPreferences = [NSMutableDictionary dictionary];
+    [defaultPreferences setObject:[[NSHost currentHost] localizedName] forKey:@"plaster-device-name"];
     [defaultPreferences setObject:[TSClientIdentifier createUUID] forKey:@"plaster-session-id"];
     [defaultPreferences setObject:[NSNumber numberWithBool:YES] forKey:@"plaster-allow-text"];
     [defaultPreferences setObject:[NSNumber numberWithBool:NO] forKey:@"plaster-allow-images"];
@@ -64,9 +65,12 @@
     [self.plasterMenu setAutoenablesItems:NO];
     [self.startMenuItem setEnabled:YES];
     [self.stopMenuItem setEnabled:NO];
+    [self.disconnectMenuItem  setEnabled:NO];
 }
 
 - (IBAction)start:(id)sender {
+    NSString *alias = [[NSUserDefaults standardUserDefaults] stringForKey:@"plaster-device-name"];
+    [_plaster setAlias:alias];
     BOOL initialized = [[NSUserDefaults standardUserDefaults] boolForKey:@"plaster-init"];
     if (!initialized) {
         TSClientStartPanelController *startPanelController = [[TSClientStartPanelController alloc] init];
@@ -75,6 +79,11 @@
         [startPanelController release];
     }
     [_plaster start];
+    NSLog(@"AD: Attaching menu...");
+    if ([_plaster connectedPeers]) {
+        [self.disconnectMenuItem setSubmenu:[_plaster connectedPeers]];
+        [self.disconnectMenuItem setEnabled:YES];        
+    }
     
     [self.startMenuItem setEnabled:NO];
     [self.stopMenuItem setEnabled:YES];
@@ -82,6 +91,8 @@
 
 - (IBAction)stop:(id)sender {
     [_plaster stop];
+    [self.disconnectMenuItem setSubmenu:nil];
+    [self.disconnectMenuItem setEnabled:NO];
     [self.startMenuItem setEnabled:YES];
     [self.stopMenuItem setEnabled:NO];
 }
