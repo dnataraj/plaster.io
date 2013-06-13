@@ -468,6 +468,7 @@ void freeBundle(HandlerBundle hb) {
         NSLog(@"REDIS: Unsubscribing from : %dth subscriber...", i);
         redisAsyncCommand(redisContext, rcSubscribe, NULL, "UNSUBSCRIBE");  // TODO: Check return!
     }
+    self.numSubscribers = 0;
 }
 
 - (void)publishObject:(NSString *)anObject toChannel:(NSString *)channel {
@@ -484,6 +485,7 @@ void freeBundle(HandlerBundle hb) {
     char *publish = malloc(sizeof(char) * (strlen(temp2)));
     if (publish == NULL) {
         NSLog(@"REDIS: Unable to allocate memory for publish strings.");
+        free(obj);
         return;
     }
     strcpy(publish, temp2);

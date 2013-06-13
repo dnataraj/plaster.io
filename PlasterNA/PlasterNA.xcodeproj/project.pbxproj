@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		410EC43E1769A56B00D4826D /* pause.png in Resources */ = {isa = PBXBuildFile; fileRef = 410EC43D1769A56B00D4826D /* pause.png */; };
+		410EC4401769A57E00D4826D /* play.png in Resources */ = {isa = PBXBuildFile; fileRef = 410EC43F1769A57E00D4826D /* play.png */; };
+		410EC4421769DC6900D4826D /* stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 410EC4411769DC6900D4826D /* stop.png */; };
 		4171B814176223E400936C31 /* NSString+TSBase64.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B68D84175DD9930090A108 /* NSString+TSBase64.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4171B815176223E700936C31 /* TSBase64.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B68D85175DD9930090A108 /* TSBase64.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4171B81A1762276000936C31 /* libTSBase64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4171B8191762276000936C31 /* libTSBase64.a */; };
@@ -56,6 +59,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		410EC43D1769A56B00D4826D /* pause.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pause.png; sourceTree = "<group>"; };
+		410EC43F1769A57E00D4826D /* play.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = play.png; sourceTree = "<group>"; };
+		410EC4411769DC6900D4826D /* stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stop.png; sourceTree = "<group>"; };
 		4171B8191762276000936C31 /* libTSBase64.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTSBase64.a; sourceTree = "<group>"; };
 		41B68C55175CD7700090A108 /* PlasterNA.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PlasterNA.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		41B68C58175CD7700090A108 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -132,6 +138,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		410EC43C1769A55D00D4826D /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				410EC4411769DC6900D4826D /* stop.png */,
+				410EC43F1769A57E00D4826D /* play.png */,
+				410EC43D1769A56B00D4826D /* pause.png */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		41B68C4C175CD7700090A108 = {
 			isa = PBXGroup;
 			children = (
@@ -175,6 +191,7 @@
 		41B68C5E175CD7700090A108 /* PlasterNA */ = {
 			isa = PBXGroup;
 			children = (
+				410EC43C1769A55D00D4826D /* Resources */,
 				41B68CE7175CD9370090A108 /* TSAppDelegate.h */,
 				41B68CE8175CD9370090A108 /* TSAppDelegate.m */,
 				41B68D0F175CD9FC0090A108 /* MainMenu.xib */,
@@ -361,6 +378,9 @@
 				41B68D0E175CD9560090A108 /* Preferences.xib in Resources */,
 				41B68D11175CD9FC0090A108 /* MainMenu.xib in Resources */,
 				41B68D75175CDF030090A108 /* TSClientStartPanel.xib in Resources */,
+				410EC43E1769A56B00D4826D /* pause.png in Resources */,
+				410EC4401769A57E00D4826D /* play.png in Resources */,
+				410EC4421769DC6900D4826D /* stop.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -13,6 +13,7 @@
 #import "TSPasteboardPacket.h"
 #import "TSBase64/NSString+TSBase64.h"
 #import "TSPlasterPeer.h"
+#import "TSPlasterGlobals.h"
 
 #define SESSION_BROADCAST_CHANNEL "plaster:session:%@:broadcast"
 #define SESSION_PARTICIPANTS_KEY "plaster:session:%@:participants"
@@ -55,15 +56,11 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
     NSPasteboard *_pb;
     NSInteger _changeCount;
     NSArray *_readables;
-    //NSMutableSet *_peers;
     NSMutableArray *_plasterPeers;
     
     TSEventDispatcher *_dispatcher;
     id <TSMessagingProvider, TSDataStoreProvider> _provider;
     NSMutableDictionary *_handlerTable;
-    
-    // Variables for menu access and manipulation
-    NSMenu *_plasterConnectedMenu;
     
     // Variables for test mode
     BOOL _testMode;
@@ -79,6 +76,7 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
         }
         _clientID = [[TSClientIdentifier clientID] retain];
         [self setAlias:nil];
+        [self setSessionKey:[[NSUserDefaults standardUserDefaults] stringForKey:PLASTER_SESSION_KEY_PREF]];
         _provider = [provider retain];
         _pb = [pasteboard retain];
         _dispatcher = [[TSEventDispatcher alloc] init];
@@ -89,9 +87,7 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
         //_readables = [[NSArray alloc] initWithObjects:[NSString class], nil];
         
         // Initialize an empty list of peers.
-        //_peers = [[NSMutableSet alloc] init];
         _plasterPeers = [[NSMutableArray alloc] init];
-        _plasterConnectedMenu = nil;
         _handlerTable = [[NSMutableDictionary alloc] init];
         
         // Handler : -testHandlePlasterInWithData:
@@ -177,12 +173,10 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
 }
 
 - (void)bootWithPeers:(NSUInteger)maxPeers {
-    // Obtain a session id from the user preferences (Note : this client could the session initiator, or a participant)
-    NSString *sessionID = [[NSUserDefaults standardUserDefaults] objectForKey:@"plaster-session-id"];
-    NSLog(@"PLASTER: BOOT : Booting plaster with client ID : [%@], and session ID [%@]", _clientID, sessionID);
+    NSLog(@"PLASTER: BOOT : Booting plaster with client ID : [%@], and session ID [%@]", _clientID, self.sessionKey);
     
     // Publish to the plaster broadcast channel to announce self to participating peers
-    NSString *broadcastChannel = [NSString stringWithFormat:@SESSION_BROADCAST_CHANNEL, sessionID];
+    NSString *broadcastChannel = [NSString stringWithFormat:@SESSION_BROADCAST_CHANNEL, self.sessionKey];
     NSLog(@"PLASTER: BOOT : Publishing HELLO to broadcast channel : %@", broadcastChannel);
     NSString *clientIdentifier = [NSString stringWithFormat:@"%@_%@", _clientID, [self alias]];
     [_provider publishObject:clientIdentifier toChannel:broadcastChannel];
@@ -193,15 +187,14 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
                            options:[self createHandlerOptionsForHandler:NSStringFromSelector(@selector(handlePeerAttachWithData:))]];
         
     // Get the list of participants already in the current session
-    NSString *participantsKey = [NSString stringWithFormat:@SESSION_PARTICIPANTS_KEY, sessionID];
+    NSString *participantsKey = [NSString stringWithFormat:@SESSION_PARTICIPANTS_KEY, self.sessionKey];
     NSString *participants = [_provider stringValueForKey:participantsKey];
     if (!participants) {
-        NSLog(@"PLASTER: BOOT : First participant for session id [%@], registering...", sessionID);
+        NSLog(@"PLASTER: BOOT : First participant for session id [%@], registering...", self.sessionKey);
         [_provider setStringValue:clientIdentifier forKey:participantsKey];
     } else {
         NSLog(@"PLASTER: BOOT : Found participants : [%@]", participants);
         NSArray *participantList = [participants componentsSeparatedByString:@":"];
-        //[_peers addObjectsFromArray:participantList];
         for (NSString *participant in participantList) {
             TSPlasterPeer *peer = [[TSPlasterPeer alloc] initWithPeer:participant];
             [_plasterPeers addObject:peer];
@@ -218,12 +211,8 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
     if ([_plasterPeers count] > 0) {
         NSLog(@"PLASTER: BOOT : Subscribing to peers...");
         NSMutableString *peerIDs = [[NSMutableString alloc] init];
-        _plasterConnectedMenu = [[NSMenu alloc] initWithTitle:@"Connected Peers"];
         for (TSPlasterPeer *peer in _plasterPeers) {
             [peerIDs appendFormat:@" %@", [peer peerID]];
-            NSMenuItem *peerMenuItem = [[[NSMenuItem alloc] initWithTitle:[peer peerAlias] action:@selector(disconnect:) keyEquivalent:@""]     autorelease];
-            [peerMenuItem setTarget:self];
-            [_plasterConnectedMenu addItem:peerMenuItem];
         }
         // TODO: What if subscribing to channel fails?
         [_provider subscribeToChannel:peerIDs
@@ -237,11 +226,6 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
                                options:[self createHandlerOptionsForHandler:NSStringFromSelector(@selector(testHandlePlasterInWithData:))]];
     }
     
-    //NSLog(@"PLASTER: BOOT : peers : %@", _peers);
-    /*
-        Set up the Plaster menu after boot so that the user can see
-        currently connected peers.
-    */
     NSLog(@"PLASTER: BOOT : Done.");
 }
 
@@ -271,12 +255,11 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
     NSLog(@"PLASTER: STOP : Stopping timer and cleaning up...");
     [self invalidateMonitorWithID:_clientID];
         
-    NSString *sessionID = [[NSUserDefaults standardUserDefaults] objectForKey:@"plaster-session-id"];
-    NSLog(@"PLASTER: STOP : Stopping plaster session with client ID : [%@], and session ID [%@]", _clientID, sessionID);
+    NSLog(@"PLASTER: STOP : Stopping plaster session with client ID : [%@], and session ID [%@]", _clientID, self.sessionKey);
     
     // Unsubscribe from both broadcast and peer channels...
     [_provider unsubscribeAll];
-    NSString *participantsKey = [NSString stringWithFormat:@SESSION_PARTICIPANTS_KEY, sessionID];
+    NSString *participantsKey = [NSString stringWithFormat:@SESSION_PARTICIPANTS_KEY, self.sessionKey];
     NSString *participants = [_provider stringValueForKey:participantsKey];
     if (!participants) {
         // Something went wrong - you are supposed to be in a session...
@@ -297,11 +280,7 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
         [_provider setStringValue:[participantList componentsJoinedByString:@":"] forKey:participantsKey];
     }
         
-    //[_peers removeAllObjects];
     [_plasterPeers removeAllObjects];
-    [_plasterConnectedMenu release];
-    _plasterConnectedMenu = nil;
-    
     NSLog(@"PLASTER: STOP : Done.");
 }
 
@@ -319,8 +298,13 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
     }
 }
 
-- (NSMenu *)connectedPeers {
-    return _plasterConnectedMenu;
+- (NSArray *)connectedPeers {
+    NSMutableArray *peers = [[NSMutableArray alloc] init];
+    for (TSPlasterPeer *peer in _plasterPeers) {
+        [peers addObject:[peer peerAlias]];
+    }
+    
+    return [peers autorelease];
 }
 
 - (void)disconnect:(id)sender {
@@ -336,7 +320,6 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
                                                                       string:[payload objectForKey:@"plaster-packet-string"]];
         NSLog(@"PLASTER: TESTING : Obtained packet [%@]", packet);
         
-        //NSPasteboard *pb = (__bridge NSPasteboard *)data;
         NSPasteboard *pb = [NSPasteboard generalPasteboard];
         if (!pb) {
             NSLog(@"PLASTER: TESTING : No pasteboard available...");
@@ -409,22 +392,15 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
         TSPlasterPeer *plpeer = [[TSPlasterPeer alloc] initWithPeer:peer];
         if ([[plpeer peerAlias] isEqualToString:[self alias]]) {
             NSLog(@"Ignoring hello from self.");
+            [plpeer release];
             return;
         }
         
         // Now subscribe to this new peer...
         [_provider subscribeToChannel:[plpeer peerID]
                               options:[self createHandlerOptionsForHandler:NSStringFromSelector(@selector(handlePlasterInWithData:))]];
-        //[_peers addObject:peer];
         
         [_plasterPeers addObject:plpeer];
-        
-        
-        NSMenuItem *peerMenuItem = [[[NSMenuItem alloc] initWithTitle:[plpeer peerAlias]
-                                                               action:@selector(disconnect:) keyEquivalent:@""] autorelease];
-        [peerMenuItem setTarget:self];
-        [_plasterConnectedMenu addItem:peerMenuItem];
-        
         [plpeer release];
      }
     return;
@@ -432,8 +408,6 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
 
 - (void)dealloc {
     [_clientID release];
-    //[_peers release];
-    [_plasterConnectedMenu release];
     [_plasterPeers release];
     [_provider release];
     [_pb release];

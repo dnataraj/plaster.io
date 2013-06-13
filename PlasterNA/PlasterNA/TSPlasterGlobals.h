@@ -16,4 +16,8 @@
 
 #define DEFAULT_PUBLISHER TSRedisController
 
+#define PLASTER_SESSION_KEY_PREF @"plaster-session-key"
+#define PLASTER_DEVICE_NAME_PREF @"plaster-device-name"
+
+
 #endif

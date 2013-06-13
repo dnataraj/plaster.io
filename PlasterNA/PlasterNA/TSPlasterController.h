@@ -12,14 +12,15 @@
 
 @interface TSPlasterController : NSObject
 
-@property (nonatomic, copy) NSString *alias;
+@property (readwrite, atomic, copy) NSString *sessionKey;
+@property (readwrite, nonatomic, copy) NSString *alias;
 
 - (id)initWithPasteboard:(NSPasteboard *)pasteboard provider:(id<TSMessagingProvider, TSDataStoreProvider>)provider;
 
 - (void)onTimer;
 - (void)start;
 - (void)stop;
-- (NSMenu *)connectedPeers;
+- (NSArray *)connectedPeers;
 - (IBAction)disconnect:(id)sender;
 
 @end
