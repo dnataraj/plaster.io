@@ -150,23 +150,30 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
     
     BOOL isPeerPaste = [_pb canReadItemWithDataConformingToTypes:@[@"com.trilobytesystems.plaster.uti"]];
     if (isPeerPaste) {
-        NSLog(@"PLASTER : PLASTER OUT : Packet is from a peer, discarding publish..");
+        NSLog(@"PLASTER: PLASTER OUT : Packet is from a peer, discarding publish..");
         return;
     }
-    //NSLog(@"PLASTER: PLASTER OUT : Readables : %@", _readables);
-    
-    //NSLog(@"PLASTER : PLASTER OUT : Reading the general pasteboard...");
     NSArray *pbContents = [_pb readObjectsForClasses:_readables options:nil];
     if ([pbContents count] > 0) {
-        NSLog(@"PLASTER : PLASTER OUT : Found in pasteboard : [%@]" , [pbContents objectAtIndex:0]);
+        //NSLog(@"PLASTER: PLASTER OUT : Found in pasteboard : [%@]" , [pbContents objectAtIndex:0]);
         // Now we have to extract the bytes
         id packet = [pbContents objectAtIndex:0];
         if ([packet isKindOfClass:[NSString class]]) {
             NSLog(@"PLASTER : PLASTER OUT : Processing NSString packet and publishing...");
             const char *jsonBytes = [TSPacketSerializer JSONWithStringPacket:[NSString stringWithString:packet]];
-            [_provider publish:jsonBytes toChannel:_clientID];
+            if (jsonBytes == NULL) {
+                NSLog(@"PLASTER: PLASTER OUT : Unable to complete operation, no data.");
+                return;                
+            }
+            char *bytes = (char *)calloc(strlen(jsonBytes), sizeof(char));
+            if (bytes == NULL) {
+                NSLog(@"PLASTER: PLASTER OUT : Unable to allocate memory for operation to complete.");
+                return;
+            }
+            strcpy(bytes, (const char *)jsonBytes);
+            [_provider publish:bytes toChannel:_clientID];
+            free(bytes);
         }
-        
     } else {
         NSLog(@"PLASTER: PLASTER OUT : Nothing retrieved from pasteboard.");
     }
@@ -344,31 +351,32 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
 
 - (void)handlePlasterInWithData:(char *)data {
     printf("PLASTER: HANDLE PLASTER IN: %s\n", data);
-    
+    NSDictionary *payload = nil;
     if (data) {
-        NSDictionary *payload = [TSPacketSerializer dictionaryFromJSON:data];
-        TSPasteboardPacket *packet = [[TSPasteboardPacket alloc] initWithTag:@"plaster-packet-string"
-                                                                      string:[payload objectForKey:@"plaster-packet-string"]];
-        NSLog(@"PLASTER: PLASTER IN : Obtained packet [%@]", packet);
-        
-        NSPasteboard *pb = [NSPasteboard generalPasteboard];
-        if (!pb) {
-            NSLog(@"PLASTER: PLASTER IN : No pasteboard available...");
+        payload = [TSPacketSerializer dictionaryFromJSON:data];
+        if (payload) {
+            TSPasteboardPacket *packet = [[TSPasteboardPacket alloc] initWithTag:@"plaster-packet-string"
+                                                                          string:[payload objectForKey:@"plaster-packet-string"]];
+            NSLog(@"PLASTER: PLASTER IN : Obtained packet [%@]", packet);
+            
+            NSPasteboard *pb = [NSPasteboard generalPasteboard];
+            if (!pb) {
+                NSLog(@"PLASTER: PLASTER IN : No pasteboard available...");
+                [packet release];
+                return;
+            }
+            NSLog(@"Pasting...");
+            [pb clearContents];
+            BOOL ok = [pb writeObjects:@[packet]];
+            if (ok) {
+                NSLog(@"PLASTER: PLASTER IN : Peer copy successfully written to local pasteboard.");
+            }
             [packet release];
             return;
         }
-        NSLog(@"Pasting...");
-        [pb clearContents];
-        BOOL ok = [pb writeObjects:@[packet]];
-        if (ok) {
-            NSLog(@"PLASTER: PLASTER IN : Peer copy successfully written to local pasteboard.");
-        }
-        
-        [packet release];
-    } else {
-        NSLog(@"Data was nil : %s", data);
     }
     
+    NSLog(@"PLASTER: HANDLE IN : Data(%s) or payload(%@) was null. ", data, payload);
     return;
 }
 

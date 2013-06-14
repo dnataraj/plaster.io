@@ -12,30 +12,29 @@
 @implementation TSPacketSerializer
 
 + (const char *)JSONWithStringPacket:(NSString *)packet {
-    //NSMutableDictionary *kvDictionary = [[NSMutableDictionary alloc] init];
     NSMutableDictionary *kvDictionary = [NSMutableDictionary dictionary];
     [kvDictionary setObject:@"plaster-text" forKey:@"plaster-type"];
     NSString *b64 = [[NSString alloc] initWithString:[packet base64String]];
-    //NSLog(@"BASE 64 ENCODED : [%@]", b64);
     [kvDictionary setObject:b64 forKey:@"plaster-data"];
     [b64 release];
-    
     NSError *error = nil;
     NSData *json = [NSJSONSerialization dataWithJSONObject:kvDictionary options:0 error:&error];
-    //NSString *string = [[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding];
-    //NSLog(@"JSON data : %@", string);
-    // TODO : Trap error
+    if (error) {
+        NSLog(@"PACKET SERIALIZER: Error occured during serialization : %@", error);
+        return NULL;
+    }
     [TSPacketSerializer logJSONToFile:json];
-    return [json bytes];
+    NSString *string = [[[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding] autorelease];
+    return [string UTF8String];
 }
 
 + (NSDictionary *)dictionaryFromJSON:(const char *)json {
     NSData *data = [NSData dataWithBytes:json length:strlen(json)];
     NSError *error = nil;
     id kvStore = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
-    //NSLog(@"Retrieved id of type [%@]", [json class]);
     if (error) {
-        //NSLog(@"SERIALIZER: Error occured : %@", error);
+        NSLog(@"SERIALIZER: Error occured during de-serialization: %@", error);
+        return nil;
     }
     if ([kvStore isKindOfClass:[NSMutableDictionary class]]) {
         NSMutableDictionary *dictionary = (NSMutableDictionary *)kvStore;
@@ -64,9 +63,10 @@
     //NSLog(@"PLASTER: TESTING : Writing to [%@]", jsonLog);
     NSFileHandle *log = [NSFileHandle fileHandleForWritingAtPath:jsonLog];
     if (log) {
-        NSLog(@"Writing json to log...");
         [log truncateFileAtOffset:[log seekToEndOfFile]];
         [log writeData:data];
+        // Write a NL/CR
+        [log writeData:[@"\n\n" dataUsingEncoding:NSUTF8StringEncoding]];
         [log closeFile];
     }
     

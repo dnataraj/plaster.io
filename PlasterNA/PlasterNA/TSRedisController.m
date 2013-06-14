@@ -199,7 +199,12 @@ void rcSubscribeWithOptions(redisAsyncContext *ctx, void *r, void *data) {
                                 NSLog(@"REDIS: SUB INV : Invoking on : %@", [target class]);
                                 NSLog(@"REDIS: SUB INV : With selector : %@", NSStringFromSelector([invocation selector]));
                                 [invocation setTarget:target];
-                                char *arg = (char *)malloc(sizeof(char) * strlen(reply->element[2]->str));
+                                //char *arg = (char *)malloc(sizeof(char) * strlen(reply->element[2]->str));
+                                char *arg = (char *)calloc(strlen(reply->element[2]->str), sizeof(char));
+                                if (arg == NULL) {
+                                    printf("REDIS: SUBSCRIBE : Unable to allocate memory for handler argument");
+                                    return;
+                                }
                                 strcpy(arg, reply->element[2]->str);
                                 [invocation retainArguments];
                                 [invocation setArgument:&arg atIndex:2];
@@ -472,31 +477,29 @@ void freeBundle(HandlerBundle hb) {
 }
 
 - (void)publishObject:(NSString *)anObject toChannel:(NSString *)channel {
-    NSString *command = [NSString stringWithFormat:@"PUBLISH %@ %%b", channel];
-    NSLog(@"REDIS: Publish command [%@]", command);
     const char *temp1 = [anObject UTF8String];
-    char *obj = malloc(sizeof(char) * strlen(temp1));
+    char *obj = (char *)calloc(strlen(temp1), sizeof(char));
     if (obj == NULL) {
         NSLog(@"REDIS: Unable to allocate memory for publish strings.");
         return;
     }
     strcpy(obj, temp1);
-    const char *temp2 = [command UTF8String];
-    char *publish = malloc(sizeof(char) * (strlen(temp2)));
-    if (publish == NULL) {
+    const char *temp2 = [channel UTF8String];
+    char *chan = (char *)calloc(strlen(temp2), sizeof(char));
+    if (chan == NULL) {
         NSLog(@"REDIS: Unable to allocate memory for publish strings.");
         free(obj);
         return;
     }
-    strcpy(publish, temp2);
+    strcpy(chan, temp2);
     redisAsyncContext *localAsyncCtx = [self connectAndDispatch];
     if (localAsyncCtx) {
-        uint result = redisAsyncCommand(localAsyncCtx, rcPublish, NULL, publish, obj, strlen(obj));
+        uint result = redisAsyncCommand(localAsyncCtx, rcPublish, NULL, "PUBLISH %s %b", chan, obj, strlen(obj));
         if (result != REDIS_OK) {
             NSLog(@"REDIS: Error buffering PUBLISH command for this session : %s", localAsyncCtx->errstr);
             redisAsyncDisconnect(localAsyncCtx);
             free(obj);
-            free(publish);
+            free(chan);
             return;
         }
     } else {
@@ -504,32 +507,30 @@ void freeBundle(HandlerBundle hb) {
     }
         
     free(obj);
-    free(publish);
+    free(chan);
 }
 
 - (void)publish:(const char *)bytes toChannel:(NSString *)channel {
-    NSMutableString *command = [NSMutableString stringWithFormat:@"PUBLISH %@ %%b", channel];
-    NSLog(@"REDIS: Publish command [%@]", command);
-    const char *temp = [command UTF8String];
-    char *publish = malloc(sizeof(char) * (strlen([command UTF8String])));
-    if (publish == NULL) {
+    const char *temp = [channel UTF8String];
+    char *chan = (char *)calloc(strlen(temp), sizeof(char));
+    if (chan == NULL) {
         NSLog(@"REDIS: Unable to allocate memory for publish strings.");
         return;
     }
-    strcpy(publish, temp);
+    strcpy(chan, temp);
     redisAsyncContext *localAsyncCtx = [self connectAndDispatch];
     if (localAsyncCtx) {
-        uint result = redisAsyncCommand(localAsyncCtx, rcPublish, NULL, publish, bytes, strlen(bytes));
+        uint result = redisAsyncCommand(localAsyncCtx, rcPublish, NULL, "PUBLISH %s %b", chan, bytes, strlen(bytes));
         if (result != REDIS_OK) {
             NSLog(@"REDIS: Error buffering PUBLISH command for this session : %s", localAsyncCtx->errstr);
             redisAsyncDisconnect(localAsyncCtx);
-            free(publish);
+            free(chan);
             return;
         }
     } else {
         NSLog(@"REDIS: Unable to complete PUBLISH OBJ.");
     }
-    free(publish);
+    free(chan);
     return;
 }
 
