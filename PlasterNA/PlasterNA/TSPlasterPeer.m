@@ -36,6 +36,19 @@
     return [NSString stringWithFormat:@"Plaster peer with id : %@ and alias : %@", [self peerID], [self peerAlias]];
 }
 
+- (BOOL)isEqual:(id)object {
+    if (![object isKindOfClass:[TSPlasterPeer class]]) {
+        return NO;
+    }
+    
+    TSPlasterPeer *aPeer = (TSPlasterPeer *)object;
+    if ([[self peerAlias] isEqualToString:[aPeer peerAlias]]) {
+        return YES;
+    }
+    
+    return NO;
+}
+
 - (void)dealloc {
     [_peerID release];
     [_peerAlias release];

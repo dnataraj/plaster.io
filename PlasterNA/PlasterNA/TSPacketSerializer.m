@@ -12,8 +12,15 @@
 @implementation TSPacketSerializer
 
 + (const char *)JSONWithStringPacket:(NSString *)packet {
+    return [TSPacketSerializer JSONWithStringPacket:packet sender:nil];
+}
+
++ (const char *)JSONWithStringPacket:(NSString *)packet sender:(NSString *)sender{
     NSMutableDictionary *kvDictionary = [NSMutableDictionary dictionary];
     [kvDictionary setObject:@"plaster-text" forKey:@"plaster-type"];
+    if (sender) {
+        [kvDictionary setObject:sender forKey:@"plaster-sender"];        
+    }
     NSString *b64 = [[NSString alloc] initWithString:[packet base64String]];
     [kvDictionary setObject:b64 forKey:@"plaster-data"];
     [b64 release];

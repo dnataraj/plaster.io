@@ -66,7 +66,7 @@
 }
 
 @end
-
+    
 @implementation TSClientStartPanelValueTransformer
 
 + (Class)transformedValueClass {

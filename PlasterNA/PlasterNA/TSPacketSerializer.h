@@ -11,6 +11,7 @@
 @interface TSPacketSerializer : NSObject
 
 + (const char *)JSONWithStringPacket:(NSString *)packet;
++ (const char *)JSONWithStringPacket:(NSString *)packet sender:(NSString *)sender;
 + (NSDictionary *)dictionaryFromJSON:(const char *)json;
 
 @end

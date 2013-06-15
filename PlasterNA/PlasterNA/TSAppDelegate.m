@@ -46,9 +46,7 @@
         [defaultPreferences setObject:[NSNumber numberWithBool:YES] forKey:@"plaster-allow-text"];
         [defaultPreferences setObject:[NSNumber numberWithBool:NO] forKey:@"plaster-allow-images"];
         
-        // This let's us know (I hope) whether the client is being installed/started for the first time.
-        // This will be flipped when the User dismisses the start configuration panel.
-        [defaultPreferences setObject:[NSNumber numberWithBool:NO] forKey:@"plaster-init"];
+        // A test mode flag to allow file logging
         [defaultPreferences setObject:[NSNumber numberWithBool:NO] forKey:@"plaster-test-mode"];
         
         [[NSUserDefaults standardUserDefaults] registerDefaults:defaultPreferences];        

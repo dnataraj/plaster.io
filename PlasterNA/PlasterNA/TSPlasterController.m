@@ -160,7 +160,7 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
         id packet = [pbContents objectAtIndex:0];
         if ([packet isKindOfClass:[NSString class]]) {
             NSLog(@"PLASTER : PLASTER OUT : Processing NSString packet and publishing...");
-            const char *jsonBytes = [TSPacketSerializer JSONWithStringPacket:[NSString stringWithString:packet]];
+            const char *jsonBytes = [TSPacketSerializer JSONWithStringPacket:[NSString stringWithString:packet] sender:[self alias]];
             if (jsonBytes == NULL) {
                 NSLog(@"PLASTER: PLASTER OUT : Unable to complete operation, no data.");
                 return;                
@@ -325,6 +325,8 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
         NSDictionary *payload = [TSPacketSerializer dictionaryFromJSON:data];
         TSPasteboardPacket *packet = [[TSPasteboardPacket alloc] initWithTag:@"plaster-packet-string"
                                                                       string:[payload objectForKey:@"plaster-packet-string"]];
+        NSString *sender = [payload objectForKey:@"plaster-sender"];
+        
         NSLog(@"PLASTER: TESTING : Obtained packet [%@]", packet);
         
         NSPasteboard *pb = [NSPasteboard generalPasteboard];
@@ -340,6 +342,17 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
             [log truncateFileAtOffset:[log seekToEndOfFile]];
             [log writeData:[[packet packet] dataUsingEncoding:NSUTF8StringEncoding]];
             [log closeFile];
+            // Show test notification
+            // Notify the user.
+            NSUserNotificationCenter *userNotificationCenter = [NSUserNotificationCenter defaultUserNotificationCenter];
+            [userNotificationCenter removeAllDeliveredNotifications];
+            NSUserNotification *notification = [[NSUserNotification alloc] init];
+            [notification setTitle:@"Plaster Test Notification"];
+            [notification setSubtitle:@"You have recieved a new plaster from :"];
+            NSString *pasteInfo = [NSString stringWithFormat:@"[%@]", sender];
+            [notification setInformativeText:pasteInfo];
+            [userNotificationCenter deliverNotification:notification];
+
         }
         [packet release];
     } else {
@@ -357,6 +370,7 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
         if (payload) {
             TSPasteboardPacket *packet = [[TSPasteboardPacket alloc] initWithTag:@"plaster-packet-string"
                                                                           string:[payload objectForKey:@"plaster-packet-string"]];
+            NSString *sender = [payload objectForKey:@"plaster-sender"];
             NSLog(@"PLASTER: PLASTER IN : Obtained packet [%@]", packet);
             
             NSPasteboard *pb = [NSPasteboard generalPasteboard];
@@ -370,6 +384,15 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
             BOOL ok = [pb writeObjects:@[packet]];
             if (ok) {
                 NSLog(@"PLASTER: PLASTER IN : Peer copy successfully written to local pasteboard.");
+                // Notify the user.
+                NSUserNotificationCenter *userNotificationCenter = [NSUserNotificationCenter defaultUserNotificationCenter];
+                [userNotificationCenter removeAllDeliveredNotifications];
+                NSUserNotification *notification = [[NSUserNotification alloc] init];
+                [notification setTitle:@"Plaster Notification"];
+                [notification setSubtitle:@"You have recieved a new plaster from :"];
+                NSString *pasteInfo = [NSString stringWithFormat:@"[%@]", sender];
+                [notification setInformativeText:pasteInfo];
+                [userNotificationCenter deliverNotification:notification];
             }
             [packet release];
             return;
@@ -394,8 +417,7 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
 - (void)handlePeerAttachWithData:(char *)data {
     if (data) {
         NSString *peer = [NSString stringWithCString:data encoding:NSUTF8StringEncoding];
-        NSLog(@"PLASTER: HANDLE PEER : Processing HELLO from peer with ID [%s].", [peer UTF8String]);
-        NSLog(@"PLASTER: HANDLE PEER : Subscribing and adding peer to set...");
+        NSLog(@"PLASTER: HANDLE PEER : Processing HELLO from peer with ID [%@].", peer);
         
         TSPlasterPeer *plpeer = [[TSPlasterPeer alloc] initWithPeer:peer];
         if ([[plpeer peerAlias] isEqualToString:[self alias]]) {
@@ -407,8 +429,9 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
         // Now subscribe to this new peer...
         [_provider subscribeToChannel:[plpeer peerID]
                               options:[self createHandlerOptionsForHandler:NSStringFromSelector(@selector(handlePlasterInWithData:))]];
-        
-        [_plasterPeers addObject:plpeer];
+        if (![_plasterPeers containsObject:plpeer]) {
+            [_plasterPeers addObject:plpeer];            
+        }
         [plpeer release];
      }
     return;
