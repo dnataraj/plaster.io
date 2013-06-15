@@ -15,9 +15,9 @@
 #import "TSPlasterPeer.h"
 #import "TSPlasterGlobals.h"
 
-#define SESSION_BROADCAST_CHANNEL "plaster:session:%@:broadcast"
-#define SESSION_PARTICIPANTS_KEY "plaster:session:%@:participants"
-#define SESSION_PEER_CHANNEL "plaster:session:%@:%@"
+#define SESSION_BROADCAST_CHANNEL @"plaster:session:%@:broadcast"
+#define SESSION_PARTICIPANTS_KEY @"plaster:session:%@:participants"
+#define SESSION_PEER_CHANNEL @"plaster:session:%@:%@"
 
 #define TEST_LOG_FILE "plaster_in.log"
 #define JSON_LOG_FILE "plaster_json_out.log"
@@ -75,7 +75,7 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
             return nil;
         }
         _clientID = [[TSClientIdentifier clientID] retain];
-        [self setAlias:nil];
+        [self setAlias:[[NSHost currentHost] localizedName]];
         [self setSessionKey:[[NSUserDefaults standardUserDefaults] stringForKey:PLASTER_SESSION_KEY_PREF]];
         _provider = [provider retain];
         _pb = [pasteboard retain];
@@ -106,8 +106,8 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
         options = [NSDictionary dictionaryWithObjects:@[self, invocation] forKeys:@[@"target", @"invocation"]];
         [_handlerTable setObject:options forKey:NSStringFromSelector(handler)];
         
-        // Handler : -handlePeerAttachWithData:
-        handler = @selector(handlePeerAttachWithData:);
+        // Handler : -handlePeerAttachAndDetachWithData:
+        handler = @selector(handlePeerAttachAndDetachWithData:);
         signature = [TSPlasterController instanceMethodSignatureForSelector:handler];
         invocation = [NSInvocation invocationWithMethodSignature:signature];
         [invocation setSelector:handler];
@@ -136,65 +136,23 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
     return self;
 }
 
-- (void)onTimer {
-    // If there are no peers to publish to, don't do anything.
-    if ([_plasterPeers count] == 0) {
-        return;
-    }
-    
-    NSInteger newChangeCount = [_pb changeCount];
-    if (_changeCount == newChangeCount) {
-        return;
-    }
-    _changeCount = newChangeCount;
-    
-    BOOL isPeerPaste = [_pb canReadItemWithDataConformingToTypes:@[@"com.trilobytesystems.plaster.uti"]];
-    if (isPeerPaste) {
-        NSLog(@"PLASTER: PLASTER OUT : Packet is from a peer, discarding publish..");
-        return;
-    }
-    NSArray *pbContents = [_pb readObjectsForClasses:_readables options:nil];
-    if ([pbContents count] > 0) {
-        //NSLog(@"PLASTER: PLASTER OUT : Found in pasteboard : [%@]" , [pbContents objectAtIndex:0]);
-        // Now we have to extract the bytes
-        id packet = [pbContents objectAtIndex:0];
-        if ([packet isKindOfClass:[NSString class]]) {
-            NSLog(@"PLASTER : PLASTER OUT : Processing NSString packet and publishing...");
-            const char *jsonBytes = [TSPacketSerializer JSONWithStringPacket:[NSString stringWithString:packet] sender:[self alias]];
-            if (jsonBytes == NULL) {
-                NSLog(@"PLASTER: PLASTER OUT : Unable to complete operation, no data.");
-                return;                
-            }
-            char *bytes = (char *)calloc(strlen(jsonBytes), sizeof(char));
-            if (bytes == NULL) {
-                NSLog(@"PLASTER: PLASTER OUT : Unable to allocate memory for operation to complete.");
-                return;
-            }
-            strcpy(bytes, (const char *)jsonBytes);
-            [_provider publish:bytes toChannel:_clientID];
-            free(bytes);
-        }
-    } else {
-        NSLog(@"PLASTER: PLASTER OUT : Nothing retrieved from pasteboard.");
-    }
-}
-
 - (void)bootWithPeers:(NSUInteger)maxPeers {
     NSLog(@"PLASTER: BOOT : Booting plaster with client ID : [%@], and session ID [%@]", _clientID, self.sessionKey);
+    NSString *clientIdentifier = [NSString stringWithFormat:@"%@_%@", _clientID, [self alias]];
     
     // Publish to the plaster broadcast channel to announce self to participating peers
-    NSString *broadcastChannel = [NSString stringWithFormat:@SESSION_BROADCAST_CHANNEL, self.sessionKey];
+    NSString *broadcastChannel = [NSString stringWithFormat:SESSION_BROADCAST_CHANNEL, self.sessionKey];
     NSLog(@"PLASTER: BOOT : Publishing HELLO to broadcast channel : %@", broadcastChannel);
-    NSString *clientIdentifier = [NSString stringWithFormat:@"%@_%@", _clientID, [self alias]];
-    [_provider publishObject:clientIdentifier toChannel:broadcastChannel];
+    NSString *hello = [NSString stringWithFormat:@"HELLO:%@", clientIdentifier];
+    [_provider publishObject:hello toChannel:broadcastChannel];
         
     // Subscribe to the plaster broadcast channel to listen to broadcasts from new participants
     NSLog(@"PLASTER: BOOT : Subscribing to broadcast channel to accept new peers.");
     [_provider subscribeToChannels:@[broadcastChannel]
-                           options:[self createHandlerOptionsForHandler:NSStringFromSelector(@selector(handlePeerAttachWithData:))]];
+                           options:[self createHandlerOptionsForHandler:NSStringFromSelector(@selector(handlePeerAttachAndDetachWithData:))]];
         
     // Get the list of participants already in the current session
-    NSString *participantsKey = [NSString stringWithFormat:@SESSION_PARTICIPANTS_KEY, self.sessionKey];
+    NSString *participantsKey = [NSString stringWithFormat:SESSION_PARTICIPANTS_KEY, self.sessionKey];
     NSString *participants = [_provider stringValueForKey:participantsKey];
     if (!participants) {
         NSLog(@"PLASTER: BOOT : First participant for session id [%@], registering...", self.sessionKey);
@@ -263,10 +221,17 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
     [self invalidateMonitorWithID:_clientID];
         
     NSLog(@"PLASTER: STOP : Stopping plaster session with client ID : [%@], and session ID [%@]", _clientID, self.sessionKey);
+    NSString *clientIdentifier = [NSString stringWithFormat:@"%@_%@", _clientID, [self alias]];
+    
+    // Publish to the plaster broadcast channel to depart session
+    NSString *broadcastChannel = [NSString stringWithFormat:SESSION_BROADCAST_CHANNEL, self.sessionKey];
+    NSLog(@"PLASTER: BOOT : Publishing GOODBYE to broadcast channel : %@", broadcastChannel);
+    NSString *goodbye = [NSString stringWithFormat:@"GOODBYE:%@", clientIdentifier];
+    [_provider publishObject:goodbye toChannel:broadcastChannel];
     
     // Unsubscribe from both broadcast and peer channels...
     [_provider unsubscribeAll];
-    NSString *participantsKey = [NSString stringWithFormat:@SESSION_PARTICIPANTS_KEY, self.sessionKey];
+    NSString *participantsKey = [NSString stringWithFormat:SESSION_PARTICIPANTS_KEY, self.sessionKey];
     NSString *participants = [_provider stringValueForKey:participantsKey];
     if (!participants) {
         // Something went wrong - you are supposed to be in a session...
@@ -318,7 +283,51 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
     NSLog(@"PLASTER: Disconnect called!");
 }
 
-// Handlers
+#pragma mark Timer and Handler Methods
+
+- (void)onTimer {
+    // If there are no peers to publish to, don't do anything.
+    if ([_plasterPeers count] == 0) {
+        return;
+    }
+    
+    NSInteger newChangeCount = [_pb changeCount];
+    if (_changeCount == newChangeCount) {
+        return;
+    }
+    _changeCount = newChangeCount;
+    
+    BOOL isPeerPaste = [_pb canReadItemWithDataConformingToTypes:@[@"com.trilobytesystems.plaster.uti"]];
+    if (isPeerPaste) {
+        NSLog(@"PLASTER: PLASTER OUT : Packet is from a peer, discarding publish..");
+        return;
+    }
+    NSArray *pbContents = [_pb readObjectsForClasses:_readables options:nil];
+    if ([pbContents count] > 0) {
+        //NSLog(@"PLASTER: PLASTER OUT : Found in pasteboard : [%@]" , [pbContents objectAtIndex:0]);
+        // Now we have to extract the bytes
+        id packet = [pbContents objectAtIndex:0];
+        if ([packet isKindOfClass:[NSString class]]) {
+            NSLog(@"PLASTER : PLASTER OUT : Processing NSString packet and publishing...");
+            const char *jsonBytes = [TSPacketSerializer JSONWithStringPacket:[NSString stringWithString:packet] sender:[self alias]];
+            if (jsonBytes == NULL) {
+                NSLog(@"PLASTER: PLASTER OUT : Unable to complete operation, no data.");
+                return;
+            }
+            char *bytes = (char *)calloc(strlen(jsonBytes), sizeof(char));
+            if (bytes == NULL) {
+                NSLog(@"PLASTER: PLASTER OUT : Unable to allocate memory for operation to complete.");
+                return;
+            }
+            strcpy(bytes, (const char *)jsonBytes);
+            [_provider publish:bytes toChannel:_clientID];
+            free(bytes);
+        }
+    } else {
+        NSLog(@"PLASTER: PLASTER OUT : Nothing retrieved from pasteboard.");
+    }
+}
+
 - (void)testHandlePlasterInWithData:(char *)data {
     NSLog(@"PLASTER: TESTING : HANDLE PLASTER IN:...");
     if (data) {
@@ -385,14 +394,8 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
             if (ok) {
                 NSLog(@"PLASTER: PLASTER IN : Peer copy successfully written to local pasteboard.");
                 // Notify the user.
-                NSUserNotificationCenter *userNotificationCenter = [NSUserNotificationCenter defaultUserNotificationCenter];
-                [userNotificationCenter removeAllDeliveredNotifications];
-                NSUserNotification *notification = [[NSUserNotification alloc] init];
-                [notification setTitle:@"Plaster Notification"];
-                [notification setSubtitle:@"You have recieved a new plaster from :"];
                 NSString *pasteInfo = [NSString stringWithFormat:@"[%@]", sender];
-                [notification setInformativeText:pasteInfo];
-                [userNotificationCenter deliverNotification:notification];
+                [self sendNotificationWithSubtitle:@"You have recieved a new plaster from :" informativeText:pasteInfo];
             }
             [packet release];
             return;
@@ -414,27 +417,68 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
  It enables the plaster client to be aware of future additions
  to the plaster session.
 */
-- (void)handlePeerAttachWithData:(char *)data {
+- (void)handlePeerAttachAndDetachWithData:(char *)data {
     if (data) {
-        NSString *peer = [NSString stringWithCString:data encoding:NSUTF8StringEncoding];
-        NSLog(@"PLASTER: HANDLE PEER : Processing HELLO from peer with ID [%@].", peer);
+        NSString *str = [NSString stringWithCString:data encoding:NSUTF8StringEncoding];
+        NSLog(@"PLASTER: PEER ATTACH/DETACH : %@", str);
         
-        TSPlasterPeer *plpeer = [[TSPlasterPeer alloc] initWithPeer:peer];
-        if ([[plpeer peerAlias] isEqualToString:[self alias]]) {
-            NSLog(@"Ignoring hello from self.");
+        if ([str hasPrefix:@"HELLO:"]) {
+            NSLog(@"PLASTER: HANDLE PEER : Processing HELLO from peer with ID [%@].", str);
+            
+            NSString *peer = [str substringFromIndex:6];
+            TSPlasterPeer *plpeer = [[TSPlasterPeer alloc] initWithPeer:peer];
+            if ([[plpeer peerAlias] isEqualToString:[self alias]]) {
+                NSLog(@"Ignoring hello from self.");
+                [plpeer release];
+                return;
+            }
+            
+            // Now subscribe to this new peer...
+            [_provider subscribeToChannel:[plpeer peerID]
+                                  options:[self createHandlerOptionsForHandler:NSStringFromSelector(@selector(handlePlasterInWithData:))]];
+            if (![_plasterPeers containsObject:plpeer]) {
+                [_plasterPeers addObject:plpeer];
+                //If configured, send a notification...
+                NSString *subtitle = [NSString stringWithFormat:@"%@ has joined.", [plpeer peerAlias]];
+                [self sendNotificationWithSubtitle:subtitle informativeText:nil];
+            }
+            [plpeer release];            
+        } else if ([str hasPrefix:@"GOODBYE:"]) {
+            NSLog(@"PLASTER: HANDLE PEER : Processing GOODBYE from peer with ID [%@].", str);
+            
+            NSString *peer = [str substringFromIndex:8];
+            TSPlasterPeer *plpeer = [[TSPlasterPeer alloc] initWithPeer:peer];
+            if ([[plpeer peerAlias] isEqualToString:[self alias]]) {
+                NSLog(@"Ignoring goodbye from self.");
+                [plpeer release];
+                return;
+            }
+            
+            if ([_plasterPeers containsObject:plpeer]) {
+                [_plasterPeers removeObject:plpeer];
+                //If configured, send a notification...
+                NSString *subtitle = [NSString stringWithFormat:@"%@ has left.", [plpeer peerAlias]];
+                [self sendNotificationWithSubtitle:subtitle informativeText:nil];
+            }
             [plpeer release];
-            return;
         }
         
-        // Now subscribe to this new peer...
-        [_provider subscribeToChannel:[plpeer peerID]
-                              options:[self createHandlerOptionsForHandler:NSStringFromSelector(@selector(handlePlasterInWithData:))]];
-        if (![_plasterPeers containsObject:plpeer]) {
-            [_plasterPeers addObject:plpeer];            
-        }
-        [plpeer release];
-     }
+    }
     return;
+}
+
+#pragma mark Notification Methods
+
+- (void)sendNotificationWithSubtitle:(NSString *)subtitle informativeText:(NSString *)text {
+    NSUserNotificationCenter *userNotificationCenter = [NSUserNotificationCenter defaultUserNotificationCenter];
+    [userNotificationCenter removeAllDeliveredNotifications];
+    NSUserNotification *notification = [[NSUserNotification alloc] init];
+    [notification setTitle:@"Plaster Notification"];
+    [notification setSubtitle:subtitle];
+    if (text) {
+        [notification setInformativeText:text];        
+    }
+    [userNotificationCenter deliverNotification:notification];
 }
 
 - (void)dealloc {

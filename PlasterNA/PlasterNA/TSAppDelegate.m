@@ -64,6 +64,12 @@
     NSLog(@"AD: Waking up from nib...");
     _plasterStatusItem = [[[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength] retain];
     [_plasterStatusItem setTitle:@"P"];
+    /*
+    NSImage *plaster = [NSImage imageNamed: @"plaster"];
+    [plaster setScalesWhenResized: YES];
+    [plaster setSize: NSMakeSize(19, 19)];
+    [_plasterStatusItem setImage:plaster];
+    */
     [_plasterStatusItem setHighlightMode:YES];
     [_plasterStatusItem setMenu:[self plasterMenu]];
     
