@@ -14,6 +14,8 @@
 #import "TSBase64/NSString+TSBase64.h"
 #import "TSPlasterPeer.h"
 #import "TSPlasterGlobals.h"
+#import "TSPlasterString.h"
+#import "TSPlasterImage.h"
 
 #define SESSION_BROADCAST_CHANNEL @"plaster:session:%@:broadcast"
 #define SESSION_PARTICIPANTS_KEY @"plaster:session:%@:participants"
@@ -54,13 +56,15 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
 @implementation TSPlasterController {
     NSString *_clientID;
     NSPasteboard *_pb;
-    NSInteger _changeCount;
-    NSArray *_readables;
     NSMutableArray *_plasterPeers;
     
     TSEventDispatcher *_dispatcher;
     id <TSMessagingProvider, TSDataStoreProvider> _provider;
     NSMutableDictionary *_handlerTable;
+    
+    // Notification variables
+    NSUserNotificationCenter *_userNotificationCenter;
+
     
     // Variables for test mode
     BOOL _testMode;
@@ -77,14 +81,13 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
         _clientID = [[TSClientIdentifier clientID] retain];
         [self setAlias:[[NSHost currentHost] localizedName]];
         [self setSessionKey:[[NSUserDefaults standardUserDefaults] stringForKey:PLASTER_SESSION_KEY_PREF]];
+        _userNotificationCenter = [NSUserNotificationCenter defaultUserNotificationCenter];
+        _userNotificationCenter.delegate = self;
+
         _provider = [provider retain];
         _pb = [pasteboard retain];
         _dispatcher = [[TSEventDispatcher alloc] init];
         _changeCount = [_pb changeCount];
-        //_readables = [NSArray arrayWithObjects:[TSPasteboardPacket class] ,[NSString class], nil];
-        _readables = @[[NSString class], [NSAttributedString class]];
-        [_readables retain];
-        //_readables = [[NSArray alloc] initWithObjects:[NSString class], nil];
         
         // Initialize an empty list of peers.
         _plasterPeers = [[NSMutableArray alloc] init];
@@ -292,94 +295,134 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
     }
     
     NSInteger newChangeCount = [_pb changeCount];
-    if (_changeCount == newChangeCount) {
+    if (self.changeCount == newChangeCount) {
         return;
     }
-    _changeCount = newChangeCount;
+    [self setChangeCount:newChangeCount];
     
-    BOOL isPeerPaste = [_pb canReadItemWithDataConformingToTypes:@[@"com.trilobytesystems.plaster.uti"]];
+    BOOL isPeerPaste =
+        [_pb canReadItemWithDataConformingToTypes:@[@"com.trilobytesystems.plaster.string.uti", @"com.trilobytesystems.plaster.image.uti"]];
+
     if (isPeerPaste) {
         NSLog(@"PLASTER: PLASTER OUT : Packet is from a peer, discarding publish..");
         return;
     }
-    NSArray *pbContents = [_pb readObjectsForClasses:_readables options:nil];
+    NSMutableArray *readables = [NSMutableArray array];
+    BOOL allowText = [[NSUserDefaults standardUserDefaults] boolForKey:PLASTER_ALLOW_TEXT_TYPE_PREF];
+    BOOL allowImages = [[NSUserDefaults standardUserDefaults] boolForKey:PLASTER_ALLOW_IMAGE_TYPE_PREF];
+    if (allowImages) {
+        [readables addObject:[NSImage class]];
+    }
+    if (allowText) {
+        NSLog(@"PLASTER: Allowing text from pasteboard...");
+        NSLog(@"PLASTER : Readable types for NSString are : %@", [NSString readableTypesForPasteboard:_pb]);
+        NSLog(@"PLASTER : Readable types for NSAttributedString are : %@", [NSAttributedString readableTypesForPasteboard:_pb]);
+        [readables addObjectsFromArray:@[[NSString class], [NSAttributedString class]]];
+    }
+    NSArray *pbContents = [_pb readObjectsForClasses:readables options:nil];
+    NSLog(@"PLASTER: Read %ld items from pasteboard.", (unsigned long)[pbContents count]);
     if ([pbContents count] > 0) {
         //NSLog(@"PLASTER: PLASTER OUT : Found in pasteboard : [%@]" , [pbContents objectAtIndex:0]);
         // Now we have to extract the bytes
         id packet = [pbContents objectAtIndex:0];
+        const char *jsonBytes = NULL;
         if ([packet isKindOfClass:[NSString class]]) {
             NSLog(@"PLASTER : PLASTER OUT : Processing NSString packet and publishing...");
-            const char *jsonBytes = [TSPacketSerializer JSONWithStringPacket:[NSString stringWithString:packet] sender:[self alias]];
-            if (jsonBytes == NULL) {
-                NSLog(@"PLASTER: PLASTER OUT : Unable to complete operation, no data.");
-                return;
-            }
-            char *bytes = (char *)calloc(strlen(jsonBytes), sizeof(char));
-            if (bytes == NULL) {
-                NSLog(@"PLASTER: PLASTER OUT : Unable to allocate memory for operation to complete.");
-                return;
-            }
-            strcpy(bytes, (const char *)jsonBytes);
-            [_provider publish:bytes toChannel:_clientID];
-            free(bytes);
+            jsonBytes = [TSPacketSerializer JSONWithStringPacket:[NSString stringWithString:packet] sender:[self alias]];
+        } else if ([packet isKindOfClass:[NSImage class]]) {
+            NSLog(@"PLASTER : PLASTER OUT : Processing NSImage packet and publishing...");
+            jsonBytes = [TSPacketSerializer JSONWithImagePacket:packet  sender:[self alias]];
         }
+        if (jsonBytes == NULL) {
+            NSLog(@"PLASTER: PLASTER OUT : Unable to complete operation, no data.");
+            return;
+        }
+        char *bytes = (char *)calloc(strlen(jsonBytes), sizeof(char));
+        if (bytes == NULL) {
+            NSLog(@"PLASTER: PLASTER OUT : Unable to allocate memory for operation to complete.");
+            return;
+        }
+        strcpy(bytes, (const char *)jsonBytes);
+        [_provider publish:jsonBytes toChannel:_clientID];
+        free(bytes);
+        return;
     } else {
         NSLog(@"PLASTER: PLASTER OUT : Nothing retrieved from pasteboard.");
     }
 }
 
 - (void)testHandlePlasterInWithData:(char *)data {
-    NSLog(@"PLASTER: TESTING : HANDLE PLASTER IN:...");
+    printf("PLASTER: TEST : HANDLE PLASTER IN:");
+    NSDictionary *payload = nil;
     if (data) {
         NSDictionary *payload = [TSPacketSerializer dictionaryFromJSON:data];
-        TSPasteboardPacket *packet = [[TSPasteboardPacket alloc] initWithTag:@"plaster-packet-string"
-                                                                      string:[payload objectForKey:@"plaster-packet-string"]];
-        NSString *sender = [payload objectForKey:@"plaster-sender"];
-        
-        NSLog(@"PLASTER: TESTING : Obtained packet [%@]", packet);
-        
-        NSPasteboard *pb = [NSPasteboard generalPasteboard];
-        if (!pb) {
-            NSLog(@"PLASTER: TESTING : No pasteboard available...");
-            [packet release];
-            return;
-        }
-        NSLog(@"PLASTER: TESTING : Writing to [%@]", _testLog);
-        NSFileHandle *log = [NSFileHandle fileHandleForWritingAtPath:_testLog];
-        if (log) {
-            NSLog(@"Writing to log...");
-            [log truncateFileAtOffset:[log seekToEndOfFile]];
-            [log writeData:[[packet packet] dataUsingEncoding:NSUTF8StringEncoding]];
-            [log closeFile];
-            // Show test notification
-            // Notify the user.
-            NSUserNotificationCenter *userNotificationCenter = [NSUserNotificationCenter defaultUserNotificationCenter];
-            [userNotificationCenter removeAllDeliveredNotifications];
-            NSUserNotification *notification = [[NSUserNotification alloc] init];
-            [notification setTitle:@"Plaster Test Notification"];
-            [notification setSubtitle:@"You have recieved a new plaster from :"];
-            NSString *pasteInfo = [NSString stringWithFormat:@"[%@]", sender];
-            [notification setInformativeText:pasteInfo];
-            [userNotificationCenter deliverNotification:notification];
+        if (payload) {
+            NSString *type = [payload objectForKey:PLASTER_TYPE_JSON_KEY];
+            if ([type isEqualToString:PLASTER_TEXT_TYPE_JSON_VALUE]) {
+                TSPasteboardPacket *packet = [[TSPasteboardPacket alloc] initWithTag:PLASTER_PACKET_TEXT
+                                                                              string:[payload objectForKey:PLASTER_PACKET_TEXT]];
+                //NSString *sender = [payload objectForKey:PLASTER_SENDER_JSON_KEY];
+                
+                NSLog(@"PLASTER: TESTING : Obtained packet [%@]", packet);
+                
+                NSPasteboard *pb = [NSPasteboard generalPasteboard];
+                if (!pb) {
+                    NSLog(@"PLASTER: TESTING : No pasteboard available...");
+                    [packet release];
+                    return;
+                }
+                NSLog(@"PLASTER: TESTING : Writing to [%@]", _testLog);
+                NSFileHandle *log = [NSFileHandle fileHandleForWritingAtPath:_testLog];
+                if (log) {
+                    NSLog(@"Writing to log...");
+                    [log truncateFileAtOffset:[log seekToEndOfFile]];
+                    [log writeData:[[packet stringPacket] dataUsingEncoding:NSUTF8StringEncoding]];
+                    [log closeFile];
+                    // Show test notification
+                    /*
+                    BOOL notify = [[NSUserDefaults standardUserDefaults] boolForKey:PLASTER_NOTIFY_PLASTERS_PREF];
+                    if (notify) {
+                        NSString *pasteInfo = [NSString stringWithFormat:@"[%@]", sender];
+                        [self sendNotificationWithSubtitle:@"[TEST] You have recieved a new plaster from :" informativeText:pasteInfo];
+                    }
+                    */
 
+                }
+                [packet release];
+                return;
+            } else if ([type isEqualToString:PLASTER_IMAGE_TYPE_JSON_VALUE]) {
+                NSLog(@"PLASTER: TESTING: Processing image packet...");
+                return;
+            }
         }
-        [packet release];
-    } else {
-        NSLog(@"Data was nil : %s", data);
     }
     
+    NSLog(@"PLASTER: HANDLE IN : Data(%s) or payload(%@) was null. ", data, payload);
     return;
 }
 
 - (void)handlePlasterInWithData:(char *)data {
-    printf("PLASTER: HANDLE PLASTER IN: %s\n", data);
+    printf("PLASTER: HANDLE PLASTER IN:");
     NSDictionary *payload = nil;
     if (data) {
         payload = [TSPacketSerializer dictionaryFromJSON:data];
         if (payload) {
-            TSPasteboardPacket *packet = [[TSPasteboardPacket alloc] initWithTag:@"plaster-packet-string"
-                                                                          string:[payload objectForKey:@"plaster-packet-string"]];
-            NSString *sender = [payload objectForKey:@"plaster-sender"];
+            NSString *type = [payload objectForKey:PLASTER_TYPE_JSON_KEY];
+            id packet = nil;
+            //TSPlasterString *stringPacket = nil;
+            
+            if ([type isEqualToString:PLASTER_TEXT_TYPE_JSON_VALUE]) {
+                NSLog(@"PLASTER: Processing text packet...");
+                //packet = [[TSPasteboardPacket alloc] initWithTag:PLASTER_PACKET_TEXT string:[payload objectForKey:PLASTER_PACKET_TEXT]];
+                packet = [[TSPlasterString alloc] initWithString:[payload objectForKey:PLASTER_PACKET_TEXT]];
+                
+            } else if ([type isEqualToString:PLASTER_IMAGE_TYPE_JSON_VALUE]) {
+                NSLog(@"PLASTER: Processing image packet...");
+                //packet = [[TSPasteboardPacket alloc] initWithTag:PLASTER_PACKET_TEXT image:[payload objectForKey:PLASTER_PACKET_IMAGE]];
+                packet = [[TSPlasterImage alloc] initWithImage:[payload objectForKey:PLASTER_PACKET_IMAGE]];
+            }
+            
+            NSString *sender = [payload objectForKey:PLASTER_SENDER_JSON_KEY];
             NSLog(@"PLASTER: PLASTER IN : Obtained packet [%@]", packet);
             
             NSPasteboard *pb = [NSPasteboard generalPasteboard];
@@ -388,17 +431,20 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
                 [packet release];
                 return;
             }
-            NSLog(@"Pasting...");
+            NSLog(@"PLASTER: PLASTER IN : Pasting...");
             [pb clearContents];
             BOOL ok = [pb writeObjects:@[packet]];
             if (ok) {
                 NSLog(@"PLASTER: PLASTER IN : Peer copy successfully written to local pasteboard.");
                 // Notify the user.
-                NSString *pasteInfo = [NSString stringWithFormat:@"[%@]", sender];
-                [self sendNotificationWithSubtitle:@"You have recieved a new plaster from :" informativeText:pasteInfo];
+                BOOL notify = [[NSUserDefaults standardUserDefaults] boolForKey:PLASTER_NOTIFY_PLASTERS_PREF];
+                if (notify) {
+                    NSString *pasteInfo = [NSString stringWithFormat:@"[%@]", sender];
+                    [self sendNotificationWithSubtitle:@"You have recieved a new plaster from :" informativeText:pasteInfo];
+                }
             }
             [packet release];
-            return;
+            return;            
         }
     }
     
@@ -439,8 +485,11 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
             if (![_plasterPeers containsObject:plpeer]) {
                 [_plasterPeers addObject:plpeer];
                 //If configured, send a notification...
-                NSString *subtitle = [NSString stringWithFormat:@"%@ has joined.", [plpeer peerAlias]];
-                [self sendNotificationWithSubtitle:subtitle informativeText:nil];
+                BOOL notify = [[NSUserDefaults standardUserDefaults] boolForKey:PLASTER_NOTIFY_JOINS_PREF];
+                if (notify) {
+                    NSString *subtitle = [NSString stringWithFormat:@"%@ has joined.", [plpeer peerAlias]];
+                    [self sendNotificationWithSubtitle:subtitle informativeText:nil];
+                }
             }
             [plpeer release];            
         } else if ([str hasPrefix:@"GOODBYE:"]) {
@@ -457,8 +506,11 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
             if ([_plasterPeers containsObject:plpeer]) {
                 [_plasterPeers removeObject:plpeer];
                 //If configured, send a notification...
-                NSString *subtitle = [NSString stringWithFormat:@"%@ has left.", [plpeer peerAlias]];
-                [self sendNotificationWithSubtitle:subtitle informativeText:nil];
+                BOOL notify = [[NSUserDefaults standardUserDefaults] boolForKey:PLASTER_NOTIFY_DEPARTURES_PREF];
+                if (notify) {
+                    NSString *subtitle = [NSString stringWithFormat:@"%@ has left.", [plpeer peerAlias]];
+                    [self sendNotificationWithSubtitle:subtitle informativeText:nil];
+                }
             }
             [plpeer release];
         }
@@ -470,15 +522,22 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
 #pragma mark Notification Methods
 
 - (void)sendNotificationWithSubtitle:(NSString *)subtitle informativeText:(NSString *)text {
-    NSUserNotificationCenter *userNotificationCenter = [NSUserNotificationCenter defaultUserNotificationCenter];
-    [userNotificationCenter removeAllDeliveredNotifications];
     NSUserNotification *notification = [[NSUserNotification alloc] init];
     [notification setTitle:@"Plaster Notification"];
     [notification setSubtitle:subtitle];
     if (text) {
         [notification setInformativeText:text];        
     }
-    [userNotificationCenter deliverNotification:notification];
+    [_userNotificationCenter deliverNotification:notification];
+    [notification release];
+}
+
+- (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center shouldPresentNotification:(NSUserNotification *)notification {
+    if ([[notification title] isEqualToString:@"Plaster Notification"]) {
+        return YES;        
+    }
+    
+    return NO;
 }
 
 - (void)dealloc {
@@ -487,7 +546,6 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
     [_provider release];
     [_pb release];
     [_dispatcher release];
-    [_readables release];
     [_handlerTable release];
     if (_testMode) {
         [_testLog release];

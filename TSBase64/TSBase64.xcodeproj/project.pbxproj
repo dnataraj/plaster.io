@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		41BF51C2176E0DF300D5CCD4 /* NSData+TSBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = 41BF51C1176E0DF300D5CCD4 /* NSData+TSBase64.m */; };
 		41FE1373174BA99A00511395 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41FE1372174BA99A00511395 /* Foundation.framework */; };
 		41FE1389174BAAB500511395 /* TSBase64.c in Sources */ = {isa = PBXBuildFile; fileRef = 41FE1388174BAAB500511395 /* TSBase64.c */; };
 		41FE138D174BAFED00511395 /* NSString+TSBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FE138C174BAFED00511395 /* NSString+TSBase64.m */; };
@@ -29,6 +30,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		41BF51C0176E0DF300D5CCD4 /* NSData+TSBase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+TSBase64.h"; sourceTree = "<group>"; };
+		41BF51C1176E0DF300D5CCD4 /* NSData+TSBase64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+TSBase64.m"; sourceTree = "<group>"; };
 		41FE136F174BA99A00511395 /* libTSBase64.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTSBase64.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		41FE1372174BA99A00511395 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		41FE1376174BA99A00511395 /* TSBase64-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TSBase64-Prefix.pch"; sourceTree = "<group>"; };
@@ -83,6 +86,8 @@
 				41FE138A174BAABF00511395 /* TSBase64.h */,
 				41FE138B174BAFED00511395 /* NSString+TSBase64.h */,
 				41FE138C174BAFED00511395 /* NSString+TSBase64.m */,
+				41BF51C0176E0DF300D5CCD4 /* NSData+TSBase64.h */,
+				41BF51C1176E0DF300D5CCD4 /* NSData+TSBase64.m */,
 			);
 			path = TSBase64;
 			sourceTree = "<group>";
@@ -148,6 +153,7 @@
 			files = (
 				41FE1389174BAAB500511395 /* TSBase64.c in Sources */,
 				41FE138D174BAFED00511395 /* NSString+TSBase64.m in Sources */,
+				41BF51C2176E0DF300D5CCD4 /* NSData+TSBase64.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -257,6 +263,7 @@
 				41FE137F174BA99A00511395 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -10,10 +10,11 @@
 #import "TSMessagingProvider.h"
 #import "TSDataStoreProvider.h"
 
-@interface TSPlasterController : NSObject
+@interface TSPlasterController : NSObject <NSUserNotificationCenterDelegate>
 
 @property (readwrite, atomic, copy) NSString *sessionKey;
 @property (readwrite, nonatomic, copy) NSString *alias;
+@property (nonatomic) NSInteger changeCount;
 
 - (id)initWithPasteboard:(NSPasteboard *)pasteboard provider:(id<TSMessagingProvider, TSDataStoreProvider>)provider;
 

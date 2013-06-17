@@ -41,10 +41,16 @@
         NSLog(@"AD: Registering default preferences...");
         // Register application default preferences
         NSMutableDictionary *defaultPreferences = [NSMutableDictionary dictionary];
-        [defaultPreferences setObject:[[NSHost currentHost] localizedName] forKey:@"plaster-device-name"];
-        [defaultPreferences setObject:[TSClientIdentifier createUUID] forKey:@"plaster-session-id"];
-        [defaultPreferences setObject:[NSNumber numberWithBool:YES] forKey:@"plaster-allow-text"];
-        [defaultPreferences setObject:[NSNumber numberWithBool:NO] forKey:@"plaster-allow-images"];
+        [defaultPreferences setObject:[[NSHost currentHost] localizedName] forKey:PLASTER_DEVICE_NAME_PREF];
+        
+        [defaultPreferences setObject:[NSNumber numberWithBool:YES] forKey:PLASTER_ALLOW_TEXT_TYPE_PREF];
+        [defaultPreferences setObject:[NSNumber numberWithBool:YES] forKey:PLASTER_ALLOW_IMAGE_TYPE_PREF];
+        [defaultPreferences setObject:[NSNumber numberWithBool:NO] forKey:PLASTER_ALLOW_FILE_TYPE_PREF];
+        
+        [defaultPreferences setObject:[NSNumber numberWithBool:YES] forKey:PLASTER_NOTIFY_JOINS_PREF];
+        [defaultPreferences setObject:[NSNumber numberWithBool:YES] forKey:PLASTER_NOTIFY_DEPARTURES_PREF];
+        [defaultPreferences setObject:[NSNumber numberWithBool:YES] forKey:PLASTER_NOTIFY_PLASTERS_PREF];
+        
         
         // A test mode flag to allow file logging
         [defaultPreferences setObject:[NSNumber numberWithBool:NO] forKey:@"plaster-test-mode"];
@@ -72,7 +78,6 @@
     */
     [_plasterStatusItem setHighlightMode:YES];
     [_plasterStatusItem setMenu:[self plasterMenu]];
-    
     [self.plasterMenu setAutoenablesItems:NO];
     
     // The user can either join an existing session (by entering the session key)
@@ -187,7 +192,19 @@
 - (void)createNewSession:(id)sender {
     [self willChangeValueForKey:@"sessionKey"];
     self.sessionKey = [TSClientIdentifier createUUID];
+    // TODO : Copy this to clipboard!
     [self didChangeValueForKey:@"sessionKey"];
+}
+
+#pragma mark Text control delegate methods
+
+- (void)controlTextDidChange:(NSNotification *)obj {
+    if ([[[self joinSessionKeyTextField] stringValue] length] > 0) {
+        [self.okButton setEnabled:YES];
+        return;
+    }
+    
+    [self.okButton setEnabled:NO];
 }
 
 #pragma mark Peer menu delegate methods.

@@ -10,8 +10,8 @@
 		410EC43E1769A56B00D4826D /* pause.png in Resources */ = {isa = PBXBuildFile; fileRef = 410EC43D1769A56B00D4826D /* pause.png */; };
 		410EC4401769A57E00D4826D /* play.png in Resources */ = {isa = PBXBuildFile; fileRef = 410EC43F1769A57E00D4826D /* play.png */; };
 		410EC4421769DC6900D4826D /* stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 410EC4411769DC6900D4826D /* stop.png */; };
-		4171B814176223E400936C31 /* NSString+TSBase64.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B68D84175DD9930090A108 /* NSString+TSBase64.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		4171B815176223E700936C31 /* TSBase64.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B68D85175DD9930090A108 /* TSBase64.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4171B814176223E400936C31 /* NSString+TSBase64.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B68D84175DD9930090A108 /* NSString+TSBase64.h */; settings = {ATTRIBUTES = (); }; };
+		4171B815176223E700936C31 /* TSBase64.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B68D85175DD9930090A108 /* TSBase64.h */; settings = {ATTRIBUTES = (); }; };
 		4171B81A1762276000936C31 /* libTSBase64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4171B8191762276000936C31 /* libTSBase64.a */; };
 		41B68C59175CD7700090A108 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41B68C58175CD7700090A108 /* Cocoa.framework */; };
 		41B68C63175CD7700090A108 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 41B68C61175CD7700090A108 /* InfoPlist.strings */; };
@@ -44,7 +44,11 @@
 		41B68D72175CDDE70090A108 /* TSPlasterController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68D02175CD94C0090A108 /* TSPlasterController.m */; };
 		41B68D75175CDF030090A108 /* TSClientStartPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 41B68D74175CDF030090A108 /* TSClientStartPanel.xib */; };
 		41B68D7C175CE4AE0090A108 /* libhiredis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41B68D7B175CE4AE0090A108 /* libhiredis.a */; };
-		41F98675176867E20031609C /* TSPlasterPeer.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F98673176867E10031609C /* TSPlasterPeer.h */; };
+		41BF51C4176E1BF000D5CCD4 /* NSData+TSBase64.h in Headers */ = {isa = PBXBuildFile; fileRef = 41BF51C3176E1BF000D5CCD4 /* NSData+TSBase64.h */; };
+		41BF51C7176EFC5400D5CCD4 /* TSPlasterString.h in Headers */ = {isa = PBXBuildFile; fileRef = 41BF51C5176EFC5300D5CCD4 /* TSPlasterString.h */; };
+		41BF51C8176EFC5400D5CCD4 /* TSPlasterString.m in Sources */ = {isa = PBXBuildFile; fileRef = 41BF51C6176EFC5400D5CCD4 /* TSPlasterString.m */; };
+		41BF51CB176F173E00D5CCD4 /* TSPlasterImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 41BF51C9176F173D00D5CCD4 /* TSPlasterImage.h */; };
+		41BF51CC176F173E00D5CCD4 /* TSPlasterImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 41BF51CA176F173D00D5CCD4 /* TSPlasterImage.m */; };
 		41F98676176867E20031609C /* TSPlasterPeer.m in Sources */ = {isa = PBXBuildFile; fileRef = 41F98674176867E10031609C /* TSPlasterPeer.m */; };
 /* End PBXBuildFile section */
 
@@ -111,6 +115,11 @@
 		41B68D7B175CE4AE0090A108 /* libhiredis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libhiredis.a; sourceTree = "<group>"; };
 		41B68D84175DD9930090A108 /* NSString+TSBase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+TSBase64.h"; sourceTree = "<group>"; };
 		41B68D85175DD9930090A108 /* TSBase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSBase64.h; sourceTree = "<group>"; };
+		41BF51C3176E1BF000D5CCD4 /* NSData+TSBase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+TSBase64.h"; sourceTree = "<group>"; };
+		41BF51C5176EFC5300D5CCD4 /* TSPlasterString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSPlasterString.h; sourceTree = "<group>"; };
+		41BF51C6176EFC5400D5CCD4 /* TSPlasterString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSPlasterString.m; sourceTree = "<group>"; };
+		41BF51C9176F173D00D5CCD4 /* TSPlasterImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSPlasterImage.h; sourceTree = "<group>"; };
+		41BF51CA176F173D00D5CCD4 /* TSPlasterImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSPlasterImage.m; sourceTree = "<group>"; };
 		41F98673176867E10031609C /* TSPlasterPeer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSPlasterPeer.h; sourceTree = "<group>"; };
 		41F98674176867E10031609C /* TSPlasterPeer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSPlasterPeer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -221,6 +230,10 @@
 				41F98674176867E10031609C /* TSPlasterPeer.m */,
 				41B68D03175CD94C0090A108 /* TSMessagingProvider.h */,
 				41B68D04175CD94C0090A108 /* TSDataStoreProvider.h */,
+				41BF51C5176EFC5300D5CCD4 /* TSPlasterString.h */,
+				41BF51C6176EFC5400D5CCD4 /* TSPlasterString.m */,
+				41BF51C9176F173D00D5CCD4 /* TSPlasterImage.h */,
+				41BF51CA176F173D00D5CCD4 /* TSPlasterImage.m */,
 			);
 			path = PlasterNA;
 			sourceTree = "<group>";
@@ -281,6 +294,7 @@
 		41B68D83175DD9930090A108 /* TSBase64 */ = {
 			isa = PBXGroup;
 			children = (
+				41BF51C3176E1BF000D5CCD4 /* NSData+TSBase64.h */,
 				41B68D84175DD9930090A108 /* NSString+TSBase64.h */,
 				41B68D85175DD9930090A108 /* TSBase64.h */,
 			);
@@ -294,9 +308,11 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				41BF51C4176E1BF000D5CCD4 /* NSData+TSBase64.h in Headers */,
 				4171B814176223E400936C31 /* NSString+TSBase64.h in Headers */,
 				4171B815176223E700936C31 /* TSBase64.h in Headers */,
-				41F98675176867E20031609C /* TSPlasterPeer.h in Headers */,
+				41BF51C7176EFC5400D5CCD4 /* TSPlasterString.h in Headers */,
+				41BF51CB176F173E00D5CCD4 /* TSPlasterImage.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -427,6 +443,8 @@
 				41B68C65175CD7700090A108 /* main.m in Sources */,
 				41B68CE9175CD9370090A108 /* TSAppDelegate.m in Sources */,
 				41F98676176867E20031609C /* TSPlasterPeer.m in Sources */,
+				41BF51C8176EFC5400D5CCD4 /* TSPlasterString.m in Sources */,
+				41BF51CC176F173E00D5CCD4 /* TSPlasterImage.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

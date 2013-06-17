@@ -79,7 +79,7 @@
     }
     
     if ([value respondsToSelector:@selector(length)]) {
-        BOOL canOK = ([value length] == 36);
+        BOOL canOK = ([value length] > 0);
         return [NSNumber numberWithBool:canOK];
     }
     

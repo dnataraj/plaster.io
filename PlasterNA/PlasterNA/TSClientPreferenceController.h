@@ -13,10 +13,16 @@
 @property (assign) IBOutlet NSTextField *deviceNameTextField;
 @property (assign) IBOutlet NSButton *handleTextTypeButton;
 @property (assign) IBOutlet NSButton *handleImageTypeButton;
+@property (assign) IBOutlet NSButton *handleFileTypeButton;
 @property (assign) IBOutlet NSTextField *sessionKeyLabelField;
 
+@property (assign) IBOutlet NSButton *shouldNotifyJoinsButton;
+@property (assign) IBOutlet NSButton *shouldNotifyDeparturesButton;
+@property (assign) IBOutlet NSButton *shouldNotifyPlastersButton;
 
 @property (readonly, copy) NSString *sessionKey, *deviceName;
-@property (readwrite) BOOL handlesTextType, handlesImageType;
+@property (readwrite) BOOL handlesTextType, handlesImageType, handlesFileType;
+@property (readwrite) BOOL shouldNotifyJoins, shouldNotifyDepartures, shouldNotifyPlasters;
+
 
 @end

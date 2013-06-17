@@ -18,6 +18,7 @@
 
 @property (assign) IBOutlet NSPanel *joinSessionHUD;
 @property (assign) IBOutlet NSTextField *joinSessionKeyTextField;
+@property (assign) IBOutlet NSButton *okButton;
 
 @property (readwrite, atomic, copy) NSString *sessionKey;
 
