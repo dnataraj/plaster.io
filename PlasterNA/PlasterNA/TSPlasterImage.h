@@ -8,10 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
+extern const NSString *PLASTER_IMAGE_UTI;
+
 @interface TSPlasterImage : NSObject <NSPasteboardReading, NSPasteboardWriting>
 
 @property (copy) NSImage *image;
 
 - (id)initWithImage:(NSImage *)anImage;
+- (NSData *)TIFFRepresentation;
 
 @end

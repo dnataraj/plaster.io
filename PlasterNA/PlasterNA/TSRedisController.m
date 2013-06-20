@@ -41,12 +41,12 @@ BOOL rcProcessReply(redisAsyncContext *ctx, void *r, void *data) {
         }
         return NO;
     }
-    
+    /*
     switch (reply->type) {
         case REDIS_REPLY_ERROR:
             printf("REDIS: ERROR! :REDIS_REPLY_ERROR : %s\n", reply->str);
             break;
-        /*
+        
         case REDIS_REPLY_STATUS:
             printf("REDIS: REDIS_REPLY_STATUS : %s\n", reply->str);
             break;
@@ -62,10 +62,11 @@ BOOL rcProcessReply(redisAsyncContext *ctx, void *r, void *data) {
         case REDIS_REPLY_ARRAY:
             printf("REDIS: REDIS_REPLY_ARRAY : Number of elements : %zd\n", reply->elements);
             break;
-        */    
+          
         default:
             break;
     }
+    */
     
     return YES;
 }
@@ -383,7 +384,7 @@ void freeBundle(HandlerBundle hb) {
     signal(SIGPIPE, SIG_IGN);
     NSString *address = [[self redisHost] address];
     const char *temp = [address UTF8String];
-    char *addr = malloc(sizeof(char) * strlen(temp));
+    char *addr = (char *)malloc(sizeof(char) * strlen(temp));
     //NSAssert(addr != NULL, @"REDIS: ERROR: Unable to malloc for string!");
     strcpy(addr, temp);
     redisAsyncContext *localAsyncCtx = redisAsyncConnect(addr, (uint)[self redisPort]);
@@ -413,13 +414,13 @@ void freeBundle(HandlerBundle hb) {
     return localAsyncCtx;
 }
 
-- (NSString *)subscribeToChannels:(NSArray *)someChannels options:(NSDictionary *)someOptions {
+- (NSUInteger)subscribeToChannels:(NSArray *)someChannels options:(NSDictionary *)someOptions {
     NSString *channels = [someChannels componentsJoinedByString:@" "];
     NSString *command = [NSString stringWithFormat:@"SUBSCRIBE %@", channels];
     //NSLog(@"REDIS: Subscription command [%@]", command);
     redisAsyncContext *localAsyncCtx = [self connectAndDispatch];
     const char *temp = [command UTF8String];
-    char *cmd = malloc((sizeof(char)) * strlen(temp));
+    char *cmd = (char *)calloc(strlen(temp), (sizeof(char)));
     strcpy(cmd, temp);
     if (localAsyncCtx) {
         uint result = redisAsyncCommand(localAsyncCtx, rcSubscribeWithOptions, [someOptions retain], cmd);
@@ -427,20 +428,30 @@ void freeBundle(HandlerBundle hb) {
             NSLog(@"REDIS: Error buffering SUBSCRIBE command for this session : %s", localAsyncCtx->errstr);
             redisAsyncDisconnect(localAsyncCtx);
             free(cmd);
-            return nil;
+            return EXIT_FAILURE;
         }
         NSLog(@"REDIS: Registering new subscriber...");
         _subscribers[[self numSubscribers]] = localAsyncCtx;
         [self setNumSubscribers:[self numSubscribers] + 1];
     } else {
         NSLog(@"REDIS: Unable to complete SUBSCRIBE.");
+        free(cmd);
+        return EXIT_FAILURE;
     }
     
     free(cmd); 
-    return nil;
+    return EXIT_SUCCESS;
 }
 
-- (void)subscribeToChannel:(NSString *)channel options:(NSDictionary *)someOptions {
+- (NSUInteger)subscribeToChannel:(NSString *)channel options:(NSDictionary *)someOptions {
+    /*
+    NSString *command = [NSString stringWithFormat:@"SUBSCRIBE %@", channel];
+    NSLog(@"REDIS: Subscription command [%@]", command);
+    redisAsyncContext *localAsyncCtx = [self connectAndDispatch];
+    const char *temp = [channel UTF8String];
+    char *chan = (char *)calloc(strlen(temp), (sizeof(char)));
+    strcpy(chan, temp);
+    */
     NSString *command = [NSString stringWithFormat:@"SUBSCRIBE %@", channel];
     NSLog(@"REDIS: Subscription command [%@]", command);
     redisAsyncContext *localAsyncCtx = [self connectAndDispatch];
@@ -453,17 +464,19 @@ void freeBundle(HandlerBundle hb) {
             NSLog(@"REDIS: Error buffering SUBSCRIBE command for this session : %s", localAsyncCtx->errstr);
             redisAsyncDisconnect(localAsyncCtx);
             free(cmd);
-            return;
+            return EXIT_FAILURE;
         }
-        NSLog(@"REDIS: Registering new subscriber...");
+        NSLog(@"REDIS: Registering new subscription...");
         _subscribers[[self numSubscribers]] = localAsyncCtx;
         [self setNumSubscribers:[self numSubscribers] + 1];
     } else {
         NSLog(@"REDIS: Unable to complete SUBSCRIBE.");
+        free(cmd);
+        return EXIT_FAILURE;
     }
     
     free(cmd);
-    return;
+    return EXIT_SUCCESS;
 }
 
 - (void)unsubscribeAll {
@@ -471,17 +484,21 @@ void freeBundle(HandlerBundle hb) {
     for (int i = 0; i < [self numSubscribers]; i++) {
         redisAsyncContext *redisContext = _subscribers[i];
         NSLog(@"REDIS: Unsubscribing from : %dth subscriber...", i);
-        redisAsyncCommand(redisContext, rcSubscribe, NULL, "UNSUBSCRIBE");  // TODO: Check return!
+        uint result = redisAsyncCommand(redisContext, rcSubscribe, NULL, "UNSUBSCRIBE");
+        if (result != REDIS_OK) {
+            NSLog(@"REDIS: Failed to unsubscribe from %dth subscription.", i);
+        }
     }
     self.numSubscribers = 0;
 }
 
-- (void)publishObject:(NSString *)anObject toChannel:(NSString *)channel {
+- (NSUInteger)publishObject:(NSString *)anObject toChannel:(NSString *)channel {
+    NSLog(@"REDIS: Publishing object to channel : %@", channel);
     const char *temp1 = [anObject UTF8String];
     char *obj = (char *)calloc(strlen(temp1), sizeof(char));
     if (obj == NULL) {
         NSLog(@"REDIS: Unable to allocate memory for publish strings.");
-        return;
+        return EXIT_FAILURE;
     }
     strcpy(obj, temp1);
     const char *temp2 = [channel UTF8String];
@@ -489,7 +506,7 @@ void freeBundle(HandlerBundle hb) {
     if (chan == NULL) {
         NSLog(@"REDIS: Unable to allocate memory for publish strings.");
         free(obj);
-        return;
+        return EXIT_FAILURE;
     }
     strcpy(chan, temp2);
     redisAsyncContext *localAsyncCtx = [self connectAndDispatch];
@@ -500,22 +517,27 @@ void freeBundle(HandlerBundle hb) {
             redisAsyncDisconnect(localAsyncCtx);
             free(obj);
             free(chan);
-            return;
+            return EXIT_FAILURE;
         }
     } else {
         NSLog(@"REDIS: Unable to complete PUBLISH OBJ.");
+        free(obj);
+        free(chan);
+        return EXIT_FAILURE;        
     }
         
     free(obj);
     free(chan);
+    return EXIT_SUCCESS;
 }
 
-- (void)publish:(const char *)bytes toChannel:(NSString *)channel {
+- (NSUInteger)publish:(const char *)bytes toChannel:(NSString *)channel {
+    NSLog(@"REDIS: PUBLISH : Publishing [%zd] bytes to channel :%@ ", strlen(bytes), channel);
     const char *temp = [channel UTF8String];
     char *chan = (char *)calloc(strlen(temp), sizeof(char));
     if (chan == NULL) {
         NSLog(@"REDIS: Unable to allocate memory for publish strings.");
-        return;
+        return EXIT_FAILURE;
     }
     strcpy(chan, temp);
     redisAsyncContext *localAsyncCtx = [self connectAndDispatch];
@@ -525,23 +547,37 @@ void freeBundle(HandlerBundle hb) {
             NSLog(@"REDIS: Error buffering PUBLISH command for this session : %s", localAsyncCtx->errstr);
             redisAsyncDisconnect(localAsyncCtx);
             free(chan);
-            return;
+            return EXIT_FAILURE;
         }
     } else {
         NSLog(@"REDIS: Unable to complete PUBLISH OBJ.");
+        free(chan);
+        return EXIT_FAILURE;
     }
+    
     free(chan);
-    return;
+    return EXIT_SUCCESS;
 }
 
--(void)setStringValue:(NSString *)stringValue forKey:(NSString *)aKey {
+-(NSUInteger)setStringValue:(NSString *)stringValue forKey:(NSString *)aKey {
     NSLog(@"REDIS: Setting value [%@] for key [%@]...", stringValue, aKey);
-    char *key = (char *)malloc((sizeof(char) * strlen([aKey UTF8String])));
-    strcpy(key, [aKey UTF8String]);
-    char *value = (char *)malloc((sizeof(char) * strlen([stringValue UTF8String])));
-    strcpy(value, [stringValue UTF8String]);
+    const char *ckey = [aKey UTF8String];
+    char *key = (char *)calloc(strlen(ckey), sizeof(char));
+    if (key == NULL) {
+        NSLog(@"REDIS: SET : Error allocating memory for key.");
+        return EXIT_FAILURE;
+    }
+    strcpy(key, ckey);
+    const char *val = [stringValue UTF8String];
+    char *value = (char *)calloc(strlen(val), sizeof(char));
+    if (value == NULL) {
+        NSLog(@"REDIS: SET : Error allocating memory for value.");
+        free(key);
+        return EXIT_FAILURE;        
+    }
+    strcpy(value, val);
     redisReply *reply = NULL;
-    
+    // TODO: Get rid of blocking context!!
     void *response = redisCommand(_blockingContext, "SET %s %b", key, value, strlen(value));
     if ([self processReply:_blockingContext withReply:response andData:NULL]) {
         reply = (redisReply *)response;
@@ -554,16 +590,22 @@ void freeBundle(HandlerBundle hb) {
         }
     } else {
         NSLog(@"REDIS: Error processing SET.");
+        if (reply) {
+            freeReplyObject(reply);
+        }
+        free(key);
+        free(value);
+        return EXIT_FAILURE;
     }
     
     NSLog(@"REDIS: SET : Finishing...");
     if (reply) {
         freeReplyObject(reply);
-        free(key);
-        free(value);
     }
+    free(key);
+    free(value);
     
-    return;
+    return EXIT_SUCCESS;
 }
 
 -(NSString *)stringValueForKey:(NSString *)aKey {
@@ -607,12 +649,14 @@ void freeBundle(HandlerBundle hb) {
             NSLog(@"REDIS: Error buffering INCR command for this session : %s", localAsyncCtx->errstr);
             redisAsyncDisconnect(localAsyncCtx);
             free(bundle);
+            dispatch_release(incr);
             return incremented;
         }
         dispatch_semaphore_wait(incr, DISPATCH_TIME_FOREVER);
         if (bundle) {
             incremented = bundle->int_data;
         }
+        dispatch_release(incr);
     } else {
         NSLog(@"REDIS: Unable to complete INCR.");
     }
@@ -622,9 +666,14 @@ void freeBundle(HandlerBundle hb) {
 }
 
 -(NSUInteger)deleteKey:(NSString *)aKey {
+    NSUInteger result = EXIT_FAILURE;
     NSLog(@"REDIS: Deleting key [%@]...", aKey);
     const char *temp = [aKey UTF8String];
-    char *key = (char *)malloc((sizeof(char) * strlen(temp)));
+    char *key = (char *)calloc(strlen(temp), sizeof(char));
+    if (key == NULL) {
+        NSLog(@"REDIS: DELETE : Unable to allocate memory for key.");
+        return EXIT_FAILURE;
+    }
     strcpy(key, temp);
     redisReply *reply = NULL;
     NSUInteger deleted = 0;
@@ -636,18 +685,25 @@ void freeBundle(HandlerBundle hb) {
             deleted = reply->integer;
         } else {
             NSLog(@"REDIS: DEL replied with (nil).");
+            result = EXIT_FAILURE;
         }
         
     } else {
         NSLog(@"REDIS: Error processing DEL.");
+        result = EXIT_FAILURE;
     }
+    
     NSLog(@"REDIS: DEL : Finishing...");
     if (reply) {
         freeReplyObject(reply);
     }
     free(key);
     
-    return deleted;
+    if (deleted) {
+        result = EXIT_SUCCESS;
+    }
+    
+    return result;
 }
 
 - (void)dealloc {

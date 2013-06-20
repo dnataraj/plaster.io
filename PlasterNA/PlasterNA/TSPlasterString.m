@@ -27,9 +27,9 @@ NSString *PLASTER_STRING_UTI = @"com.trilobytesystems.plaster.string.uti";
         NSLog(@"PACKET: Initializing with property list %@", [propertyList class]);
         NSLog(@"PACKET: and type %@", type);
         if ([type isEqualToString:PLASTER_STRING_UTI]) {
-            self.string = [[NSString alloc] initWithPasteboardPropertyList:propertyList ofType:NSPasteboardTypeString];
+            self.string = [[[NSString alloc] initWithPasteboardPropertyList:propertyList ofType:NSPasteboardTypeString] autorelease];
         } else {
-            self.string = [[NSString alloc] initWithPasteboardPropertyList:propertyList ofType:type];
+            self.string = [[[NSString alloc] initWithPasteboardPropertyList:propertyList ofType:type] autorelease];
             
         }
         
@@ -59,9 +59,17 @@ NSString *PLASTER_STRING_UTI = @"com.trilobytesystems.plaster.string.uti";
     return [self.string pasteboardPropertyListForType:type];
 }
 
+- (NSData *)dataUsingEncoding:(NSStringEncoding)encoding {
+    return [self.string dataUsingEncoding:encoding];
+}
+
 - (NSString *)description {
         return [NSString stringWithFormat:@"Packet with [%ld] characters.", (unsigned long)[self.string length]];
 }
 
+- (void)dealloc {
+    [_string release];
+    [super dealloc];
+}
 
 @end

@@ -11,7 +11,7 @@
 @protocol TSDataStoreProvider <NSObject>
 
 @optional
--(void)setStringValue:(NSString *)stringValue forKey:(NSString *)key;
+-(NSUInteger)setStringValue:(NSString *)stringValue forKey:(NSString *)key;
 -(NSString *)stringValueForKey:(NSString *)key;
 
 -(void)setDictionaryValue:(NSDictionary *)dictionary forKey:(NSString *)key;

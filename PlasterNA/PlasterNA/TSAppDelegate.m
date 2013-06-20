@@ -16,7 +16,6 @@
 #import "TSPacketSerializer.h"
 #import "TSClientIdentifier.h"
 #import "TSClientPreferenceController.h"
-#import "TSClientStartPanelController.h"
 #import "TSPlasterController.h"
 #import "Carbon/Carbon.h"
 
@@ -46,6 +45,9 @@
         [defaultPreferences setObject:[NSNumber numberWithBool:YES] forKey:PLASTER_ALLOW_TEXT_TYPE_PREF];
         [defaultPreferences setObject:[NSNumber numberWithBool:YES] forKey:PLASTER_ALLOW_IMAGE_TYPE_PREF];
         [defaultPreferences setObject:[NSNumber numberWithBool:NO] forKey:PLASTER_ALLOW_FILE_TYPE_PREF];
+        
+        [defaultPreferences setObject:@"pasteboard" forKey:PLASTER_MODE_PREF];
+        [defaultPreferences setObject:NSHomeDirectory() forKey:PLASTER_FOLDER_PREF];
         
         [defaultPreferences setObject:[NSNumber numberWithBool:YES] forKey:PLASTER_NOTIFY_JOINS_PREF];
         [defaultPreferences setObject:[NSNumber numberWithBool:YES] forKey:PLASTER_NOTIFY_DEPARTURES_PREF];
@@ -183,7 +185,6 @@
     self.sessionKey = [[self joinSessionKeyTextField] stringValue];
     NSLog(@"AD: Joining plaster session with key [%@]", self.sessionKey);
     [[NSUserDefaults standardUserDefaults] setObject:self.sessionKey forKey:PLASTER_SESSION_KEY_PREF];
-    [[NSUserDefaults standardUserDefaults] synchronize];
     [_plaster setSessionKey:self.sessionKey];
     
     [self start:nil];    

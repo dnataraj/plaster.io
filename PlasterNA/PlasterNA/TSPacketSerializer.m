@@ -18,23 +18,29 @@
 }
 
 + (const char *)JSONWithStringPacket:(NSString *)packet sender:(NSString *)sender{
-    NSMutableDictionary *kvDictionary = [NSMutableDictionary dictionary];
-    [kvDictionary setObject:PLASTER_TEXT_TYPE_JSON_VALUE forKey:PLASTER_TYPE_JSON_KEY];
-    if (sender) {
-        [kvDictionary setObject:sender forKey:PLASTER_SENDER_JSON_KEY];
+    NSString *stringRep = [NSString stringWithString:packet];
+    if (stringRep) {
+        NSMutableDictionary *kvDictionary = [NSMutableDictionary dictionary];
+        [kvDictionary setObject:PLASTER_TEXT_TYPE_JSON_VALUE forKey:PLASTER_TYPE_JSON_KEY];
+        if (sender) {
+            [kvDictionary setObject:sender forKey:PLASTER_SENDER_JSON_KEY];
+        }
+        NSString *b64 = [[NSString alloc] initWithString:[stringRep base64String]];
+        [kvDictionary setObject:b64 forKey:PLASTER_DATA_JSON_KEY];
+        [b64 release];
+        NSError *error = nil;
+        NSData *json = [NSJSONSerialization dataWithJSONObject:kvDictionary options:0 error:&error];
+        if (error) {
+            NSLog(@"PACKET SERIALIZER: Error occured during serialization : %@", error);
+            return NULL;
+        }
+        //[TSPacketSerializer logJSONToFile:json];
+        NSString *string = [[[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding] autorelease];
+        return [string UTF8String];
     }
-    NSString *b64 = [[NSString alloc] initWithString:[packet base64String]];
-    [kvDictionary setObject:b64 forKey:PLASTER_DATA_JSON_KEY];
-    [b64 release];
-    NSError *error = nil;
-    NSData *json = [NSJSONSerialization dataWithJSONObject:kvDictionary options:0 error:&error];
-    if (error) {
-        NSLog(@"PACKET SERIALIZER: Error occured during serialization : %@", error);
-        return NULL;
-    }
-    //[TSPacketSerializer logJSONToFile:json];
-    NSString *string = [[[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding] autorelease];
-    return [string UTF8String];
+    
+    NSLog(@"PACKET SERIALIZER: Unable to obtain string representation");
+    return nil;
 }
 
 + (const char *)JSONWithImagePacket:(NSImage *)packet sender:(NSString *)sender{
@@ -42,6 +48,32 @@
     if (tiffRep) {
         NSMutableDictionary *kvDictionary = [NSMutableDictionary dictionary];
         [kvDictionary setObject:PLASTER_IMAGE_TYPE_JSON_VALUE forKey:PLASTER_TYPE_JSON_KEY];
+        if (sender) {
+            [kvDictionary setObject:sender forKey:PLASTER_SENDER_JSON_KEY];
+        }
+        NSData *imageData = [[NSData alloc] initWithData:tiffRep];
+        NSString *b64 = [imageData base64String];
+        [imageData release];
+        [kvDictionary setObject:b64 forKey:PLASTER_DATA_JSON_KEY];
+        NSError *error = nil;
+        NSData *json = [NSJSONSerialization dataWithJSONObject:kvDictionary options:0 error:&error];
+        if (error) {
+            NSLog(@"PACKET SERIALIZER: Error occured during serialization : %@", error);
+            return NULL;
+        }
+        NSString *string = [[[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding] autorelease];
+        return [string UTF8String];
+    }
+    NSLog(@"PACKET SERIALIZER: Unable to obtain tiff representation.");
+    
+    return nil;
+}
+
+/*
++ (const char *)JSONDataPacketWithURL:(NSURL *)url sender:(NSString *)sender {
+    if (url) {
+        NSMutableDictionary *kvDictionary = [NSMutableDictionary dictionary];
+        [kvDictionary setObject:PLASTER_FILE_TYPE_JSON_VALUE forKey:PLASTER_TYPE_JSON_KEY];
         if (sender) {
             [kvDictionary setObject:sender forKey:PLASTER_SENDER_JSON_KEY];
         }
@@ -63,7 +95,7 @@
     
     return nil;
 }
-
+*/
 
 + (NSDictionary *)dictionaryFromJSON:(const char *)json {
     NSData *data = [NSData dataWithBytes:json length:strlen(json)];

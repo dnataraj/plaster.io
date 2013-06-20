@@ -27,9 +27,9 @@ NSString *PLASTER_IMAGE_UTI = @"com.trilobytesystems.plaster.image.uti";
         NSLog(@"PACKET: Initializing with property list %@", [propertyList class]);
         NSLog(@"PACKET: and type %@", type);
         if ([type isEqualToString:PLASTER_IMAGE_UTI]) {
-            self.image = [[NSImage alloc] initWithPasteboardPropertyList:propertyList ofType:NSPasteboardTypeTIFF];
+            self.image = [[[NSImage alloc] initWithPasteboardPropertyList:propertyList ofType:NSPasteboardTypeTIFF] autorelease];
         } else {
-            self.image = [[NSImage alloc] initWithPasteboardPropertyList:propertyList ofType:type];
+            self.image = [[[NSImage alloc] initWithPasteboardPropertyList:propertyList ofType:type] autorelease];
             
         }
         
@@ -59,8 +59,17 @@ NSString *PLASTER_IMAGE_UTI = @"com.trilobytesystems.plaster.image.uti";
     return [self.image pasteboardPropertyListForType:type];
 }
 
+- (NSData *)TIFFRepresentation {
+    return [self.image TIFFRepresentation];
+}
+
 - (NSString *)description {
     return [NSString stringWithFormat:@"Packet with [%f]h and [%f]w.", [self.image size].height, [self.image size].width];
+}
+
+- (void)dealloc {
+    [_image release];
+    [super dealloc];
 }
 
 @end

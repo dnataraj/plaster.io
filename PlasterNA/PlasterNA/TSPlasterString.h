@@ -8,10 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
+extern const NSString *PLASTER_STRING_UTI;
+
 @interface TSPlasterString : NSObject <NSPasteboardReading, NSPasteboardWriting>
 
 @property (copy) NSString *string;
 
 - (id)initWithString:(NSString *)aString;
+- (NSData *)dataUsingEncoding:(NSStringEncoding)encoding;
 
 @end
