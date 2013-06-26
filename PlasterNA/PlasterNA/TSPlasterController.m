@@ -24,35 +24,6 @@
 #define TEST_LOG_FILE "plaster_in.log"
 #define JSON_LOG_FILE "plaster_json_out.log"
 
-/*
-struct _TSPlasterPeer {
-    const char *peer;
-    const char *peerAlias;
-};
-
-void printPeer(struct _TSPlasterPeer peer) {
-    printf("Peer : %s\n", peer.peer);
-    printf("Peer Alias : %s\n", peer.peerAlias);
-}
-
-struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
-    struct _TSPlasterPeer *plasterPeer = (struct _TSPlasterPeer *)calloc(1, sizeof(struct _TSPlasterPeer));
-    const char *temp = [peerObj UTF8String];
-    char *peer = (char *)calloc(strlen(temp), sizeof(char));
-    if (peer == NULL) {
-        return nil;
-    }
-    strcpy(peer, temp);
-    
-    const char *peerCString = strtok(peer, "_");
-    const char *aliasCString = strtok(NULL, "_");
-    plasterPeer->peer = peerCString;
-    plasterPeer->peerAlias = aliasCString;
-    
-    return plasterPeer;
-}
-*/
-
 @implementation TSPlasterController {
     NSString *_clientID;
     NSPasteboard *_pb;
@@ -79,13 +50,14 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
             return nil;
         }
         _clientID = [[TSClientIdentifier clientID] retain];
-        NSString *aliasPref = [[NSUserDefaults standardUserDefaults] stringForKey:PLASTER_DEVICE_NAME_PREF];
+        NSString *aliasPref = [[NSUserDefaults standardUserDefaults] stringForKey:TSPlasterDeviceName];
         if (aliasPref) {
             [self setAlias:aliasPref];
         } else {
             [self setAlias:[[NSHost currentHost] localizedName]];            
         }
-        [self setSessionKey:[[NSUserDefaults standardUserDefaults] stringForKey:PLASTER_SESSION_KEY_PREF]];
+        //[self setSessionKey:[[NSUserDefaults standardUserDefaults] stringForKey:PLASTER_SESSION_KEY_PREF]];
+        [self setSessionKey:nil];
         _userNotificationCenter = [NSUserNotificationCenter defaultUserNotificationCenter];
         _userNotificationCenter.delegate = self;
 
@@ -214,6 +186,7 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
 }
 
 - (void)start {
+    NSAssert(_sessionKey != nil, @"PLASTER: FATAL : Will not start without a valid session key");
     /*
         Start a plaster session, OR join an existing one.
     */
@@ -408,9 +381,8 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
     if (data) {
         payload = [TSPacketSerializer dictionaryFromJSON:data];
         if (payload) {
-            NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-            BOOL allowTextType = [userDefaults boolForKey:PLASTER_ALLOW_TEXT_TYPE_PREF];
-            BOOL allowImageType = [userDefaults boolForKey:PLASTER_ALLOW_IMAGE_TYPE_PREF];
+            BOOL allowTextType = [[_sessionProfile objectForKey:TSPlasterAllowText] boolValue];
+            BOOL allowImageType = [[_sessionProfile objectForKey:TSPlasterAllowImages] boolValue];;
             
             NSString *type = [payload objectForKey:PLASTER_TYPE_JSON_KEY];
             id packet = nil;
@@ -440,8 +412,8 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
             NSString *sender = [payload objectForKey:PLASTER_SENDER_JSON_KEY];
             
             // Figure out how the user wants to write out the packet - pasteboard or file
-            NSString *mode = [userDefaults stringForKey:PLASTER_MODE_PREF];
-            if ([mode isEqualToString:PLASTER_MODE_PASTEBOARD]) {
+            NSString *mode = [_sessionProfile objectForKey:TSPlasterMode];
+            if ([mode isEqualToString:TSPlasterModePasteboard]) {
                 NSLog(@"PLASTER: HANDLE IN : Operating in pasteboard mode...");
                 NSPasteboard *pb = [NSPasteboard generalPasteboard];
                 if (!pb) {
@@ -455,13 +427,13 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
                 if (ok) {
                     NSLog(@"PLASTER: HANDLE IN : Peer copy successfully written to local pasteboard.");
                     // Notify the user.
-                    BOOL notify = [userDefaults boolForKey:PLASTER_NOTIFY_PLASTERS_PREF];
+                    BOOL notify = [[_sessionProfile objectForKey:TSPlasterNotifyPlasters] boolValue];
                     if (notify) {
                         NSString *pasteInfo = [NSString stringWithFormat:@"[%@]", sender];
                         [self sendNotificationWithSubtitle:@"You have recieved a new plaster from :" informativeText:pasteInfo];
                     }
                 }
-            } else if ([mode isEqualToString:PLASTER_MODE_FILE]) {
+            } else if ([mode isEqualToString:TSPlasterModeFile]) {
                 NSLog(@"PLASTER: HANDLE IN : Operating in file mode...");
                 // Since this is just ordinary clipboard text and image data, generate a file name
                 NSFileManager *fm = [NSFileManager defaultManager];
@@ -472,7 +444,7 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
                 [now release];
                 [dateFormatter release];
                 
-                NSString *plasterFolderPath = [userDefaults stringForKey:PLASTER_FOLDER_PREF];
+                NSString *plasterFolderPath = [_sessionProfile objectForKey:TSPlasterFolderPath];
                 NSString *plasterFileName = nil;
                 NSData *blob = nil;
                 if ([type isEqualToString:PLASTER_TEXT_TYPE_JSON_VALUE]) {
@@ -492,7 +464,7 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
                 if (![fm createFileAtPath:outputPath contents:blob attributes:nil]) {
                     NSLog(@"PLASTER: HANDLE IN : Unable to create content file at path : %@", outputPath);
                 } else {
-                    BOOL notify = [userDefaults boolForKey:PLASTER_NOTIFY_PLASTERS_PREF];
+                    BOOL notify = [[_sessionProfile objectForKey:TSPlasterNotifyPlasters] boolValue];
                     if (notify) {
                         NSString *pasteInfo = [NSString stringWithFormat:@"[%@]", sender];
                         [self sendNotificationWithSubtitle:@"You have recieved a new file from :" informativeText:pasteInfo];
@@ -544,9 +516,9 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
                     [_plasterPeers addObject:plpeer];
                 }
                 //If configured, send a notification...
-                BOOL notify = [[NSUserDefaults standardUserDefaults] boolForKey:PLASTER_NOTIFY_JOINS_PREF];
+                BOOL notify = [[_sessionProfile objectForKey:TSPlasterNotifyJoins] boolValue];
                 if (notify) {
-                    NSString *subtitle = [NSString stringWithFormat:@"%@ has joined session %@", [plpeer peerAlias], [self sessionKey]];
+                    NSString *subtitle = [NSString stringWithFormat:@"'%@' has joined session [%@]", [plpeer peerAlias], [_sessionProfile objectForKey:TSPlasterProfileName]];
                     [self sendNotificationWithSubtitle:subtitle informativeText:nil];
                 }
             }
@@ -567,9 +539,9 @@ struct _TSPlasterPeer *makePlasterPeer(NSString *peerObj) {
                     [_plasterPeers removeObject:plpeer];
                 }
                 //If configured, send a notification...
-                BOOL notify = [[NSUserDefaults standardUserDefaults] boolForKey:PLASTER_NOTIFY_DEPARTURES_PREF];
+                BOOL notify = [[_sessionProfile objectForKey:TSPlasterNotifyDepartures] boolValue];
                 if (notify) {
-                    NSString *subtitle = [NSString stringWithFormat:@"%@ has left session %@", [plpeer peerAlias], [self sessionKey]];
+                    NSString *subtitle = [NSString stringWithFormat:@"'%@' has left session [%@]", [plpeer peerAlias], [_sessionProfile objectForKey:TSPlasterProfileName]];
                     [self sendNotificationWithSubtitle:subtitle informativeText:nil];
                 }
             }

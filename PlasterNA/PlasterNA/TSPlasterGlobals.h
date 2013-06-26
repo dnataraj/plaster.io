@@ -17,33 +17,31 @@
 #define DEFAULT_PUBLISHER TSRedisController
 
 // Keys for various user preferences.
-#define PLASTER_SESSION_KEY_PREF @"plaster-session-key"
-#define PLASTER_DEVICE_NAME_PREF @"plaster-device-name"
-#define PLASTER_ALLOW_TEXT_TYPE_PREF @"plaster-allow-text"
-#define PLASTER_ALLOW_IMAGE_TYPE_PREF @"plaster-allow-images"
-#define PLASTER_ALLOW_FILE_TYPE_PREF @"plaster-allow-files"
-#define PLASTER_NOTIFY_JOINS_PREF @"plaster-notify-joins"
-#define PLASTER_NOTIFY_DEPARTURES_PREF @"plaster-notify-departures"
-#define PLASTER_NOTIFY_PLASTERS_PREF @"plaster-notify-plasters"
-#define PLASTER_MODE_PREF @"plaster-mode"
-#define PLASTER_FOLDER_PREF @"plaster-folder-path"
-
-// Plaster destinations
-#define PLASTER_MODE_PASTEBOARD @"pasteboard"
-#define PLASTER_MODE_FILE @"file"
+extern NSString *const TSPlasterDeviceName;
+extern NSString *const TSPlasterProfiles;
+extern NSString *const TSPlasterSessionKey;
+extern NSString *const TSPlasterProfileName;
+extern NSString *const TSPlasterAllowText;
+extern NSString *const TSPlasterAllowImages;
+extern NSString *const TSPlasterAllowFiles;
+extern NSString *const TSPlasterNotifyJoins;
+extern NSString *const TSPlasterNotifyDepartures;
+extern NSString *const TSPlasterNotifyPlasters;
+extern NSString *const TSPlasterMode;
+extern NSString *const TSPlasterModePasteboard;
+extern NSString *const TSPlasterModeFile;
+extern NSString *const TSPlasterFolderPath;
 
 // Keys used in the JSON packet
 #define PLASTER_TYPE_JSON_KEY @"plaster-type"
 #define PLASTER_DATA_JSON_KEY @"plaster-data"
-#define PLASTER_MODE_JSON_KEY @"plaster-mode"
 #define PLASTER_SENDER_JSON_KEY @"plaster-sender"
 #define PLASTER_FILENAME_JSON_KEY @"plaster-file-name"
+
 // Standard values used in the JSON packet
 #define PLASTER_TEXT_TYPE_JSON_VALUE @"plaster-text"
 #define PLASTER_IMAGE_TYPE_JSON_VALUE @"plaster-image"
 #define PLASTER_FILE_TYPE_JSON_VALUE @"plaster-file"
-#define PLASTER_MODE_PASTEBOARD_JSON_VALUE @"pasteboard"
-#define PLASTER_MODE_FILE_JSON_VALUE @"file"
 
 // Keys used for decoded data
 #define PLASTER_PACKET_TEXT @"plaster-packet-text"

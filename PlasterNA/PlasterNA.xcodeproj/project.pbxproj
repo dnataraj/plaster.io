@@ -50,6 +50,7 @@
 		41BF51CB176F173E00D5CCD4 /* TSPlasterImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 41BF51C9176F173D00D5CCD4 /* TSPlasterImage.h */; };
 		41BF51CC176F173E00D5CCD4 /* TSPlasterImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 41BF51CA176F173D00D5CCD4 /* TSPlasterImage.m */; };
 		41F98676176867E20031609C /* TSPlasterPeer.m in Sources */ = {isa = PBXBuildFile; fileRef = 41F98674176867E10031609C /* TSPlasterPeer.m */; };
+		41FCC37E177AD34700859EF1 /* TSPlasterGlobals.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FCC37D177AD34700859EF1 /* TSPlasterGlobals.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -122,6 +123,7 @@
 		41BF51CA176F173D00D5CCD4 /* TSPlasterImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSPlasterImage.m; sourceTree = "<group>"; };
 		41F98673176867E10031609C /* TSPlasterPeer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSPlasterPeer.h; sourceTree = "<group>"; };
 		41F98674176867E10031609C /* TSPlasterPeer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSPlasterPeer.m; sourceTree = "<group>"; };
+		41FCC37D177AD34700859EF1 /* TSPlasterGlobals.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSPlasterGlobals.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -212,6 +214,7 @@
 				41B68CEE175CD9410090A108 /* TSRedisController.h */,
 				41B68CEF175CD9410090A108 /* TSRedisController.m */,
 				41B68CF0175CD9410090A108 /* TSPlasterGlobals.h */,
+				41FCC37D177AD34700859EF1 /* TSPlasterGlobals.m */,
 				41B68CF1175CD9410090A108 /* TSEventDispatcher.h */,
 				41B68CF2175CD9410090A108 /* TSEventDispatcher.m */,
 				41B68CF3175CD9410090A108 /* TSPacketSerializer.h */,
@@ -445,6 +448,7 @@
 				41F98676176867E20031609C /* TSPlasterPeer.m in Sources */,
 				41BF51C8176EFC5400D5CCD4 /* TSPlasterString.m in Sources */,
 				41BF51CC176F173E00D5CCD4 /* TSPlasterImage.m in Sources */,
+				41FCC37E177AD34700859EF1 /* TSPlasterGlobals.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

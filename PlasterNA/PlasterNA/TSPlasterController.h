@@ -13,8 +13,9 @@
 @interface TSPlasterController : NSObject <NSUserNotificationCenterDelegate>
 
 @property (readwrite, atomic, copy) NSString *sessionKey;
+@property (copy) NSDictionary *sessionProfile;
 @property (readwrite, nonatomic, copy) NSString *alias;
-@property (nonatomic) NSInteger changeCount;
+@property NSInteger changeCount;
 
 - (id)initWithPasteboard:(NSPasteboard *)pasteboard provider:(id<TSMessagingProvider, TSDataStoreProvider>)provider;
 

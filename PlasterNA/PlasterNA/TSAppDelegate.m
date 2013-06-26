@@ -24,48 +24,35 @@
     TSRedisController *_redisController;
     TSPlasterController *_plaster;
     TSClientPreferenceController *_preferenceController;
-    NSMenu *_peersMenu;
+    NSMenu *_peersMenu, *_profilesMenu;
+    
+    NSUserDefaults *_userDefaults;
 }
 
 - (id)init {
     self = [super init];
     if (self) {
         NSLog(@"AD: Delegate initializing...");
+        _userDefaults = [[NSUserDefaults standardUserDefaults] retain];
         _redisController = [[TSRedisController alloc] init];
         _plaster = [[TSPlasterController alloc] initWithPasteboard:[NSPasteboard generalPasteboard] provider:_redisController];
         
         // Initialize the peers menu
         _peersMenu = [[NSMenu alloc] initWithTitle:@"Peers Menu"];
+        _profilesMenu = [[NSMenu alloc] initWithTitle:@"Profiles Menu"];
         
         NSLog(@"AD: Registering default preferences...");
         // Register application default preferences
         NSMutableDictionary *defaultPreferences = [NSMutableDictionary dictionary];
-        [defaultPreferences setObject:[[NSHost currentHost] localizedName] forKey:PLASTER_DEVICE_NAME_PREF];
-        
-        [defaultPreferences setObject:[NSNumber numberWithBool:YES] forKey:PLASTER_ALLOW_TEXT_TYPE_PREF];
-        [defaultPreferences setObject:[NSNumber numberWithBool:YES] forKey:PLASTER_ALLOW_IMAGE_TYPE_PREF];
-        [defaultPreferences setObject:[NSNumber numberWithBool:NO] forKey:PLASTER_ALLOW_FILE_TYPE_PREF];
-        
-        [defaultPreferences setObject:@"pasteboard" forKey:PLASTER_MODE_PREF];
-        [defaultPreferences setObject:NSHomeDirectory() forKey:PLASTER_FOLDER_PREF];
-        
-        [defaultPreferences setObject:[NSNumber numberWithBool:YES] forKey:PLASTER_NOTIFY_JOINS_PREF];
-        [defaultPreferences setObject:[NSNumber numberWithBool:YES] forKey:PLASTER_NOTIFY_DEPARTURES_PREF];
-        [defaultPreferences setObject:[NSNumber numberWithBool:YES] forKey:PLASTER_NOTIFY_PLASTERS_PREF];
-        
+        [defaultPreferences setObject:[[NSHost currentHost] localizedName] forKey:TSPlasterDeviceName];
         
         // A test mode flag to allow file logging
-        [defaultPreferences setObject:[NSNumber numberWithBool:NO] forKey:@"plaster-test-mode"];
+        [defaultPreferences setObject:@NO forKey:@"plaster-test-mode"];
         
-        [[NSUserDefaults standardUserDefaults] registerDefaults:defaultPreferences];        
+        [_userDefaults registerDefaults:defaultPreferences];
     }
     
     return self;
-}
-
-- (void)applicationDidFinishLaunching:(NSNotification *)notification {
-    [self.joinSessionHUD orderOut:nil];
-    NSLog(@"AD: Application Launched.");
 }
 
 - (void)awakeFromNib {
@@ -82,43 +69,42 @@
     [_plasterStatusItem setMenu:[self plasterMenu]];
     [self.plasterMenu setAutoenablesItems:NO];
     
-    // The user can either join an existing session (by entering the session key)
-    // or start a new session - and the key is copied to the pasteboard
-    [self.joinMenuItem setEnabled:YES];
-
     NSImage *play = [NSImage imageNamed: @"play"];
     [play setScalesWhenResized: YES];
     [play setSize: NSMakeSize(16, 16)];
     [self.startStopPlasterMenuItem setImage:play];
     
-    // If a session key exists, allow the user to start plastering with this session
-    NSString *existingSessionKey = [[NSUserDefaults standardUserDefaults] stringForKey:PLASTER_SESSION_KEY_PREF];
-    if (existingSessionKey) {
-        [self.startStopPlasterMenuItem setEnabled:YES];
-        [self setSessionKey:existingSessionKey];
-        [_plaster setSessionKey:existingSessionKey];
-    } else {
-        [self.startStopPlasterMenuItem setEnabled:NO];
-    }
+    // Set up the profiles menu
+    [_profilesMenu setDelegate:self];
+    [self.startWithProfileMenuItem setSubmenu:_profilesMenu];
     
-    // Obviously, we've just woken up - no peers to show.
-    [self.peersMenuItem setEnabled:NO];
     // Attach the peers submenu to this item (NB : This did not work in -init:, self init not complete!)
     [_peersMenu setDelegate:self];
     [self.peersMenuItem setSubmenu:_peersMenu];
 }
 
 - (IBAction)start:(id)sender {
-    NSString *alias = [[NSUserDefaults standardUserDefaults] stringForKey:PLASTER_DEVICE_NAME_PREF];
+    NSString *alias = [_userDefaults stringForKey:TSPlasterDeviceName];
     [_plaster setAlias:alias];
     [_plaster start];
     
     // Update the peers menu
-    [self menuNeedsUpdate:_peersMenu];
+    //[self menuNeedsUpdate:_peersMenu];
 
     // When plaster is running, the user cannot join another session or create a new one
     // without stopping it first.
     [self.joinMenuItem setEnabled:NO];
+    [self.freshSessionMenuItem setEnabled:NO];
+    
+    // The user cannot start a session with another profile
+    [self.startWithProfileMenuItem setEnabled:NO];
+    
+    // The user can create a profile for the running session, if one does not already
+    [self.saveAsMenuItem setEnabled:YES];
+    NSDictionary *profiles = [_userDefaults dictionaryForKey:TSPlasterProfiles];
+    if ([profiles objectForKey:self.sessionKey]) {
+        [self.saveAsMenuItem setEnabled:NO];
+    }
     
     // Toggle the text/image of the startstop button so that it is in the "stop" mode
     [self.startStopPlasterMenuItem setTitle:@"Stop Plaster"];
@@ -127,17 +113,40 @@
     [stop setSize: NSMakeSize(16, 16)];
     [self.startStopPlasterMenuItem setImage:stop];
     [self.startStopPlasterMenuItem setEnabled:YES];
+    if (self.currentProfile) {
+        [self.startStopPlasterMenuItem setToolTip:self.currentProfile];
+    } else {
+        [self.startStopPlasterMenuItem setToolTip:@"*new"];
+    }
+}
+
+- (void)startPlasterWithProfile:(id)sender {
+    NSLog(@"Starting plaster session for : %@", [sender title]);
+    [self setCurrentProfile:[sender title]];
+    [self setSessionKey:[sender toolTip]];
+    [sender setState:NSOnState];
+    
+    // Get this profiles configuration, and set it on the plaster controller
+    NSDictionary *profiles = [_userDefaults dictionaryForKey:TSPlasterProfiles];
+    [_plaster setSessionProfile:[profiles objectForKey:_sessionKey]];
+    // Set the Plaster Controller's session key and start it.
+    [_plaster setSessionKey:_sessionKey];
+    [self start:nil];
 }
 
 - (IBAction)stop:(id)sender {
     [_plaster stop];
     // Remove the peers submenu until the session is resumed
-    [self menuNeedsUpdate:_peersMenu];
+    //[self menuNeedsUpdate:_peersMenu];
     [self.peersMenuItem setEnabled:NO];
     
     // Since plaster has essentially stopped, you can either join another session
     // or create a new one. So enable these options again.
     [self.joinMenuItem setEnabled:YES];
+    [self.freshSessionMenuItem setEnabled:YES];
+    
+    // The user can start up a session with another profile, if any exists
+    [self.startWithProfileMenuItem setEnabled:YES];
     
     // Toggle the text/image of the startstop button so that it is in the "start" mode
     [self.startStopPlasterMenuItem setTitle:@"Start Plaster"];
@@ -146,21 +155,7 @@
     [play setSize: NSMakeSize(16, 16)];
     [self.startStopPlasterMenuItem setImage:play];
     [self.startStopPlasterMenuItem setEnabled:YES];
-}
-
-- (IBAction)showPreferences:(id)sender {
-    if (!_preferenceController) {
-        _preferenceController = [[TSClientPreferenceController alloc] init];
-    }
-    [NSApp activateIgnoringOtherApps:YES];
-    [_preferenceController showWindow:self];
-}
-
-- (void)applicationWillTerminate:(NSNotification *)notification {
-    NSLog(@"AD: Quitting...");
-    if ([[self.startStopPlasterMenuItem title] isEqualToString:@"Stop Plaster"]) {
-        [self stop:self];
-    }
+    [self.startStopPlasterMenuItem setToolTip:_currentProfile];
 }
 
 - (void)showJoinHUD:(id)sender {
@@ -184,27 +179,153 @@
     [self.joinSessionHUD orderOut:nil];
     self.sessionKey = [[self joinSessionKeyTextField] stringValue];
     NSLog(@"AD: Joining plaster session with key [%@]", self.sessionKey);
-    [[NSUserDefaults standardUserDefaults] setObject:self.sessionKey forKey:PLASTER_SESSION_KEY_PREF];
     [_plaster setSessionKey:self.sessionKey];
+    [_plaster setSessionProfile:[[self newProfileWithName:@"*untitled"] autorelease]];
+    self.currentProfile = @"*untitled";
     
-    [self start:nil];    
+    [self start:nil];
 }
 
-- (void)createNewSession:(id)sender {
+- (void)freshSession:(id)sender {
     [self willChangeValueForKey:@"sessionKey"];
     self.sessionKey = [TSClientIdentifier createUUID];
-    // TODO : Copy this to clipboard!
     [self didChangeValueForKey:@"sessionKey"];
+    
+    // Write the new session key to the pasteboard.
+    NSPasteboard *pb = [NSPasteboard generalPasteboard];
+    [pb clearContents];
+    BOOL ok = [pb writeObjects:@[_sessionKey]];
+    NSAssert(ok == YES, @"AD: Error writing generated session key to pasteboard : %@", self.sessionKey);
+
+    self.currentProfile = @"*untitled";
+
+    [self.freshSessionKeyTextField setStringValue:_sessionKey];
+    [self.freshSessionHUD makeKeyAndOrderFront:nil];
+}
+
+- (void)dismissFreshSession:(id)sender {
+    [self.freshSessionHUD orderOut:nil];
+    // Set this new session key on the Plaster Controller.
+    [_plaster setSessionKey:self.sessionKey];
+    // Create a new "untitled" default profile
+    [_plaster setSessionProfile:[[self newProfileWithName:@"*untitled"] autorelease]];
+    [self start:nil];
+}
+
+- (void)showSaveProfileHUD:(id)sender {
+    [self.saveProfileHUD makeKeyAndOrderFront:nil];
+}
+
+- (void)cancelSaveProfile:(id)sender {
+    [self.saveProfileHUD orderOut:nil];
+}
+
+- (void)saveProfile:(id)sender {
+    // Reload the profile container since the user might have changed this using preferences.
+    NSMutableDictionary *mutableProfiles = [[_userDefaults dictionaryForKey:TSPlasterProfiles] mutableCopy];
+    NSMutableDictionary *profiles = [[NSMutableDictionary alloc] initWithDictionary:mutableProfiles];
+    [mutableProfiles release];
+    
+    NSString *profileName = [self.profileNameTextField stringValue];
+    NSLog(@"AD: Saving profile with name : %@", profileName);
+    NSDictionary *profileConfiguration = [self newProfileWithName:profileName];
+    NSLog(@"Adding profile : %@ to profiles with key : %@", profileName, self.sessionKey);
+    [profiles setObject:profileConfiguration forKey:self.sessionKey];
+    [profileConfiguration release];
+    
+    // Once this session has been saved, it cannot be saved again (not even with another name - for now.)
+    [self.saveAsMenuItem setEnabled:NO];
+    [self.saveProfileHUD orderOut:nil];
+    
+    // Save the user preferences.
+    [_userDefaults setObject:profiles forKey:TSPlasterProfiles];
+    
+    // Set the current profile and necessary tooltops
+    [self setCurrentProfile:profileName];
+    [self.startStopPlasterMenuItem setToolTip:profileName];
+    // Replace the "dummy" profile that the plaster controller started with.
+    [_plaster setSessionProfile:profileConfiguration];
+    
+    [profiles release];
+}
+
+- (NSDictionary *)newProfileWithName:(NSString *)profileName {
+    NSMutableDictionary *profileConfiguration = [[NSMutableDictionary alloc] init];
+    [profileConfiguration setObject:profileName forKey:TSPlasterProfileName];
+    NSNumber *allowText = [NSNumber numberWithBool:YES];
+    NSNumber *allowImages = [NSNumber numberWithBool:YES];
+    NSNumber *allowFile = [NSNumber numberWithBool:NO];
+    NSString *defaultPlasterMode = TSPlasterModePasteboard;
+    NSNumber *notifyOnJoin = [NSNumber numberWithBool:YES];
+    NSNumber *notifyOnDeparture = [NSNumber numberWithBool:YES];
+    NSNumber *notifyOnPlaster = [NSNumber numberWithBool:YES];
+    [profileConfiguration setObject:allowText forKey:TSPlasterAllowText];
+    [profileConfiguration setObject:allowImages forKey:TSPlasterAllowImages];
+    [profileConfiguration setObject:allowFile forKey:TSPlasterAllowFiles];
+    [profileConfiguration setObject:defaultPlasterMode forKey:TSPlasterMode];
+    [profileConfiguration setObject:notifyOnJoin forKey:TSPlasterNotifyJoins];
+    [profileConfiguration setObject:notifyOnDeparture forKey:TSPlasterNotifyDepartures];
+    [profileConfiguration setObject:notifyOnPlaster forKey:TSPlasterNotifyPlasters];
+    
+    return profileConfiguration;
+}
+
+- (void)buildProfilesMenu {
+    NSDictionary *profiles = [_userDefaults dictionaryForKey:TSPlasterProfiles];
+    
+    // If there are no profiles, disable the "Start With Profile" menu item.
+    if (![profiles count]) {
+        [self.startWithProfileMenuItem setEnabled:NO];
+        return;
+    }
+    // If any current plaster session is not running, then enable the user to "Start With Profile >"
+    if ([[self.startStopPlasterMenuItem title] isEqualToString:@"Start Plaster"]) {
+        [self.startWithProfileMenuItem setEnabled:YES];
+    }
+    
+    // Prep the parent menu
+    [_profilesMenu removeAllItems];
+    
+    // Check for profiles and build the submenu
+    for (NSString *profileKey in [profiles keyEnumerator]) {
+        NSLog(@"AD: Found saved profile : %@", profileKey);
+        NSDictionary *profileConfiguration = [profiles objectForKey:profileKey];
+        NSString *profileName = [profileConfiguration objectForKey:TSPlasterProfileName];
+        NSMenuItem *profileMenuItem = [[[NSMenuItem alloc] initWithTitle:profileName action:@selector(startPlasterWithProfile:) keyEquivalent:@""] autorelease];
+        [profileMenuItem setTarget:self];
+        [profileMenuItem setEnabled:YES];
+        [profileMenuItem setState:NSOffState];
+        if ([profileName isEqualToString:self.currentProfile]) {
+            [profileMenuItem setState:NSOnState];
+        }
+        [profileMenuItem setToolTip:profileKey];
+        [_profilesMenu addItem:profileMenuItem];
+    }
+}
+
+#pragma mark Show Preferences Dialog
+
+- (IBAction)showPreferences:(id)sender {
+    if (!_preferenceController) {
+        _preferenceController = [[TSClientPreferenceController alloc] init];
+    }
+    [NSApp activateIgnoringOtherApps:YES];
+    [_preferenceController showWindow:self];
 }
 
 #pragma mark Text control delegate methods
 
 - (void)controlTextDidChange:(NSNotification *)obj {
-    if ([[[self joinSessionKeyTextField] stringValue] length] > 0) {
+    if ([[[self joinSessionKeyTextField] stringValue] length] == 36) {
         [self.okButton setEnabled:YES];
         return;
     }
+    if ([[[self profileNameTextField] stringValue] length] > 0) {
+        [self.saveProfileButton setEnabled:YES];
+        return;
+    }
     
+    [self.saveProfileButton setEnabled:NO];
     [self.okButton setEnabled:NO];
 }
 
@@ -215,6 +336,7 @@
     BOOL anyPeers = ([peers count] > 0);
     if ([[menu title] isEqualToString:@"Plaster Menu"]) {
         [self.peersMenuItem setEnabled:anyPeers];
+        [self buildProfilesMenu];
         return;
     }
     
@@ -231,6 +353,23 @@
     return;
 }
 
+#pragma mark Application Delegate methods
+
+- (void)applicationWillTerminate:(NSNotification *)notification {
+    NSLog(@"AD: Quitting...");
+    if ([[self.startStopPlasterMenuItem title] isEqualToString:@"Stop Plaster"]) {
+        [self stop:self];
+    }
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (void)applicationDidFinishLaunching:(NSNotification *)notification {
+    [self.joinSessionHUD orderOut:nil];
+    NSLog(@"AD: Application Launched.");
+}
+
+#pragma mark Deallocations
+
 - (void)dealloc {
     [_plaster release];
     [_redisController release];
@@ -238,6 +377,7 @@
     [_preferenceController release];
     [_peersMenuItem setSubmenu:nil];
     [_peersMenu release];
+    //[_profiles release];
     
     [super dealloc];
 }
