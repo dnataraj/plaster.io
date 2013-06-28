@@ -51,6 +51,9 @@
 		41BF51CC176F173E00D5CCD4 /* TSPlasterImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 41BF51CA176F173D00D5CCD4 /* TSPlasterImage.m */; };
 		41F98676176867E20031609C /* TSPlasterPeer.m in Sources */ = {isa = PBXBuildFile; fileRef = 41F98674176867E10031609C /* TSPlasterPeer.m */; };
 		41FCC37E177AD34700859EF1 /* TSPlasterGlobals.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FCC37D177AD34700859EF1 /* TSPlasterGlobals.m */; };
+		41FCC380177B51B900859EF1 /* ProfileConfiguration.xib in Resources */ = {isa = PBXBuildFile; fileRef = 41FCC37F177B51B800859EF1 /* ProfileConfiguration.xib */; };
+		41FCC383177B573600859EF1 /* TSProfileConfigurationViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FCC381177B573500859EF1 /* TSProfileConfigurationViewController.h */; };
+		41FCC384177B573600859EF1 /* TSProfileConfigurationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FCC382177B573500859EF1 /* TSProfileConfigurationViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -124,6 +127,9 @@
 		41F98673176867E10031609C /* TSPlasterPeer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSPlasterPeer.h; sourceTree = "<group>"; };
 		41F98674176867E10031609C /* TSPlasterPeer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSPlasterPeer.m; sourceTree = "<group>"; };
 		41FCC37D177AD34700859EF1 /* TSPlasterGlobals.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSPlasterGlobals.m; sourceTree = "<group>"; };
+		41FCC37F177B51B800859EF1 /* ProfileConfiguration.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProfileConfiguration.xib; sourceTree = "<group>"; };
+		41FCC381177B573500859EF1 /* TSProfileConfigurationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSProfileConfigurationViewController.h; sourceTree = "<group>"; };
+		41FCC382177B573500859EF1 /* TSProfileConfigurationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSProfileConfigurationViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -220,6 +226,9 @@
 				41B68CF3175CD9410090A108 /* TSPacketSerializer.h */,
 				41B68CF4175CD9410090A108 /* TSPacketSerializer.m */,
 				41B68D0D175CD9560090A108 /* Preferences.xib */,
+				41FCC37F177B51B800859EF1 /* ProfileConfiguration.xib */,
+				41FCC381177B573500859EF1 /* TSProfileConfigurationViewController.h */,
+				41FCC382177B573500859EF1 /* TSProfileConfigurationViewController.m */,
 				41B68CFA175CD94C0090A108 /* TSClientPreferenceController.h */,
 				41B68CFB175CD94C0090A108 /* TSClientPreferenceController.m */,
 				41B68CFC175CD94C0090A108 /* TSClientIdentifier.h */,
@@ -316,6 +325,7 @@
 				4171B815176223E700936C31 /* TSBase64.h in Headers */,
 				41BF51C7176EFC5400D5CCD4 /* TSPlasterString.h in Headers */,
 				41BF51CB176F173E00D5CCD4 /* TSPlasterImage.h in Headers */,
+				41FCC383177B573600859EF1 /* TSProfileConfigurationViewController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -400,6 +410,7 @@
 				410EC43E1769A56B00D4826D /* pause.png in Resources */,
 				410EC4401769A57E00D4826D /* play.png in Resources */,
 				410EC4421769DC6900D4826D /* stop.png in Resources */,
+				41FCC380177B51B900859EF1 /* ProfileConfiguration.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -449,6 +460,7 @@
 				41BF51C8176EFC5400D5CCD4 /* TSPlasterString.m in Sources */,
 				41BF51CC176F173E00D5CCD4 /* TSPlasterImage.m in Sources */,
 				41FCC37E177AD34700859EF1 /* TSPlasterGlobals.m in Sources */,
+				41FCC384177B573600859EF1 /* TSProfileConfigurationViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -294,7 +294,17 @@
         return;
     }
     
-    NSArray *readables = @[[NSImage class], [NSString class], [NSAttributedString class]];
+    NSMutableArray *readables = [NSMutableArray array];
+    BOOL allowOutImages = [[_sessionProfile objectForKey:TSPlasterOutAllowImages] boolValue];
+    if (allowOutImages) {
+        NSLog(@"PLASTER: PLASTER OUT : Allowing images to be plastered out.");
+        [readables addObject:[NSImage class]];
+    }
+    BOOL allowOutText = [[_sessionProfile objectForKey:TSPlasterOutAllowText] boolValue];
+    if (allowOutText) {
+        NSLog(@"PLASTER: PLASTER OUT : Allowing text to be plastered out.");
+        [readables addObjectsFromArray:@[[NSString class], [NSAttributedString class]]];
+    }
     NSArray *pbContents = [_pb readObjectsForClasses:readables options:nil];
     NSLog(@"PLASTER: Read %ld items from pasteboard.", (unsigned long)[pbContents count]);
     if ([pbContents count] > 0) {

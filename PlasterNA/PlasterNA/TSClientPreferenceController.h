@@ -7,31 +7,21 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "TSProfileConfigurationViewController.h"
 
 @interface TSClientPreferenceController : NSWindowController <NSWindowDelegate, NSTableViewDataSource, NSTableViewDelegate>
 
 @property (assign) IBOutlet NSTextField *deviceNameTextField;
-@property (assign) IBOutlet NSButton *handleTextTypeButton;
-@property (assign) IBOutlet NSButton *handleImageTypeButton;
-@property (assign) IBOutlet NSButton *handleFileTypeButton;
-//@property (assign) IBOutlet NSTextField *sessionKeyLabelField;
-
-@property (assign) IBOutlet NSButton *shouldNotifyJoinsButton;
-@property (assign) IBOutlet NSButton *shouldNotifyDeparturesButton;
-@property (assign) IBOutlet NSButton *shouldNotifyPlastersButton;
-@property (assign) IBOutlet NSMatrix *plasterLocationMatrix;
-@property (assign) IBOutlet NSTextField *plasterLocationFileTextField;
-@property (assign) IBOutlet NSButton *browseButton;
 
 @property (assign) IBOutlet NSTableView *profileListTableView;
 
-//@property (readonly) NSString *sessionKey;
-@property (retain) NSString *deviceName, *plasterFolder;
-@property (readwrite) BOOL handlesTextType, handlesImageType, handlesFileType;
-@property (readwrite) BOOL shouldNotifyJoins, shouldNotifyDepartures, shouldNotifyPlasters;
+@property (assign) IBOutlet NSTextField *sessionKeyLabelField;
 
-- (IBAction)browse:(id)sender;
-- (IBAction)switchPlasterDestination:(id)sender;
+@property (assign) IBOutlet NSView *profileConfigurationView;
+@property (retain) TSProfileConfigurationViewController *profileViewController;
+
+@property (retain) NSString *deviceName;
+
 - (IBAction)deleteProfile:(id)sender;
 
 - (IBAction)cancelPreferences:(id)sender;

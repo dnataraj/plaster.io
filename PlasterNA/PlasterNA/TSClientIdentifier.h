@@ -10,8 +10,6 @@
 
 @interface TSClientIdentifier : NSObject
 
-//@property (readwrite, copy) NSString *sessionKey;
-
 + (NSString *)createUUID;
 + (NSString *)clientID;
 

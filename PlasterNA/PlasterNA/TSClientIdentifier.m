@@ -27,22 +27,6 @@ static NSString *_clientID = nil;
     return _clientID;
 }
 
-/*
-- (id)init {
-    self = [super init];
-    if (self) {
-        _sessionKey = [TSClientIdentifier createUUID];
-        NSLog(@"Initializing client with session key [%@]", _sessionKey);
-    }
-    
-    return self;
-}
-
-- (void)resetSessionKey {
-    [self setSessionKey:[TSClientIdentifier createUUID]];
-}
-*/
-
 - (void)dealloc {
     [_clientID release];
     [super dealloc];

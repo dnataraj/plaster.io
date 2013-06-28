@@ -16,6 +16,7 @@
 #import "TSPacketSerializer.h"
 #import "TSClientIdentifier.h"
 #import "TSClientPreferenceController.h"
+#import "TSProfileConfigurationViewController.h"
 #import "TSPlasterController.h"
 #import "Carbon/Carbon.h"
 
@@ -27,6 +28,7 @@
     NSMenu *_peersMenu, *_profilesMenu;
     
     NSUserDefaults *_userDefaults;
+    TSProfileConfigurationViewController *_profileConfigurationViewController;
 }
 
 - (id)init {
@@ -50,6 +52,8 @@
         [defaultPreferences setObject:@NO forKey:@"plaster-test-mode"];
         
         [_userDefaults registerDefaults:defaultPreferences];
+        
+        _profileConfigurationViewController = [[TSProfileConfigurationViewController alloc] init];
     }
     
     return self;
@@ -81,6 +85,10 @@
     // Attach the peers submenu to this item (NB : This did not work in -init:, self init not complete!)
     [_peersMenu setDelegate:self];
     [self.peersMenuItem setSubmenu:_peersMenu];
+    
+    // Set up the HUD's for join and new sessions
+    [_joinProfileConfigurationView addSubview:[_profileConfigurationViewController view]];
+    [_freshProfileConfigurationView addSubview:[_profileConfigurationViewController view]];
 }
 
 - (IBAction)start:(id)sender {
@@ -159,6 +167,8 @@
 }
 
 - (void)showJoinHUD:(id)sender {
+    NSDictionary *newProfile = [[self newProfileWithName:@"*untitled"] autorelease];
+    [_profileConfigurationViewController configureWithProfile:newProfile];
     [self.joinSessionHUD makeKeyAndOrderFront:nil];
 }
 
@@ -175,14 +185,16 @@
     }
 }
 
+#pragma mark Capture configuration when joining a session
+
 - (void)joinSession:(id)sender {
     [self.joinSessionHUD orderOut:nil];
     self.sessionKey = [[self joinSessionKeyTextField] stringValue];
     NSLog(@"AD: Joining plaster session with key [%@]", self.sessionKey);
     [_plaster setSessionKey:self.sessionKey];
-    [_plaster setSessionProfile:[[self newProfileWithName:@"*untitled"] autorelease]];
+    [_plaster setSessionProfile:[_profileConfigurationViewController getProfileConfiguration]];
     self.currentProfile = @"*untitled";
-    
+        
     [self start:nil];
 }
 
@@ -198,17 +210,19 @@
     NSAssert(ok == YES, @"AD: Error writing generated session key to pasteboard : %@", self.sessionKey);
 
     self.currentProfile = @"*untitled";
+    NSDictionary *newProfile = [[self newProfileWithName:@"*untitled"] autorelease];
+    [_profileConfigurationViewController configureWithProfile:newProfile];
 
     [self.freshSessionKeyTextField setStringValue:_sessionKey];
     [self.freshSessionHUD makeKeyAndOrderFront:nil];
 }
 
-- (void)dismissFreshSession:(id)sender {
+- (void)startFreshSession:(id)sender {
     [self.freshSessionHUD orderOut:nil];
     // Set this new session key on the Plaster Controller.
     [_plaster setSessionKey:self.sessionKey];
     // Create a new "untitled" default profile
-    [_plaster setSessionProfile:[[self newProfileWithName:@"*untitled"] autorelease]];
+    [_plaster setSessionProfile:[_profileConfigurationViewController getProfileConfiguration]];
     [self start:nil];
 }
 
@@ -252,16 +266,21 @@
 - (NSDictionary *)newProfileWithName:(NSString *)profileName {
     NSMutableDictionary *profileConfiguration = [[NSMutableDictionary alloc] init];
     [profileConfiguration setObject:profileName forKey:TSPlasterProfileName];
-    NSNumber *allowText = [NSNumber numberWithBool:YES];
-    NSNumber *allowImages = [NSNumber numberWithBool:YES];
-    NSNumber *allowFile = [NSNumber numberWithBool:NO];
     NSString *defaultPlasterMode = TSPlasterModePasteboard;
     NSNumber *notifyOnJoin = [NSNumber numberWithBool:YES];
     NSNumber *notifyOnDeparture = [NSNumber numberWithBool:YES];
     NSNumber *notifyOnPlaster = [NSNumber numberWithBool:YES];
-    [profileConfiguration setObject:allowText forKey:TSPlasterAllowText];
-    [profileConfiguration setObject:allowImages forKey:TSPlasterAllowImages];
-    [profileConfiguration setObject:allowFile forKey:TSPlasterAllowFiles];
+    
+    // By default the user can recieve text and images, but not files.
+    [profileConfiguration setObject:@YES forKey:TSPlasterAllowText];
+    [profileConfiguration setObject:@YES forKey:TSPlasterAllowImages];
+    [profileConfiguration setObject:@NO forKey:TSPlasterAllowFiles];
+    
+    // By default the user only sends out images and files, but not clipboard text.
+    [profileConfiguration setObject:@NO forKey:TSPlasterOutAllowText];
+    [profileConfiguration setObject:@YES forKey:TSPlasterOutAllowImages];
+    [profileConfiguration setObject:@YES forKey:TSPlasterOutAllowFiles];
+    
     [profileConfiguration setObject:defaultPlasterMode forKey:TSPlasterMode];
     [profileConfiguration setObject:notifyOnJoin forKey:TSPlasterNotifyJoins];
     [profileConfiguration setObject:notifyOnDeparture forKey:TSPlasterNotifyDepartures];
@@ -377,11 +396,9 @@
     [_preferenceController release];
     [_peersMenuItem setSubmenu:nil];
     [_peersMenu release];
-    //[_profiles release];
+    [_profileConfigurationViewController release];
     
     [super dealloc];
 }
-
-
 
 @end
