@@ -113,6 +113,8 @@
     [_stopMenuItem setToolTip:_currentProfileName];
     [_startWithProfileMenuItem setHidden:YES];
     [_stopMenuItem setHidden:NO];
+    
+    [_passcodeMenuItem setEnabled:YES];
 }
 
 - (void)startPlasterWithProfile:(id)sender {
@@ -143,6 +145,8 @@
     [_startWithProfileMenuItem setHidden:NO];
     [_startWithProfileMenuItem setEnabled:YES];
     [_stopMenuItem setHidden:YES];
+    
+    [_passcodeMenuItem setEnabled:NO];
 }
 
 #pragma mark Joining a Session
@@ -150,7 +154,8 @@
 - (void)showJoinHUD:(id)sender {
     NSMutableDictionary *newProfile = [[self newProfileWithName:@"*untitled"] autorelease];
     [_joinProfileConfigurationViewController configureWithProfile:newProfile];
-    [self.joinSessionKeyTextField setStringValue:@""];
+    //[self.joinSessionKeyTextField setStringValue:@""];
+    [NSApp activateIgnoringOtherApps:YES];
     [self.joinSessionHUD makeKeyAndOrderFront:nil];
 }
 
@@ -177,16 +182,14 @@
     [self didChangeValueForKey:@"sessionKey"];
     
     // Write the new session key to the pasteboard.
-    NSPasteboard *pb = [NSPasteboard generalPasteboard];
-    [pb clearContents];
-    BOOL ok = [pb writeObjects:@[_sessionKey]];
-    NSAssert(ok == YES, @"AD: Error writing generated session key to pasteboard : %@", self.sessionKey);
-
+    [self pasteCurrentPasscode:nil];
+    
     self.currentProfileName = @"*untitled";
     NSMutableDictionary *newProfile = [[self newProfileWithName:@"*untitled"] autorelease];
     [_freshProfileConfigurationViewController configureWithProfile:newProfile];
 
     [self.freshSessionKeyTextField setStringValue:_sessionKey];
+    [NSApp activateIgnoringOtherApps:YES];
     [self.freshSessionHUD makeKeyAndOrderFront:nil];
 }
 
@@ -202,6 +205,8 @@
 #pragma mark Saving a profile
 
 - (void)showSaveProfileHUD:(id)sender {
+    [NSApp activateIgnoringOtherApps:YES];
+    [self.saveProfileHUD makeFirstResponder:self.profileNameTextField];
     [self.saveProfileHUD makeKeyAndOrderFront:nil];
 }
 
@@ -231,16 +236,26 @@
     
     // Save the user preferences.
     [_userDefaults setObject:profiles forKey:TSPlasterProfiles];
+    [_userDefaults synchronize];
     
     // Set the current profile and necessary tooltips
     [self setCurrentProfileName:profileName];
     [_startWithProfileMenuItem setToolTip:profileName];
     [_stopMenuItem setToolTip:profileName];
     
+    [profileConfiguration release];
     [profiles release];
 }
 
-#pragma Other utility methods
+#pragma mark Paste current session key to pasteboard
+- (void)pasteCurrentPasscode:(id)sender {
+    NSPasteboard *pb = [NSPasteboard generalPasteboard];
+    [pb clearContents];
+    BOOL ok = [pb writeObjects:@[_sessionKey]];
+    NSAssert(ok == YES, @"AD: Error writing generated session key to pasteboard : %@", self.sessionKey);
+}
+
+#pragma mark Other utility methods
 
 - (NSMutableDictionary *)newProfileWithName:(NSString *)profileName {
     NSMutableDictionary *profileConfiguration = [[NSMutableDictionary alloc] init];
@@ -249,10 +264,10 @@
     // By default the user can recieve text and images, but not files.
     [profileConfiguration setObject:@YES forKey:TSPlasterAllowText];
     [profileConfiguration setObject:@YES forKey:TSPlasterAllowImages];
-    [profileConfiguration setObject:@YES forKey:TSPlasterAllowFiles];
+    [profileConfiguration setObject:@NO forKey:TSPlasterAllowFiles];
     
     // By default the user only sends out images and files, but not clipboard text.
-    [profileConfiguration setObject:@NO forKey:TSPlasterOutAllowText];
+    [profileConfiguration setObject:@YES forKey:TSPlasterOutAllowText];
     [profileConfiguration setObject:@YES forKey:TSPlasterOutAllowImages];
     [profileConfiguration setObject:@YES forKey:TSPlasterOutAllowFiles];
     
@@ -296,6 +311,8 @@
         [profileMenuItem setToolTip:profileKey];
         [_profilesMenu addItem:profileMenuItem];
     }
+    
+    [self.startWithProfileMenuItem setEnabled:YES];
 }
 
 #pragma mark Show Preferences Dialog

@@ -191,6 +191,7 @@
         Start a plaster session, OR join an existing one.
     */
     NSLog(@"PLASTER: START : Starting...");
+    self.started = YES;
     [self bootWithPeers:10];
     NSLog(@"PLASTER: START : Starting pasteboard monitoring every 100ms");
     [self scheduleMonitorWithID:_clientID andTimeInterval:0.100];
@@ -198,6 +199,7 @@
 }
 
 - (void)stop {
+    self.started = NO;
     /*
         Stop monitoring the local pasteboard.
         Unsubscribe from the broadcast channel, and from all peer paste channels.
@@ -279,6 +281,14 @@
 - (void)onTimer {
     // If there are no peers to publish to, don't do anything.
     if ([_plasterPeers count] == 0) {
+        return;
+    }
+    
+    // if Plaster just started, ignore existing pasteboard content
+    if (self.started) {
+        NSLog(@"PLASTER: PLASTER OUT : Clearing stale content...");
+        self.started = NO;
+        [_pb clearContents];
         return;
     }
     

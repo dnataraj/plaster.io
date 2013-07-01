@@ -107,8 +107,6 @@
 #pragma mark Profile loading/storing methods
 
 - (void)reloadAndConfigure {
-    // Register any current configuration
-    [self registerConfigurationForRow:[self.profileListTableView selectedRow]];
     // Release what we have, and re-init
     [_profiles release];
     [_sessionKeys release];
@@ -126,6 +124,16 @@
             [configuration release];
         }
     }
+    
+    // Save any existing edits (say during a window reload after browsing for a folder
+    NSInteger row = [self.profileListTableView selectedRow];
+    if ( (row >= 0) && (row < [_sessionKeys count]) ) {
+        NSDictionary *edits = [_profileViewController getProfileConfiguration];
+        NSMutableDictionary *profileChanges = [_profileConfigurations objectAtIndex:row];
+        [profileChanges addEntriesFromDictionary:edits];
+        [_profiles setObject:profileChanges forKey:[_sessionKeys objectAtIndex:row]];
+    }
+    
     [self.profileListTableView reloadData];
     [self configureWithRow:[self.profileListTableView selectedRow]];
 }
@@ -146,7 +154,6 @@
         NSDictionary *edits = [_profileViewController getProfileConfiguration];
         NSMutableDictionary *profileChanges = [_profileConfigurations objectAtIndex:row];
         [profileChanges addEntriesFromDictionary:edits];
-        
         // Now we have to set this change back into the parent profile collection (remember : we have a mutable copy)
         [_profiles setObject:profileChanges forKey:[_sessionKeys objectAtIndex:row]];
     }

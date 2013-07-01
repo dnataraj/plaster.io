@@ -16,6 +16,7 @@
 @property (copy) NSDictionary *sessionProfile;
 @property (readwrite, nonatomic, copy) NSString *alias;
 @property NSInteger changeCount;
+@property BOOL started;
 
 - (id)initWithPasteboard:(NSPasteboard *)pasteboard provider:(id<TSMessagingProvider, TSDataStoreProvider>)provider;
 

@@ -18,6 +18,7 @@
 @property (assign) IBOutlet NSMenuItem *saveAsMenuItem;
 @property (assign) IBOutlet NSMenuItem *startWithProfileMenuItem;
 @property (assign) IBOutlet NSMenuItem *stopMenuItem;
+@property (assign) IBOutlet NSMenuItem *passcodeMenuItem;
 
 @property (assign) IBOutlet NSMenuItem *peersMenuItem;
 @property (assign) IBOutlet NSMenuItem *preferencesMenuItem;
@@ -57,5 +58,7 @@
 - (IBAction)showSaveProfileHUD:(id)sender;
 - (IBAction)saveProfile:(id)sender;
 - (IBAction)cancelSaveProfile:(id)sender;
+
+- (IBAction)pasteCurrentPasscode:(id)sender;
 
 @end
