@@ -17,7 +17,8 @@
 @property (assign) IBOutlet NSMenuItem *freshSessionMenuItem;
 @property (assign) IBOutlet NSMenuItem *saveAsMenuItem;
 @property (assign) IBOutlet NSMenuItem *startWithProfileMenuItem;
-@property (assign) IBOutlet NSMenuItem *startStopPlasterMenuItem;
+@property (assign) IBOutlet NSMenuItem *stopMenuItem;
+
 @property (assign) IBOutlet NSMenuItem *peersMenuItem;
 @property (assign) IBOutlet NSMenuItem *preferencesMenuItem;
 
@@ -40,7 +41,7 @@
 @property (assign) IBOutlet NSButton *saveProfileButton;
 
 @property (readwrite, atomic, copy) NSString *sessionKey;
-@property (readwrite, atomic, copy) NSString *currentProfile;
+@property (readwrite, atomic, copy) NSString *currentProfileName;
 
 - (IBAction)start:(id)sender;
 - (IBAction)stop:(id)sender;
@@ -52,8 +53,6 @@
 
 - (IBAction)freshSession:(id)sender;
 - (IBAction)startFreshSession:(id)sender;
-
-- (IBAction)startStopPlaster:(id)sender;
 
 - (IBAction)showSaveProfileHUD:(id)sender;
 - (IBAction)saveProfile:(id)sender;

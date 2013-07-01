@@ -13,13 +13,16 @@
 
 @end
 
-@implementation TSProfileConfigurationViewController
+@implementation TSProfileConfigurationViewController {
+    NSMutableDictionary *_mutableProfileConfiguration;
+}
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
+        _mutableProfileConfiguration = nil;
     }
     
     return self;
@@ -35,6 +38,7 @@
     [self.plasterFolderLocationTextField setEnabled:NO];
     [self.plasterFolderLocationBrowseButton setEnabled:NO];
     [self.handleInFileTypeButton setEnabled:NO];
+    self.plasterMode = TSPlasterModePasteboard;
 }
 
 - (void)enableFileMode {
@@ -43,6 +47,7 @@
     [self.plasterFolderLocationTextField setEnabled:YES];
     [self.plasterFolderLocationBrowseButton setEnabled:YES];
     [self.handleInFileTypeButton setEnabled:YES];
+    self.plasterMode = TSPlasterModeFile;
 }
 
 - (void)disableProfileConfiguration {
@@ -53,43 +58,39 @@
     [self.handleOutImageTypeButton setEnabled:NO];
     [self.handleOutFileTypeButton setEnabled:NO];
     [self.plasterFolderLocationBrowseButton setEnabled:NO];
-    [self.plasterFolderLocationBrowseButton setEnabled:NO];
+    [self.plasterFolderLocationTextField setEnabled:NO];
     [self.plasterLocationSelectionMatrix setEnabled:NO];
     [self.shouldNotifyJoinsButton setEnabled:NO];
     [self.shouldNotifyPlastersButton setEnabled:NO];
     [self.shouldNotifyDeparturesButton setEnabled:NO];
 }
 
-- (NSDictionary *)getProfileConfiguration {
-    NSMutableDictionary *profileConfiguration = [NSMutableDictionary dictionary];
-    [profileConfiguration setObject:[NSNumber numberWithBool:self.handlesInTextType] forKey:TSPlasterAllowText];
-    [profileConfiguration setObject:[NSNumber numberWithBool:self.handlesInImageType] forKey:TSPlasterAllowImages];
-    [profileConfiguration setObject:[NSNumber numberWithBool:self.handlesInFileType] forKey:TSPlasterAllowFiles];
-    
-    [profileConfiguration setObject:[NSNumber numberWithBool:self.handlesOutTextType] forKey:TSPlasterOutAllowText];
-    [profileConfiguration setObject:[NSNumber numberWithBool:self.handlesOutImageType] forKey:TSPlasterOutAllowImages];
-    [profileConfiguration setObject:[NSNumber numberWithBool:self.handlesOutFileType] forKey:TSPlasterOutAllowFiles];
-    
-    if ([self.plasterLocationSelectionMatrix selectedCell] == [self.plasterLocationSelectionMatrix cellAtRow:0 column:0]) {
-        [profileConfiguration setObject:TSPlasterModePasteboard forKey:TSPlasterMode];
-    } else if ([self.plasterLocationSelectionMatrix selectedCell] == [self.plasterLocationSelectionMatrix cellAtRow:1 column:0]) {
-        [profileConfiguration setObject:TSPlasterModeFile forKey:TSPlasterMode];
-        if ([self.plasterFolderLocationTextField stringValue]) {
-            [profileConfiguration setObject:[self.plasterFolderLocationTextField stringValue] forKey:TSPlasterFolderPath];
-        } else {
-            [profileConfiguration setObject:NSHomeDirectory() forKey:TSPlasterFolderPath];
-        }
+- (NSMutableDictionary *)getProfileConfiguration {
+    if (!_mutableProfileConfiguration) {
+        NSLog(@"PROFILE CONFIGURATION MANAGER : No profile to work with");
+        return nil;
     }
+    [_mutableProfileConfiguration setObject:[NSNumber numberWithBool:self.handlesInTextType] forKey:TSPlasterAllowText];
+    [_mutableProfileConfiguration setObject:[NSNumber numberWithBool:self.handlesInImageType] forKey:TSPlasterAllowImages];
+    [_mutableProfileConfiguration setObject:[NSNumber numberWithBool:self.handlesInFileType] forKey:TSPlasterAllowFiles];
     
-    [profileConfiguration setObject:[NSNumber numberWithBool:self.shouldNotifyJoins] forKey:TSPlasterNotifyJoins];
-    [profileConfiguration setObject:[NSNumber numberWithBool:self.shouldNotifyDepartures] forKey:TSPlasterNotifyDepartures];
-    [profileConfiguration setObject:[NSNumber numberWithBool:self.shouldNotifyPlasters] forKey:TSPlasterNotifyPlasters];
+    [_mutableProfileConfiguration setObject:[NSNumber numberWithBool:self.handlesOutTextType] forKey:TSPlasterOutAllowText];
+    [_mutableProfileConfiguration setObject:[NSNumber numberWithBool:self.handlesOutImageType] forKey:TSPlasterOutAllowImages];
+    [_mutableProfileConfiguration setObject:[NSNumber numberWithBool:self.handlesOutFileType] forKey:TSPlasterOutAllowFiles];
     
-    return profileConfiguration;
+    [_mutableProfileConfiguration setObject:self.plasterMode forKey:TSPlasterMode];
+    [_mutableProfileConfiguration setObject:self.plasterFolder forKey:TSPlasterFolderPath];
+    
+    [_mutableProfileConfiguration setObject:[NSNumber numberWithBool:self.shouldNotifyJoins] forKey:TSPlasterNotifyJoins];
+    [_mutableProfileConfiguration setObject:[NSNumber numberWithBool:self.shouldNotifyDepartures] forKey:TSPlasterNotifyDepartures];
+    [_mutableProfileConfiguration setObject:[NSNumber numberWithBool:self.shouldNotifyPlasters] forKey:TSPlasterNotifyPlasters];
+    
+    return [_mutableProfileConfiguration autorelease];
 }
 
-- (void)configureWithProfile:(NSDictionary *)profileConfiguration {
+- (void)configureWithProfile:(NSMutableDictionary *)profileConfiguration {
     if (profileConfiguration) {
+        _mutableProfileConfiguration = [profileConfiguration retain];
         [_handleInTextTypeButton setEnabled:YES];
         self.handlesInTextType = [[profileConfiguration objectForKey:TSPlasterAllowText] boolValue];
         [_handleInImageTypeButton setEnabled:YES];
@@ -98,11 +99,11 @@
         self.handlesInFileType = [[profileConfiguration objectForKey:TSPlasterAllowFiles] boolValue];
         
         [_handleOutTextTypeButton setEnabled:YES];
-        self.handlesOutTextType = [[profileConfiguration objectForKey:TSPlasterOutAllowFiles] boolValue];
+        self.handlesOutTextType = [[profileConfiguration objectForKey:TSPlasterOutAllowText] boolValue];
         [_handleOutImageTypeButton setEnabled:YES];
         self.handlesOutImageType = [[profileConfiguration objectForKey:TSPlasterOutAllowImages] boolValue];
-        [_handleOutFileTypeButton setEnabled:YES];
-        self.handlesOutFileType = [[profileConfiguration objectForKey:TSPlasterOutAllowImages] boolValue];
+        [_handleOutFileTypeButton setEnabled:NO];
+        self.handlesOutFileType = [[profileConfiguration objectForKey:TSPlasterOutAllowFiles] boolValue];
         
         NSString *mode = [profileConfiguration objectForKey:TSPlasterMode];
         [self.plasterLocationSelectionMatrix setEnabled:YES];
@@ -111,11 +112,10 @@
         } else if ([mode isEqualToString:TSPlasterModeFile]) {
             [self enableFileMode];
         }
-        NSString *plasterFolder = [profileConfiguration objectForKey:TSPlasterFolderPath];
-        if (!plasterFolder) {
-            plasterFolder = NSHomeDirectory();
+        self.plasterFolder = [profileConfiguration objectForKey:TSPlasterFolderPath];
+        if ([self.plasterFolder isEqualToString:@""]) {
+            self.plasterFolder = NSHomeDirectory();
         }
-        [self.plasterFolderLocationTextField setStringValue:plasterFolder];
         
         [_shouldNotifyJoinsButton setEnabled:YES];
         self.shouldNotifyJoins = [[profileConfiguration objectForKey:TSPlasterNotifyJoins] boolValue];
@@ -133,9 +133,17 @@
     [panel setCanCreateDirectories:YES];
     void (^openPanelDidEnd) (NSInteger) = ^(NSInteger result) {
         if (result == NSFileHandlingPanelOKButton) {
-            
             NSString *path = [[panel URL] path];
-            [self.plasterFolderLocationTextField setStringValue:path];
+            
+            [self willChangeValueForKey:@"plasterFolder"];
+            self.plasterFolder = path;
+            [self didChangeValueForKey:@"plasterFolder"];
+            [_mutableProfileConfiguration setObject:self.plasterMode forKey:TSPlasterMode];
+            if (![self.plasterFolder isEqualToString:@""]) {
+                [_mutableProfileConfiguration setObject:self.plasterFolder forKey:TSPlasterFolderPath];
+            } else {
+                [_mutableProfileConfiguration setObject:NSHomeDirectory() forKey:TSPlasterFolderPath];
+            }
         }
     };
     [panel beginSheetModalForWindow:[[self view] window] completionHandler:openPanelDidEnd];
@@ -149,6 +157,11 @@
     }
 }
 
+- (void)dealloc {
+    _mutableProfileConfiguration = nil;
+    
+    [super dealloc];
+}
 
 
 @end

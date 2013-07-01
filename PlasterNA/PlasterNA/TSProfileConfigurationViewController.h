@@ -28,7 +28,8 @@
 @property (assign) IBOutlet NSButton *shouldNotifyDeparturesButton;
 @property (assign) IBOutlet NSButton *shouldNotifyPlastersButton;
 
-@property (retain) NSString *plasterFolder;
+@property (copy) NSString *plasterFolder;
+@property (copy) NSString *plasterMode;
 @property (readwrite) BOOL handlesInTextType, handlesInImageType, handlesInFileType;
 @property (readwrite) BOOL handlesOutTextType, handlesOutImageType, handlesOutFileType;
 @property (readwrite) BOOL shouldNotifyJoins, shouldNotifyDepartures, shouldNotifyPlasters;
@@ -38,6 +39,6 @@
 
 - (void)disableProfileConfiguration;
 - (NSDictionary *)getProfileConfiguration;
-- (void)configureWithProfile:(NSDictionary *)profileConfiguration;
+- (void)configureWithProfile:(NSMutableDictionary *)profileConfiguration;
 
 @end

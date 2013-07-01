@@ -49,7 +49,7 @@
     _profileConfigurations = [[NSMutableArray alloc] init];
     if ([_sessionKeys count] > 0) {
         for (NSString *sessionKey in _sessionKeys) {
-            NSMutableDictionary *configuration = [[NSMutableDictionary alloc] initWithDictionary:[[_profiles objectForKey:sessionKey] mutableCopy]];
+            NSMutableDictionary *configuration = [[NSMutableDictionary alloc] initWithDictionary:[_profiles objectForKey:sessionKey]];
             [_profileConfigurations addObject:configuration];
             [configuration release];
         }
@@ -107,6 +107,8 @@
 #pragma mark Profile loading/storing methods
 
 - (void)reloadAndConfigure {
+    // Register any current configuration
+    [self registerConfigurationForRow:[self.profileListTableView selectedRow]];
     // Release what we have, and re-init
     [_profiles release];
     [_sessionKeys release];
@@ -187,7 +189,6 @@
     }
     [_userDefaults setObject:_deviceName forKey:TSPlasterDeviceName];
     [_userDefaults removeObjectForKey:TSPlasterProfiles];
-    //NSLog(@"PREFERENCES: Saving profiles : %@", _profiles);
     [_userDefaults setObject:_profiles forKey:TSPlasterProfiles];
     [_userDefaults synchronize];
     
@@ -201,9 +202,6 @@
 }
 
 - (void)windowDidLoad {
-    NSLog(@"PREFERENCES: Loading...");
-    
-    //[self configureProfileView:[self.profileListTableView selectedRow]];
     [self configureWithRow:[self.profileListTableView selectedRow]];
 }
 
