@@ -24,8 +24,8 @@ NSString *PLASTER_STRING_UTI = @"com.trilobytesystems.plaster.string.uti";
 - (id)initWithPasteboardPropertyList:(id)propertyList ofType:(NSString *)type {
     self = [super init];
     if (self) {
-        NSLog(@"PACKET: Initializing with property list %@", [propertyList class]);
-        NSLog(@"PACKET: and type %@", type);
+        DLog(@"PACKET: Initializing with property list %@", [propertyList class]);
+        DLog(@"PACKET: and type %@", type);
         if ([type isEqualToString:PLASTER_STRING_UTI]) {
             self.string = [[[NSString alloc] initWithPasteboardPropertyList:propertyList ofType:NSPasteboardTypeString] autorelease];
         } else {

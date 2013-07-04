@@ -24,8 +24,8 @@ NSString *PLASTER_IMAGE_UTI = @"com.trilobytesystems.plaster.image.uti";
 - (id)initWithPasteboardPropertyList:(id)propertyList ofType:(NSString *)type {
     self = [super init];
     if (self) {
-        NSLog(@"PACKET: Initializing with property list %@", [propertyList class]);
-        NSLog(@"PACKET: and type %@", type);
+        DLog(@"PACKET: Initializing with property list %@", [propertyList class]);
+        DLog(@"PACKET: and type %@", type);
         if ([type isEqualToString:PLASTER_IMAGE_UTI]) {
             self.image = [[[NSImage alloc] initWithPasteboardPropertyList:propertyList ofType:NSPasteboardTypeTIFF] autorelease];
         } else {

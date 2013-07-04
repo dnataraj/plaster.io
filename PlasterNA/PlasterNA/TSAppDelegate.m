@@ -34,7 +34,7 @@
 - (id)init {
     self = [super init];
     if (self) {
-        NSLog(@"AD: Delegate initializing...");
+        DLog(@"AD: Delegate initializing...");
         _userDefaults = [[NSUserDefaults standardUserDefaults] retain];
         _redisController = [[TSRedisController alloc] init];
         _plaster = [[TSPlasterController alloc] initWithPasteboard:[NSPasteboard generalPasteboard] provider:_redisController];
@@ -43,7 +43,7 @@
         _peersMenu = [[NSMenu alloc] initWithTitle:@"Peers Menu"];
         _profilesMenu = [[NSMenu alloc] initWithTitle:@"Profiles Menu"];
         
-        NSLog(@"AD: Registering default preferences...");
+        DLog(@"AD: Registering default preferences...");
         // Register application default preferences
         NSMutableDictionary *defaultPreferences = [NSMutableDictionary dictionary];
         [defaultPreferences setObject:[[NSHost currentHost] localizedName] forKey:TSPlasterDeviceName];
@@ -61,7 +61,7 @@
 }
 
 - (void)awakeFromNib {
-    NSLog(@"AD: Waking up from nib...");
+    DLog(@"AD: Waking up from nib...");
     _plasterStatusItem = [[[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength] retain];
     [_plasterStatusItem setTitle:@"P"];
     /*
@@ -118,7 +118,7 @@
 }
 
 - (void)startPlasterWithProfile:(id)sender {
-    NSLog(@"Starting plaster session for : %@", [sender title]);
+    DLog(@"Starting plaster session for : %@", [sender title]);
     [self setCurrentProfileName:[sender title]];
     [self setSessionKey:[sender toolTip]];
     [sender setState:NSOnState];
@@ -166,7 +166,7 @@
 - (void)joinSession:(id)sender {
     [self.joinSessionHUD orderOut:nil];
     self.sessionKey = [self.joinSessionKeyTextField stringValue];
-    NSLog(@"AD: Joining plaster session with key [%@]", self.sessionKey);
+    DLog(@"AD: Joining plaster session with key [%@]", self.sessionKey);
     [_plaster setSessionKey:self.sessionKey];
     [_plaster setSessionProfile:[_joinProfileConfigurationViewController getProfileConfiguration]];
     self.currentProfileName = @"*untitled";
@@ -221,11 +221,11 @@
     [mutableProfiles release];
     
     NSString *profileName = [self.profileNameTextField stringValue];
-    NSLog(@"AD: Saving profile with name : %@", profileName);
+    DLog(@"AD: Saving profile with name : %@", profileName);
     NSMutableDictionary *profileConfiguration = [[NSMutableDictionary alloc] initWithDictionary:[_plaster sessionProfile]];
     [profileConfiguration setObject:profileName forKey:TSPlasterProfileName];
     
-    NSLog(@"Adding profile : %@ to profiles with key : %@", profileName, self.sessionKey);
+    DLog(@"Adding profile : %@ to profiles with key : %@", profileName, self.sessionKey);
     [profiles setObject:profileConfiguration forKey:self.sessionKey];
     // Replace the "dummy" profile that the plaster controller started with.
     [_plaster setSessionProfile:profileConfiguration];
@@ -354,7 +354,7 @@
     [_peersMenu removeAllItems];
     if (anyPeers) {
         for (NSString *peer in peers) {
-            //NSLog(@"Adding peer : %@", peer);
+            //DLog(@"Adding peer : %@", peer);
             NSMenuItem *peerMenuItem = [[[NSMenuItem alloc] initWithTitle:peer action:@selector(_no_op:) keyEquivalent:@""] autorelease];
             [peerMenuItem setTarget:self];
             [peerMenuItem setEnabled:YES];
@@ -367,7 +367,7 @@
 #pragma mark Application Delegate methods
 
 - (void)applicationWillTerminate:(NSNotification *)notification {
-    NSLog(@"AD: Quitting...");
+    DLog(@"AD: Quitting...");
     if ([[_startWithProfileMenuItem title] isEqualToString:@"Stop Plaster"]) {
         [self stop:self];
     }
@@ -376,7 +376,7 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
     [self.joinSessionHUD orderOut:nil];
-    NSLog(@"AD: Application Launched.");
+    DLog(@"AD: Application Launched.");
 }
 
 #pragma mark Deallocations

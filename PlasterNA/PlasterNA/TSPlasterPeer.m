@@ -22,7 +22,7 @@
     if (self) {
         NSArray *tokens = [aPeer componentsSeparatedByString:@"_"];
         if ([tokens count] < 2) {
-            NSLog(@"Unable to initialize plaster peer.");
+            DLog(@"Unable to initialize plaster peer.");
             return nil;
         }
         [self setPeerID:[tokens objectAtIndex:0]];

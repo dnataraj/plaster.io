@@ -46,7 +46,7 @@
     self = [super init];
     if (self) {
         if (!pasteboard || !provider) {
-            NSLog(@"PLASTER: INIT : The pasteboard controller needs both a valid pasteboard and a message provider.");
+            DLog(@"PLASTER: INIT : The pasteboard controller needs both a valid pasteboard and a message provider.");
             return nil;
         }
         _clientID = [[TSClientIdentifier clientID] retain];
@@ -96,17 +96,17 @@
         
         _testMode = [[NSUserDefaults standardUserDefaults] boolForKey:@"plaster-test-mode"];
         if (_testMode) {
-            NSLog(@"PLASTER: BOOT : Test mode is enabled.");
+            DLog(@"PLASTER: BOOT : Test mode is enabled.");
             _testLog = [NSString stringWithFormat:@"%@/%@", NSHomeDirectory(), @TEST_LOG_FILE];
             [_testLog retain];
             NSFileManager *fileManager = [NSFileManager defaultManager];
             if (![fileManager fileExistsAtPath:_testLog]) {
-                NSLog(@"PLASTER: BOOT : TEST MODE : Creating log file at path : [%@]", _testLog);
+                DLog(@"PLASTER: BOOT : TEST MODE : Creating log file at path : [%@]", _testLog);
                 [fileManager createFileAtPath:_testLog contents:nil attributes:nil];
             }
             NSString *jsonLog = [NSString stringWithFormat:@"%@/%@", NSHomeDirectory(), @JSON_LOG_FILE];
             if (![fileManager fileExistsAtPath:jsonLog]) {
-                NSLog(@"PLASTER: BOOT : TEST MODE : Creating json log file at path : [%@]", jsonLog);
+                DLog(@"PLASTER: BOOT : TEST MODE : Creating json log file at path : [%@]", jsonLog);
                 [fileManager createFileAtPath:jsonLog contents:nil attributes:nil];
             }
             
@@ -118,18 +118,18 @@
 
 - (void)bootWithPeers:(NSUInteger)maxPeers {
     NSUInteger result = EXIT_FAILURE;
-    NSLog(@"PLASTER: BOOT : Booting plaster with client ID : [%@], and session ID [%@]", _clientID, self.sessionKey);
+    DLog(@"PLASTER: BOOT : Booting plaster with client ID : [%@], and session ID [%@]", _clientID, self.sessionKey);
     NSString *clientIdentifier = [NSString stringWithFormat:@"%@_%@", _clientID, [self alias]];
     
     // Publish to the plaster broadcast channel to announce self to participating peers
     NSString *broadcastChannel = [NSString stringWithFormat:SESSION_BROADCAST_CHANNEL, self.sessionKey];
-    NSLog(@"PLASTER: BOOT : Publishing HELLO to broadcast channel : %@", broadcastChannel);
+    DLog(@"PLASTER: BOOT : Publishing HELLO to broadcast channel : %@", broadcastChannel);
     NSString *hello = [NSString stringWithFormat:@"HELLO:%@", clientIdentifier];
     result = [_provider publishObject:hello toChannel:broadcastChannel];
     NSAssert(result == EXIT_SUCCESS, @"PLASTER: FATAL : Unable to publish to broadcast channel %@", broadcastChannel);
         
     // Subscribe to the plaster broadcast channel to listen to broadcasts from new participants
-    NSLog(@"PLASTER: BOOT : Subscribing to broadcast channel to accept new peers.");
+    DLog(@"PLASTER: BOOT : Subscribing to broadcast channel to accept new peers.");
     result = [_provider subscribeToChannel:broadcastChannel
                            options:[self createHandlerOptionsForHandler:NSStringFromSelector(@selector(handlePeerAttachAndDetachWithData:))]];
     NSAssert(result == EXIT_SUCCESS, @"PLASTER: FATAL : Unable to subscribe to broadcast channel %@", broadcastChannel);
@@ -139,11 +139,11 @@
     NSString *peersKey = [NSString stringWithFormat:SESSION_PEERS_KEY, self.sessionKey];
     NSString *peers = [_provider stringValueForKey:peersKey];
     if (!peers) {
-        NSLog(@"PLASTER: BOOT : First participant for session id [%@], registering...", self.sessionKey);
+        DLog(@"PLASTER: BOOT : First participant for session id [%@], registering...", self.sessionKey);
         result = [_provider setStringValue:clientIdentifier forKey:peersKey];
         NSAssert(result == EXIT_SUCCESS, @"PLASTER: FATAL : Unable to register as first participant with key %@", peersKey);
     } else {
-        NSLog(@"PLASTER: BOOT : Found peers : [%@]", peers);
+        DLog(@"PLASTER: BOOT : Found peers : [%@]", peers);
         NSArray *peerList = [peers componentsSeparatedByString:@":"];
         for (NSString *peerID in peerList) {
             TSPlasterPeer *peer = [[TSPlasterPeer alloc] initWithPeer:peerID];
@@ -153,14 +153,14 @@
             
         // Add self to list, for the benefit of future participants joining this session
         NSString *updatedPeers = [peers stringByAppendingFormat:@":%@", clientIdentifier];
-        NSLog(@"PLASTER: BOOT : Updating peer list with value [%@]", updatedPeers);
+        DLog(@"PLASTER: BOOT : Updating peer list with value [%@]", updatedPeers);
         result = [_provider setStringValue:updatedPeers forKey:peersKey];
         NSAssert(result == EXIT_SUCCESS, @"PLASTER: FATAL : Unable to add to peers key %@", peersKey);
     }
         
     // Subscribe to peers
     if ([_plasterPeers count] > 0) {
-        NSLog(@"PLASTER: BOOT : Subscribing to peers...");
+        DLog(@"PLASTER: BOOT : Subscribing to peers...");
         NSMutableString *peerIDs = [[NSMutableString alloc] init];
         for (TSPlasterPeer *peer in _plasterPeers) {
             [peerIDs appendFormat:@" %@", [peer peerID]];
@@ -173,12 +173,12 @@
     }
 
     if (_testMode) {
-        NSLog(@"PLASTER: BOOT : Test mode : Subscribing to our plaster board");
+        DLog(@"PLASTER: BOOT : Test mode : Subscribing to our plaster board");
         [_provider subscribeToChannel:_clientID
                                options:[self createHandlerOptionsForHandler:NSStringFromSelector(@selector(testHandlePlasterInWithData:))]];
     }
     
-    NSLog(@"PLASTER: BOOT : Done.");
+    DLog(@"PLASTER: BOOT : Done.");
 }
 
 - (NSDictionary *)createHandlerOptionsForHandler:(NSString *)handler {
@@ -190,12 +190,12 @@
     /*
         Start a plaster session, OR join an existing one.
     */
-    NSLog(@"PLASTER: START : Starting...");
+    DLog(@"PLASTER: START : Starting...");
     self.started = YES;
     [self bootWithPeers:10];
-    NSLog(@"PLASTER: START : Starting pasteboard monitoring every 100ms");
+    DLog(@"PLASTER: START : Starting pasteboard monitoring every 100ms");
     [self scheduleMonitorWithID:_clientID andTimeInterval:0.100];
-    NSLog(@"PLASTER: START : Done.");
+    DLog(@"PLASTER: START : Done.");
 }
 
 - (void)stop {
@@ -208,15 +208,15 @@
         Also empty the list of peers.
     */
     NSUInteger result = EXIT_FAILURE;
-    NSLog(@"PLASTER: STOP : Stopping timer and cleaning up...");
+    DLog(@"PLASTER: STOP : Stopping timer and cleaning up...");
     [self invalidateMonitorWithID:_clientID];
         
-    NSLog(@"PLASTER: STOP : Stopping plaster session with client ID : [%@], and session ID [%@]", _clientID, self.sessionKey);
+    DLog(@"PLASTER: STOP : Stopping plaster session with client ID : [%@], and session ID [%@]", _clientID, self.sessionKey);
     NSString *clientIdentifier = [NSString stringWithFormat:@"%@_%@", _clientID, [self alias]];
     
     // Publish to the plaster broadcast channel to depart session
     NSString *broadcastChannel = [NSString stringWithFormat:SESSION_BROADCAST_CHANNEL, self.sessionKey];
-    NSLog(@"PLASTER: BOOT : Publishing GOODBYE to broadcast channel : %@", broadcastChannel);
+    DLog(@"PLASTER: BOOT : Publishing GOODBYE to broadcast channel : %@", broadcastChannel);
     NSString *goodbye = [NSString stringWithFormat:@"GOODBYE:%@", clientIdentifier];
     result = [_provider publishObject:goodbye toChannel:broadcastChannel];
     NSAssert(result == EXIT_SUCCESS, @"PLASTER: STOP : Unable to broadcast goodbye to channel : %@", broadcastChannel);
@@ -227,39 +227,39 @@
     NSString *peers = [_provider stringValueForKey:peersKey];
     if (!peers) {
         // Something went wrong - you are supposed to be in a session...
-        NSLog(@"PLASTER: STOP : Unable to stop plaster session!");
+        DLog(@"PLASTER: STOP : Unable to stop plaster session!");
         return;
     }
-    NSLog(@"PLASTER: STOP : Found peers : [%@]", peers);
+    DLog(@"PLASTER: STOP : Found peers : [%@]", peers);
     NSMutableArray *peerList = [NSMutableArray arrayWithArray:[peers componentsSeparatedByString:@":"]];
     // If this is the only participant, then remove the session key entirely.
     if ([peerList count] == 1) {
-        NSLog(@"PLASTER: STOP : Only participant, removing session key...");
+        DLog(@"PLASTER: STOP : Only participant, removing session key...");
         result = [_provider deleteKey:peersKey];
         NSAssert(result == EXIT_SUCCESS, @"PLASTER: STOP : Unable to delete session key : %@", peersKey);
-        //NSLog(@"PLASTER: STOP : Removed %ld keys.", (unsigned long)result);
+        //DLog(@"PLASTER: STOP : Removed %ld keys.", (unsigned long)result);
     } else {
-        NSLog(@"PLASTER: STOP : Removing this client from peers...");
+        DLog(@"PLASTER: STOP : Removing this client from peers...");
         [peerList removeObject:clientIdentifier];
         result = [_provider setStringValue:[peerList componentsJoinedByString:@":"] forKey:peersKey];
         NSAssert(result == EXIT_SUCCESS, @"PLASTER: STOP : Unable to remove this peer from session : %@", peersKey);
     }
     
     [_plasterPeers removeAllObjects];
-    NSLog(@"PLASTER: STOP : Done.");
+    DLog(@"PLASTER: STOP : Done.");
 }
 
 - (void)scheduleMonitorWithID:(NSString *)id andTimeInterval:(NSTimeInterval)interval {
     uint ret = [_dispatcher dispatchTask:id WithPeriod:(interval * NSEC_PER_SEC) andController:self];
     if (ret == TS_DISPATCH_ERR) {
-        NSLog(@"PLASTER: Error starting Plaster monitor : Unable to create/start dispatch timer, id : %@", id);
+        DLog(@"PLASTER: Error starting Plaster monitor : Unable to create/start dispatch timer, id : %@", id);
     }
 }
 
 - (void)invalidateMonitorWithID:(NSString *)id {
     uint ret = [_dispatcher stopTask:id];
     if (ret == TS_DISPATCH_ERR) {
-        NSLog(@"PLASTER: Error invalidating Plaster monitor : Unable to stop dispatch timer, id : %@", id);
+        DLog(@"PLASTER: Error invalidating Plaster monitor : Unable to stop dispatch timer, id : %@", id);
     }
 }
 
@@ -273,7 +273,7 @@
 }
 
 - (void)disconnect:(id)sender {
-    NSLog(@"PLASTER: Disconnect called!");
+    DLog(@"PLASTER: Disconnect called!");
 }
 
 #pragma mark Timer and Handler Methods
@@ -286,7 +286,7 @@
     
     // if Plaster just started, ignore existing pasteboard content
     if (self.started) {
-        NSLog(@"PLASTER: PLASTER OUT : Clearing stale content...");
+        DLog(@"PLASTER: PLASTER OUT : Clearing stale content...");
         self.started = NO;
         [_pb clearContents];
         return;
@@ -300,41 +300,41 @@
     
     BOOL isPeerPaste = [_pb canReadItemWithDataConformingToTypes:@[PLASTER_STRING_UTI, PLASTER_IMAGE_UTI]];
     if (isPeerPaste) {
-        NSLog(@"PLASTER: PLASTER OUT : Packet is from a peer, discarding publish..");
+        DLog(@"PLASTER: PLASTER OUT : Packet is from a peer, discarding publish..");
         return;
     }
     
     NSMutableArray *readables = [NSMutableArray array];
     BOOL allowOutImages = [[_sessionProfile objectForKey:TSPlasterOutAllowImages] boolValue];
     if (allowOutImages) {
-        NSLog(@"PLASTER: PLASTER OUT : Allowing images to be plastered out.");
+        DLog(@"PLASTER: PLASTER OUT : Allowing images to be plastered out.");
         [readables addObject:[NSImage class]];
     }
     BOOL allowOutText = [[_sessionProfile objectForKey:TSPlasterOutAllowText] boolValue];
     if (allowOutText) {
-        NSLog(@"PLASTER: PLASTER OUT : Allowing text to be plastered out.");
+        DLog(@"PLASTER: PLASTER OUT : Allowing text to be plastered out.");
         [readables addObjectsFromArray:@[[NSString class], [NSAttributedString class]]];
     }
     NSArray *pbContents = [_pb readObjectsForClasses:readables options:nil];
-    NSLog(@"PLASTER: Read %ld items from pasteboard.", (unsigned long)[pbContents count]);
+    DLog(@"PLASTER: Read %ld items from pasteboard.", (unsigned long)[pbContents count]);
     if ([pbContents count] > 0) {
         // Now we have to extract the bytes
         id packet = [pbContents objectAtIndex:0];
         const char *jsonBytes = NULL;
         if ([packet isKindOfClass:[NSString class]]) {
-            NSLog(@"PLASTER : PLASTER OUT : Processing NSString packet and publishing...");
+            DLog(@"PLASTER : PLASTER OUT : Processing NSString packet and publishing...");
             jsonBytes = [TSPacketSerializer JSONWithStringPacket:packet sender:[self alias]];
         } else if ([packet isKindOfClass:[NSImage class]]) {
-            NSLog(@"PLASTER : PLASTER OUT : Processing NSImage packet and publishing...");
+            DLog(@"PLASTER : PLASTER OUT : Processing NSImage packet and publishing...");
             jsonBytes = [TSPacketSerializer JSONWithImagePacket:packet  sender:[self alias]];
         }
         if (jsonBytes == NULL) {
-            NSLog(@"PLASTER: PLASTER OUT : Unable to complete operation, no data.");
+            DLog(@"PLASTER: PLASTER OUT : Unable to complete operation, no data.");
             return;
         }
         char *bytes = (char *)calloc(strlen(jsonBytes), sizeof(char));
         if (bytes == NULL) {
-            NSLog(@"PLASTER: PLASTER OUT : Unable to allocate memory for operation to complete.");
+            DLog(@"PLASTER: PLASTER OUT : Unable to allocate memory for operation to complete.");
             return;
         }
         strcpy(bytes, (const char *)jsonBytes);
@@ -342,15 +342,15 @@
         free(bytes);
         return;
     } else {
-        NSLog(@"PLASTER: PLASTER OUT : Nothing retrieved from pasteboard.");
+        DLog(@"PLASTER: PLASTER OUT : Nothing retrieved from pasteboard.");
     }
 }
 
 - (void)testHandlePlasterInWithData:(char *)data {
-    NSLog(@"PLASTER: TEST : HANDLE PLASTER IN:");
+    DLog(@"PLASTER: TEST : HANDLE PLASTER IN:");
     NSDictionary *payload = nil;
     if (data) {
-        NSDictionary *payload = [TSPacketSerializer dictionaryFromJSON:data];
+        payload = [TSPacketSerializer dictionaryFromJSON:data];
         if (payload) {
             NSString *type = [payload objectForKey:PLASTER_TYPE_JSON_KEY];
             if ([type isEqualToString:PLASTER_TEXT_TYPE_JSON_VALUE]) {
@@ -358,18 +358,18 @@
                                                                               string:[payload objectForKey:PLASTER_PACKET_TEXT]];
                 //NSString *sender = [payload objectForKey:PLASTER_SENDER_JSON_KEY];
                 
-                NSLog(@"PLASTER: TESTING : Obtained packet [%@]", packet);
+                DLog(@"PLASTER: TESTING : Obtained packet [%@]", packet);
                 
                 NSPasteboard *pb = [NSPasteboard generalPasteboard];
                 if (!pb) {
-                    NSLog(@"PLASTER: TESTING : No pasteboard available...");
+                    DLog(@"PLASTER: TESTING : No pasteboard available...");
                     [packet release];
                     return;
                 }
-                NSLog(@"PLASTER: TESTING : Writing to [%@]", _testLog);
+                DLog(@"PLASTER: TESTING : Writing to [%@]", _testLog);
                 NSFileHandle *log = [NSFileHandle fileHandleForWritingAtPath:_testLog];
                 if (log) {
-                    NSLog(@"Writing to log...");
+                    DLog(@"Writing to log...");
                     [log truncateFileAtOffset:[log seekToEndOfFile]];
                     [log writeData:[[packet packet] dataUsingEncoding:NSUTF8StringEncoding]];
                     [log closeFile];
@@ -385,18 +385,18 @@
                 [packet release];
                 return;
             } else if ([type isEqualToString:PLASTER_IMAGE_TYPE_JSON_VALUE]) {
-                NSLog(@"PLASTER: TESTING: Processing image packet...");
+                DLog(@"PLASTER: TESTING: Processing image packet...");
                 return;
             }
         }
     }
     
-    NSLog(@"PLASTER: HANDLE IN : Data(%s) or payload(%@) was null. ", data, payload);
+    DLog(@"PLASTER: HANDLE IN : Data(%s) or payload(%@) was null. ", data, payload);
     return;
 }
 
 - (void)handlePlasterInWithData:(char *)data {
-    NSLog(@"PLASTER: HANDLE IN :");
+    DLog(@"PLASTER: HANDLE IN :");
     NSDictionary *payload = nil;
     if (data) {
         payload = [TSPacketSerializer dictionaryFromJSON:data];
@@ -409,43 +409,43 @@
             
             if ([type isEqualToString:PLASTER_TEXT_TYPE_JSON_VALUE]) {
                 if (!allowTextType) {
-                    NSLog(@"PLASTER: HANDLE IN : This session does not support incoming text-type plasters.");
+                    DLog(@"PLASTER: HANDLE IN : This session does not support incoming text-type plasters.");
                     return;
                 }
-                NSLog(@"PLASTER: HANDLE IN : Processing text packet...");
+                DLog(@"PLASTER: HANDLE IN : Processing text packet...");
                 packet = [[TSPlasterString alloc] initWithString:[payload objectForKey:PLASTER_PACKET_TEXT]];
             } else if ([type isEqualToString:PLASTER_IMAGE_TYPE_JSON_VALUE]) {
                 if (!allowImageType) {
-                    NSLog(@"PLASTER: HANDLE IN : This session does not support incoming image-type plasters.");
+                    DLog(@"PLASTER: HANDLE IN : This session does not support incoming image-type plasters.");
                     return;                    
                 }
-                NSLog(@"PLASTER: HANDLE IN : Processing image packet...");
+                DLog(@"PLASTER: HANDLE IN : Processing image packet...");
                 packet = [[TSPlasterImage alloc] initWithImage:[payload objectForKey:PLASTER_PACKET_IMAGE]];
             }
             
             if (!packet) {
-                NSLog(@"PLASTER: HANDLE IN : Unable to initialize text or image packet.");
+                DLog(@"PLASTER: HANDLE IN : Unable to initialize text or image packet.");
                 return;
             }
-            NSLog(@"PLASTER: HANDLE IN : Obtained packet [%@]", packet);
+            DLog(@"PLASTER: HANDLE IN : Obtained packet [%@]", packet);
             
             NSString *sender = [payload objectForKey:PLASTER_SENDER_JSON_KEY];
             
             // Figure out how the user wants to write out the packet - pasteboard or file
             NSString *mode = [_sessionProfile objectForKey:TSPlasterMode];
             if ([mode isEqualToString:TSPlasterModePasteboard]) {
-                NSLog(@"PLASTER: HANDLE IN : Operating in pasteboard mode...");
+                DLog(@"PLASTER: HANDLE IN : Operating in pasteboard mode...");
                 NSPasteboard *pb = [NSPasteboard generalPasteboard];
                 if (!pb) {
-                    NSLog(@"PLASTER: PLASTER IN : No pasteboard available...");
+                    DLog(@"PLASTER: PLASTER IN : No pasteboard available...");
                     [packet release];
                     return;
                 }
-                NSLog(@"PLASTER: HANDLE IN : Pasting...");
+                DLog(@"PLASTER: HANDLE IN : Pasting...");
                 [pb clearContents];
                 BOOL ok = [pb writeObjects:@[packet]];
                 if (ok) {
-                    NSLog(@"PLASTER: HANDLE IN : Peer copy successfully written to local pasteboard.");
+                    DLog(@"PLASTER: HANDLE IN : Peer copy successfully written to local pasteboard.");
                     // Notify the user.
                     BOOL notify = [[_sessionProfile objectForKey:TSPlasterNotifyPlasters] boolValue];
                     if (notify) {
@@ -454,7 +454,7 @@
                     }
                 }
             } else if ([mode isEqualToString:TSPlasterModeFile]) {
-                NSLog(@"PLASTER: HANDLE IN : Operating in file mode...");
+                DLog(@"PLASTER: HANDLE IN : Operating in file mode...");
                 // Since this is just ordinary clipboard text and image data, generate a file name
                 NSFileManager *fm = [NSFileManager defaultManager];
                 NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -475,14 +475,14 @@
                     blob = [packet TIFFRepresentation];
                 }
                 if (!blob) {
-                    NSLog(@"PLASTER: HANDLE IN : Error obtaining data representations for incoming plaster.");
+                    DLog(@"PLASTER: HANDLE IN : Error obtaining data representations for incoming plaster.");
                     [packet release];
                     return;
                 }
                 NSString *outputPath = [NSString pathWithComponents:@[plasterFolderPath, plasterFileName]];
-                NSLog(@"PLASTER: HANDLE IN : Dumping incoming plaster to path : %@", outputPath);
+                DLog(@"PLASTER: HANDLE IN : Dumping incoming plaster to path : %@", outputPath);
                 if (![fm createFileAtPath:outputPath contents:blob attributes:nil]) {
-                    NSLog(@"PLASTER: HANDLE IN : Unable to create content file at path : %@", outputPath);
+                    DLog(@"PLASTER: HANDLE IN : Unable to create content file at path : %@", outputPath);
                 } else {
                     BOOL notify = [[_sessionProfile objectForKey:TSPlasterNotifyPlasters] boolValue];
                     if (notify) {
@@ -497,7 +497,7 @@
         }
     }
     
-    NSLog(@"PLASTER: HANDLE IN : Data(%s) or payload(%@) was null. ", data, payload);
+    DLog(@"PLASTER: HANDLE IN : Data(%s) or payload(%@) was null. ", data, payload);
     return;
 }
 
@@ -515,15 +515,15 @@
 - (void)handlePeerAttachAndDetachWithData:(char *)data {
     if (data) {
         NSString *str = [NSString stringWithCString:data encoding:NSUTF8StringEncoding];
-        NSLog(@"PLASTER: PEER ATTACH/DETACH : %@", str);
+        DLog(@"PLASTER: PEER ATTACH/DETACH : %@", str);
         
         if ([str hasPrefix:@"HELLO:"]) {
-            NSLog(@"PLASTER: HANDLE PEER : Processing HELLO from peer with ID [%@].", str);
+            DLog(@"PLASTER: HANDLE PEER : Processing HELLO from peer with ID [%@].", str);
             
             NSString *peer = [str substringFromIndex:6];
             TSPlasterPeer *plpeer = [[TSPlasterPeer alloc] initWithPeer:peer];
             if ([[plpeer peerAlias] isEqualToString:[self alias]]) {
-                NSLog(@"Ignoring hello from self.");
+                DLog(@"Ignoring hello from self.");
                 [plpeer release];
                 return;
             }
@@ -544,12 +544,12 @@
             }
             [plpeer release];            
         } else if ([str hasPrefix:@"GOODBYE:"]) {
-            NSLog(@"PLASTER: HANDLE PEER : Processing GOODBYE from peer with ID [%@].", str);
+            DLog(@"PLASTER: HANDLE PEER : Processing GOODBYE from peer with ID [%@].", str);
             
             NSString *peer = [str substringFromIndex:8];
             TSPlasterPeer *plpeer = [[TSPlasterPeer alloc] initWithPeer:peer];
             if ([[plpeer peerAlias] isEqualToString:[self alias]]) {
-                NSLog(@"Ignoring goodbye from self.");
+                DLog(@"Ignoring goodbye from self.");
                 [plpeer release];
                 return;
             }

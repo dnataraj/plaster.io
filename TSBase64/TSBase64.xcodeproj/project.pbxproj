@@ -7,27 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		415123A51785A026002D7E70 /* TSBase64.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FE138A174BAABF00511395 /* TSBase64.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		415123A61785A029002D7E70 /* NSString+TSBase64.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FE138B174BAFED00511395 /* NSString+TSBase64.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		415123A71785A02E002D7E70 /* NSData+TSBase64.h in Headers */ = {isa = PBXBuildFile; fileRef = 41BF51C0176E0DF300D5CCD4 /* NSData+TSBase64.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		41BF51C2176E0DF300D5CCD4 /* NSData+TSBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = 41BF51C1176E0DF300D5CCD4 /* NSData+TSBase64.m */; };
 		41FE1373174BA99A00511395 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41FE1372174BA99A00511395 /* Foundation.framework */; };
 		41FE1389174BAAB500511395 /* TSBase64.c in Sources */ = {isa = PBXBuildFile; fileRef = 41FE1388174BAAB500511395 /* TSBase64.c */; };
 		41FE138D174BAFED00511395 /* NSString+TSBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FE138C174BAFED00511395 /* NSString+TSBase64.m */; };
-		41FE1390174BB3D300511395 /* NSString+TSBase64.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 41FE138B174BAFED00511395 /* NSString+TSBase64.h */; };
-		41FE1391174BB3E100511395 /* TSBase64.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 41FE138A174BAABF00511395 /* TSBase64.h */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		41FE136D174BA99A00511395 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/${PRODUCT_NAME}";
-			dstSubfolderSpec = 16;
-			files = (
-				41FE1390174BB3D300511395 /* NSString+TSBase64.h in CopyFiles */,
-				41FE1391174BB3E100511395 /* TSBase64.h in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		41BF51C0176E0DF300D5CCD4 /* NSData+TSBase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+TSBase64.h"; sourceTree = "<group>"; };
@@ -102,6 +89,19 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		415123A41785A015002D7E70 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				415123A61785A029002D7E70 /* NSString+TSBase64.h in Headers */,
+				415123A71785A02E002D7E70 /* NSData+TSBase64.h in Headers */,
+				415123A51785A026002D7E70 /* TSBase64.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
 		41FE136E174BA99A00511395 /* TSBase64 */ = {
 			isa = PBXNativeTarget;
@@ -109,7 +109,7 @@
 			buildPhases = (
 				41FE136B174BA99A00511395 /* Sources */,
 				41FE136C174BA99A00511395 /* Frameworks */,
-				41FE136D174BA99A00511395 /* CopyFiles */,
+				415123A41785A015002D7E70 /* Headers */,
 			);
 			buildRules = (
 			);
@@ -221,8 +221,10 @@
 				DSTROOT = /tmp/TSBase64.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TSBase64/TSBase64-Prefix.pch";
+				INSTALL_PATH = "${BUILT_PRODUCTS_DIR}";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "${TARGET_NAME}";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = macosx;
@@ -236,8 +238,10 @@
 				DSTROOT = /tmp/TSBase64.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TSBase64/TSBase64-Prefix.pch";
+				INSTALL_PATH = "${BUILT_PRODUCTS_DIR}";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "${TARGET_NAME}";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = macosx;

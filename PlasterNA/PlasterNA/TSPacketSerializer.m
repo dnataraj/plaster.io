@@ -31,7 +31,7 @@
         NSError *error = nil;
         NSData *json = [NSJSONSerialization dataWithJSONObject:kvDictionary options:0 error:&error];
         if (error) {
-            NSLog(@"PACKET SERIALIZER: Error occured during serialization : %@", error);
+            DLog(@"PACKET SERIALIZER: Error occured during serialization : %@", error);
             return NULL;
         }
         //[TSPacketSerializer logJSONToFile:json];
@@ -39,7 +39,7 @@
         return [string UTF8String];
     }
     
-    NSLog(@"PACKET SERIALIZER: Unable to obtain string representation");
+    DLog(@"PACKET SERIALIZER: Unable to obtain string representation");
     return nil;
 }
 
@@ -58,13 +58,13 @@
         NSError *error = nil;
         NSData *json = [NSJSONSerialization dataWithJSONObject:kvDictionary options:0 error:&error];
         if (error) {
-            NSLog(@"PACKET SERIALIZER: Error occured during serialization : %@", error);
+            DLog(@"PACKET SERIALIZER: Error occured during serialization : %@", error);
             return NULL;
         }
         NSString *string = [[[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding] autorelease];
         return [string UTF8String];
     }
-    NSLog(@"PACKET SERIALIZER: Unable to obtain tiff representation.");
+    DLog(@"PACKET SERIALIZER: Unable to obtain tiff representation.");
     
     return nil;
 }
@@ -102,7 +102,7 @@
     NSError *error = nil;
     id kvStore = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
     if (error) {
-        NSLog(@"SERIALIZER: Error occured during de-serialization: %@", error);
+        DLog(@"SERIALIZER: Error occured during de-serialization: %@", error);
         return nil;
     }
     if ([kvStore isKindOfClass:[NSMutableDictionary class]]) {
@@ -117,7 +117,7 @@
                     [dictionary setObject:cleared forKey:PLASTER_PACKET_TEXT];
                     [cleared release];
                 } else if ([type isEqualToString:PLASTER_IMAGE_TYPE_JSON_VALUE]) {
-                    NSLog(@"PACKET SERIALIZER: Converting data to image...");
+                    DLog(@"PACKET SERIALIZER: Converting data to image...");
                     NSImage *image = [[NSImage alloc] initWithData:packet];
                     [dictionary setObject:image forKey:PLASTER_PACKET_IMAGE];
                     [image release];

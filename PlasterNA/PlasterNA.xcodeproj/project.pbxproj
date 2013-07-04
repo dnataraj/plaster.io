@@ -10,9 +10,7 @@
 		410EC43E1769A56B00D4826D /* pause.png in Resources */ = {isa = PBXBuildFile; fileRef = 410EC43D1769A56B00D4826D /* pause.png */; };
 		410EC4401769A57E00D4826D /* play.png in Resources */ = {isa = PBXBuildFile; fileRef = 410EC43F1769A57E00D4826D /* play.png */; };
 		410EC4421769DC6900D4826D /* stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 410EC4411769DC6900D4826D /* stop.png */; };
-		4171B814176223E400936C31 /* NSString+TSBase64.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B68D84175DD9930090A108 /* NSString+TSBase64.h */; settings = {ATTRIBUTES = (); }; };
-		4171B815176223E700936C31 /* TSBase64.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B68D85175DD9930090A108 /* TSBase64.h */; settings = {ATTRIBUTES = (); }; };
-		4171B81A1762276000936C31 /* libTSBase64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4171B8191762276000936C31 /* libTSBase64.a */; };
+		414EDBBE1785A34D007EFDA4 /* libTSBase64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 415123A317859DA6002D7E70 /* libTSBase64.a */; };
 		41B68C59175CD7700090A108 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41B68C58175CD7700090A108 /* Cocoa.framework */; };
 		41B68C63175CD7700090A108 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 41B68C61175CD7700090A108 /* InfoPlist.strings */; };
 		41B68C65175CD7700090A108 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68C64175CD7700090A108 /* main.m */; };
@@ -44,19 +42,22 @@
 		41B68D72175CDDE70090A108 /* TSPlasterController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B68D02175CD94C0090A108 /* TSPlasterController.m */; };
 		41B68D75175CDF030090A108 /* TSClientStartPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 41B68D74175CDF030090A108 /* TSClientStartPanel.xib */; };
 		41B68D7C175CE4AE0090A108 /* libhiredis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41B68D7B175CE4AE0090A108 /* libhiredis.a */; };
-		41BF51C4176E1BF000D5CCD4 /* NSData+TSBase64.h in Headers */ = {isa = PBXBuildFile; fileRef = 41BF51C3176E1BF000D5CCD4 /* NSData+TSBase64.h */; };
-		41BF51C7176EFC5400D5CCD4 /* TSPlasterString.h in Headers */ = {isa = PBXBuildFile; fileRef = 41BF51C5176EFC5300D5CCD4 /* TSPlasterString.h */; };
 		41BF51C8176EFC5400D5CCD4 /* TSPlasterString.m in Sources */ = {isa = PBXBuildFile; fileRef = 41BF51C6176EFC5400D5CCD4 /* TSPlasterString.m */; };
-		41BF51CB176F173E00D5CCD4 /* TSPlasterImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 41BF51C9176F173D00D5CCD4 /* TSPlasterImage.h */; };
 		41BF51CC176F173E00D5CCD4 /* TSPlasterImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 41BF51CA176F173D00D5CCD4 /* TSPlasterImage.m */; };
 		41F98676176867E20031609C /* TSPlasterPeer.m in Sources */ = {isa = PBXBuildFile; fileRef = 41F98674176867E10031609C /* TSPlasterPeer.m */; };
 		41FCC37E177AD34700859EF1 /* TSPlasterGlobals.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FCC37D177AD34700859EF1 /* TSPlasterGlobals.m */; };
 		41FCC380177B51B900859EF1 /* ProfileConfiguration.xib in Resources */ = {isa = PBXBuildFile; fileRef = 41FCC37F177B51B800859EF1 /* ProfileConfiguration.xib */; };
-		41FCC383177B573600859EF1 /* TSProfileConfigurationViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FCC381177B573500859EF1 /* TSProfileConfigurationViewController.h */; };
 		41FCC384177B573600859EF1 /* TSProfileConfigurationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FCC382177B573500859EF1 /* TSProfileConfigurationViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		415123A217859DA6002D7E70 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4151239E17859DA6002D7E70 /* TSBase64.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 41FE136F174BA99A00511395;
+			remoteInfo = TSBase64;
+		};
 		41B68C79175CD7710090A108 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 41B68C4D175CD7700090A108 /* Project object */;
@@ -70,7 +71,7 @@
 		410EC43D1769A56B00D4826D /* pause.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pause.png; sourceTree = "<group>"; };
 		410EC43F1769A57E00D4826D /* play.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = play.png; sourceTree = "<group>"; };
 		410EC4411769DC6900D4826D /* stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stop.png; sourceTree = "<group>"; };
-		4171B8191762276000936C31 /* libTSBase64.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTSBase64.a; sourceTree = "<group>"; };
+		4151239E17859DA6002D7E70 /* TSBase64.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TSBase64.xcodeproj; path = /Users/dnataraj/dev/plaster.io/Plaster/Plaster/../../TSBase64/TSBase64.xcodeproj; sourceTree = "<absolute>"; };
 		41B68C55175CD7700090A108 /* PlasterNA.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PlasterNA.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		41B68C58175CD7700090A108 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		41B68C5B175CD7700090A108 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -117,9 +118,6 @@
 		41B68D79175CE4A00090A108 /* async.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = async.h; sourceTree = "<group>"; };
 		41B68D7A175CE4A00090A108 /* hiredis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hiredis.h; sourceTree = "<group>"; };
 		41B68D7B175CE4AE0090A108 /* libhiredis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libhiredis.a; sourceTree = "<group>"; };
-		41B68D84175DD9930090A108 /* NSString+TSBase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+TSBase64.h"; sourceTree = "<group>"; };
-		41B68D85175DD9930090A108 /* TSBase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSBase64.h; sourceTree = "<group>"; };
-		41BF51C3176E1BF000D5CCD4 /* NSData+TSBase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+TSBase64.h"; sourceTree = "<group>"; };
 		41BF51C5176EFC5300D5CCD4 /* TSPlasterString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSPlasterString.h; sourceTree = "<group>"; };
 		41BF51C6176EFC5400D5CCD4 /* TSPlasterString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSPlasterString.m; sourceTree = "<group>"; };
 		41BF51C9176F173D00D5CCD4 /* TSPlasterImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSPlasterImage.h; sourceTree = "<group>"; };
@@ -137,9 +135,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				414EDBBE1785A34D007EFDA4 /* libTSBase64.a in Frameworks */,
 				41B68C59175CD7700090A108 /* Cocoa.framework in Frameworks */,
 				41B68D7C175CE4AE0090A108 /* libhiredis.a in Frameworks */,
-				4171B81A1762276000936C31 /* libTSBase64.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -163,6 +161,14 @@
 				410EC43D1769A56B00D4826D /* pause.png */,
 			);
 			name = Resources;
+			sourceTree = "<group>";
+		};
+		4151239F17859DA6002D7E70 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				415123A317859DA6002D7E70 /* libTSBase64.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		41B68C4C175CD7700090A108 = {
@@ -284,8 +290,7 @@
 		41B68D76175CE4860090A108 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				4171B8191762276000936C31 /* libTSBase64.a */,
-				41B68D83175DD9930090A108 /* TSBase64 */,
+				4151239E17859DA6002D7E70 /* TSBase64.xcodeproj */,
 				41B68D7B175CE4AE0090A108 /* libhiredis.a */,
 				41B68D77175CE4A00090A108 /* adapters */,
 				41B68D79175CE4A00090A108 /* async.h */,
@@ -303,33 +308,7 @@
 			path = adapters;
 			sourceTree = "<group>";
 		};
-		41B68D83175DD9930090A108 /* TSBase64 */ = {
-			isa = PBXGroup;
-			children = (
-				41BF51C3176E1BF000D5CCD4 /* NSData+TSBase64.h */,
-				41B68D84175DD9930090A108 /* NSString+TSBase64.h */,
-				41B68D85175DD9930090A108 /* TSBase64.h */,
-			);
-			path = TSBase64;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
-
-/* Begin PBXHeadersBuildPhase section */
-		4171B813176223D600936C31 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				41BF51C4176E1BF000D5CCD4 /* NSData+TSBase64.h in Headers */,
-				4171B814176223E400936C31 /* NSString+TSBase64.h in Headers */,
-				4171B815176223E700936C31 /* TSBase64.h in Headers */,
-				41BF51C7176EFC5400D5CCD4 /* TSPlasterString.h in Headers */,
-				41BF51CB176F173E00D5CCD4 /* TSPlasterImage.h in Headers */,
-				41FCC383177B573600859EF1 /* TSProfileConfigurationViewController.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		41B68C54175CD7700090A108 /* PlasterNA */ = {
@@ -339,7 +318,6 @@
 				41B68C51175CD7700090A108 /* Sources */,
 				41B68C52175CD7700090A108 /* Frameworks */,
 				41B68C53175CD7700090A108 /* Resources */,
-				4171B813176223D600936C31 /* Headers */,
 			);
 			buildRules = (
 			);
@@ -389,6 +367,12 @@
 			mainGroup = 41B68C4C175CD7700090A108;
 			productRefGroup = 41B68C56175CD7700090A108 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 4151239F17859DA6002D7E70 /* Products */;
+					ProjectRef = 4151239E17859DA6002D7E70 /* TSBase64.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				41B68C54175CD7700090A108 /* PlasterNA */,
@@ -396,6 +380,16 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		415123A317859DA6002D7E70 /* libTSBase64.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libTSBase64.a;
+			remoteRef = 415123A217859DA6002D7E70 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		41B68C53175CD7700090A108 /* Resources */ = {
@@ -587,6 +581,8 @@
 		41B68C87175CD7710090A108 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -594,6 +590,7 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PlasterNA/PlasterNA-Prefix.pch";
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "PlasterNA/PlasterNA-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -604,6 +601,7 @@
 				"OTHER_LDFLAGS[arch=*]" = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = NO;
+				USER_HEADER_SEARCH_PATHS = "${BUILT_PRODUCTS_DIR}/**";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -611,6 +609,8 @@
 		41B68C88175CD7710090A108 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -618,6 +618,7 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PlasterNA/PlasterNA-Prefix.pch";
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "PlasterNA/PlasterNA-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -625,8 +626,10 @@
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/PlasterNA\"",
 				);
+				"OTHER_LDFLAGS[arch=*]" = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = NO;
+				USER_HEADER_SEARCH_PATHS = "${BUILT_PRODUCTS_DIR}/** $(BUILD_ROOT)/../IntermediateBuildFilesPath/UninstalledProducts/**";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

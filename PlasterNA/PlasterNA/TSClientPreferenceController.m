@@ -32,7 +32,7 @@
 }
 
 - (void)awakeFromNib {
-    NSLog(@"PREFERENCES: Waking up...");
+    DLog(@"PREFERENCES: Waking up...");
     if (_profileViewController) {
         [_profileConfigurationView addSubview:[_profileViewController view]];
     }
@@ -79,7 +79,7 @@
 - (void)tableView:(NSTableView *)tableView setObjectValue:(id)object forTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
     NSMutableDictionary *profileChanges = [_profileConfigurations objectAtIndex:row];
     
-    NSLog(@"PREFERENCES: Changing profile name to : %@", object);
+    DLog(@"PREFERENCES: Changing profile name to : %@", object);
     [profileChanges setObject:object forKey:TSPlasterProfileName];
 
     // Now we have to set this change back into the parent profile collection (remember : we have a mutable copy)
@@ -162,7 +162,7 @@
 
 - (IBAction)deleteProfile:(id)sender {
     NSInteger rowForDelete = [self.profileListTableView selectedRow];
-    NSLog(@"PREFERENCES: Deleting row : %ld", rowForDelete);
+    DLog(@"PREFERENCES: Deleting row : %ld", rowForDelete);
 
     NSString *keyForDelete = [_sessionKeys objectAtIndex:rowForDelete];
     [_profiles removeObjectForKey:keyForDelete];
@@ -186,7 +186,7 @@
 }
 
 - (void)saveAndClosePreferences:(id)sender {
-    NSLog(@"PREFERENCES: Saving user preferences and closing...");
+    DLog(@"PREFERENCES: Saving user preferences and closing...");
     // Capture the last selected row's configuration (since we usually capture this only on switching to another row)
     [self registerConfigurationForRow:[_profileListTableView selectedRow]];
     
