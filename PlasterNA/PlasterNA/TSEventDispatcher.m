@@ -84,8 +84,8 @@ void redisClean(void *privateData) {
 - (id)init {
     self = [super init];
     if (self) {
-        //_queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
-        _queue = dispatch_queue_create("PLASTER", DISPATCH_QUEUE_CONCURRENT);
+        _queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+        //_queue = dispatch_queue_create("PLASTER", DISPATCH_QUEUE_CONCURRENT);
         _timers = [[NSMutableDictionary alloc] init];
     }
     

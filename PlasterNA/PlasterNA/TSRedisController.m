@@ -270,10 +270,9 @@ void freeBundle(HandlerBundle hb) {
     redisAsyncContext *_subscribers[100];
     
     TSEventDispatcher *_dispatcher;
-    //NSMutableDictionary *_subscribers;
     
     // Long-living redis synchronous contexts.
-    redisContext *_blockingContext;
+    //redisContext *_blockingContext;
 }
 
 - (id)initWithIPAddress:(NSString *)ip port:(NSUInteger)port {
@@ -294,11 +293,13 @@ void freeBundle(HandlerBundle hb) {
             return nil;
         }
         
+        /*
         _blockingContext = [self connect];
         if (!_blockingContext) {
             NSLog(@"REDIS: Unable to initialize synchronous Redis context.");
             return nil;
         }
+        */
         
         // Zero the number of subscribers
         _numSubscribers = 0;
@@ -374,7 +375,6 @@ void freeBundle(HandlerBundle hb) {
     if (context && context->err) {
         NSLog(@"REDIS: SYNC CONNECT : There was an error establishing the connection : %s", context->errstr);
         context = NULL;
-        return context;
     }
     
     return context;
@@ -577,9 +577,19 @@ void freeBundle(HandlerBundle hb) {
     }
     strcpy(value, val);
     redisReply *reply = NULL;
-    // TODO: Get rid of blocking context!!
-    void *response = redisCommand(_blockingContext, "SET %s %b", key, value, strlen(value));
-    if ([self processReply:_blockingContext withReply:response andData:NULL]) {
+    redisContext *blockingContext = [self connect];
+    if (blockingContext == NULL) {
+        // Try again, otherwise leave
+        blockingContext = [self connect];
+        if (blockingContext == NULL) {
+            NSLog(@"REDIS: Unable to initialize synchronouse REDIS context.");
+            free(key);
+            free(value);
+            return EXIT_FAILURE;
+        }
+    }
+    void *response = redisCommand(blockingContext, "SET %s %b", key, value, strlen(value));
+    if ([self processReply:blockingContext withReply:response andData:NULL]) {
         reply = (redisReply *)response;
         if (reply->type == REDIS_REPLY_STATUS) {
             if (strcmp(reply->str, "OK")) {
@@ -595,6 +605,7 @@ void freeBundle(HandlerBundle hb) {
         }
         free(key);
         free(value);
+        redisFree(blockingContext);
         return EXIT_FAILURE;
     }
     
@@ -604,6 +615,7 @@ void freeBundle(HandlerBundle hb) {
     }
     free(key);
     free(value);
+    redisFree(blockingContext);
     
     return EXIT_SUCCESS;
 }
@@ -614,8 +626,18 @@ void freeBundle(HandlerBundle hb) {
     strcpy(key, [aKey UTF8String]);
     NSString *stringValue = nil;
     redisReply *reply = NULL;
-    void *response = redisCommand(_blockingContext, "GET %s", key);
-    if ([self processReply:_blockingContext withReply:response andData:NULL]) {
+    redisContext *blockingContext = [self connect];
+    if (blockingContext == NULL) {
+        // Try again, otherwise leave
+        blockingContext = [self connect];
+        if (blockingContext == NULL) {
+            NSLog(@"REDIS: Unable to initialize synchronouse REDIS context.");
+            free(key);
+            return nil;
+        }
+    }
+    void *response = redisCommand(blockingContext, "GET %s", key);
+    if ([self processReply:blockingContext withReply:response andData:NULL]) {
         reply = (redisReply *)response;
         if (reply->type == REDIS_REPLY_STRING) {
             NSLog(@"REDIS: GET : Processing GET reply..");
@@ -632,6 +654,7 @@ void freeBundle(HandlerBundle hb) {
         freeReplyObject(reply);
         free(key);
     }
+    redisFree(blockingContext);
     
     return stringValue;
 }
@@ -677,9 +700,18 @@ void freeBundle(HandlerBundle hb) {
     strcpy(key, temp);
     redisReply *reply = NULL;
     NSUInteger deleted = 0;
-    
-    void *response = redisCommand(_blockingContext, "DEL %s", key);
-    if ([self processReply:_blockingContext withReply:response andData:NULL]) {
+    redisContext *blockingContext = [self connect];
+    if (blockingContext == NULL) {
+        // Try again, otherwise leave
+        blockingContext = [self connect];
+        if (blockingContext == NULL) {
+            NSLog(@"REDIS: Unable to initialize synchronouse REDIS context.");
+            free(key);
+            return EXIT_FAILURE;
+        }
+    }
+    void *response = redisCommand(blockingContext, "DEL %s", key);
+    if ([self processReply:blockingContext withReply:response andData:NULL]) {
         reply = (redisReply *)response;
         if (reply->type == REDIS_REPLY_INTEGER) {
             deleted = reply->integer;
@@ -698,6 +730,7 @@ void freeBundle(HandlerBundle hb) {
         freeReplyObject(reply);
     }
     free(key);
+    redisFree(blockingContext);
     
     if (deleted) {
         result = EXIT_SUCCESS;
@@ -714,9 +747,9 @@ void freeBundle(HandlerBundle hb) {
     }
     _asyncPubSessionContext = nil;
     
-    NSLog(@"REDIS: Deallocating blocking context...");
-    redisFree(_blockingContext);
-    _blockingContext = nil;
+    //NSLog(@"REDIS: Deallocating blocking context...");
+    //redisFree(_blockingContext);
+    //_blockingContext = nil;
     
     [_dispatcher release];
     

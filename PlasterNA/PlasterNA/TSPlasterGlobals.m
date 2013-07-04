@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "TSPlasterGlobals.h"
 
+NSString *const TSCurrentSessionKey = @"plaster-current-session";
+
 // Constants for profile configuration
 NSString *const TSPlasterDeviceName = @"plaster-device-name";
 NSString *const TSPlasterProfiles = @"plaster-profiles";

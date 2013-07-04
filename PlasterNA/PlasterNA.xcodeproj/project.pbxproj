@@ -603,7 +603,7 @@
 				);
 				"OTHER_LDFLAGS[arch=*]" = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -626,7 +626,7 @@
 					"\"$(SRCROOT)/PlasterNA\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

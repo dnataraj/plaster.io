@@ -16,6 +16,8 @@
 
 #define DEFAULT_PUBLISHER TSRedisController
 
+extern NSString *const TSCurrentSessionKey;
+
 // Keys for various user preferences.
 extern NSString *const TSPlasterDeviceName;
 extern NSString *const TSPlasterProfiles;

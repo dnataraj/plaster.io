@@ -298,7 +298,6 @@
     
     // Check for profiles and build the submenu
     for (NSString *profileKey in [profiles keyEnumerator]) {
-        NSLog(@"AD: Found saved profile : %@", profileKey);
         NSDictionary *profileConfiguration = [profiles objectForKey:profileKey];
         NSString *profileName = [profileConfiguration objectForKey:TSPlasterProfileName];
         NSMenuItem *profileMenuItem = [[[NSMenuItem alloc] initWithTitle:profileName action:@selector(startPlasterWithProfile:) keyEquivalent:@""] autorelease];
