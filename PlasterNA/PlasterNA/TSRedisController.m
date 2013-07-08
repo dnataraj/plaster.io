@@ -162,7 +162,7 @@ void rcSubscribe(redisAsyncContext *ctx, void *r, void *data) {
                 redisAsyncDisconnect(ctx);
                 return;
             }
-            if (reply->elements > 2 && reply->element[2]->str) {
+            if ( (reply->elements > 2) && (reply->element[2]->str) ) {
                 if (data != NULL) {
                     HandlerBundle hb = (HandlerBundle)data;
                     if (hb->handler) {
@@ -186,7 +186,7 @@ void rcSubscribeWithOptions(redisAsyncContext *ctx, void *r, void *data) {
                 redisAsyncDisconnect(ctx);
                 return;
             }
-            if (reply->elements > 2 && reply->element[2]->str) {
+            if ( (reply->elements > 2) && (reply->element[2]->str) ) {
                 if (data != NULL) {
                     NSDictionary *options = (NSDictionary *)data;
                     if (options) {
@@ -225,6 +225,37 @@ void rcSubscribeWithOptions(redisAsyncContext *ctx, void *r, void *data) {
 
 void rcPublish(redisAsyncContext *ctx, void *r, void *data) {
     if (rcProcessReply(ctx, r, data)) {        
+        printf("REDIS: PUBLISH : Disconnecting...\n");
+        redisAsyncDisconnect(ctx);
+    }
+    return;
+}
+
+void rcPublishWithOptions(redisAsyncContext *ctx, void *r, void *data) {
+    if (rcProcessReply(ctx, r, data)) {
+        if (data != NULL) {
+            NSDictionary *options = (NSDictionary *)data;
+            if (options) {
+                NSString *handlerName = [options objectForKey:@"HANDLER_NAME"];
+                NSDictionary *handlerTable = [options objectForKey:@"HANDLER_TABLE"];
+                NSDictionary *handlerOptions = [handlerTable objectForKey:handlerName];
+                if (handlerOptions) {
+                    id target = [handlerOptions objectForKey:@"target"];
+                    NSInvocation *invocation = [handlerOptions objectForKey:@"invocation"];
+                    NSNumber *packetSize = [handlerOptions objectForKey:@"packetSize"];
+                    if (invocation) {
+                        [invocation setTarget:target];
+                        [invocation retainArguments];
+                        [invocation setArgument:&packetSize atIndex:2];
+                        [invocation invoke];
+                    }
+                }
+                [options release];
+            }
+        } else {
+            printf("REDIS: PUBLISH : No handler : %p\n", data);
+        }
+        
         printf("REDIS: PUBLISH : Disconnecting...\n");
         redisAsyncDisconnect(ctx);
     }
@@ -492,7 +523,7 @@ void freeBundle(HandlerBundle hb) {
     self.numSubscribers = 0;
 }
 
-- (NSUInteger)publishObject:(NSString *)anObject toChannel:(NSString *)channel {
+- (NSUInteger)publishObject:(NSString *)anObject channel:(NSString *)channel options:(NSDictionary *)options {
     DLog(@"REDIS: Publishing object to channel : %@", channel);
     const char *temp1 = [anObject UTF8String];
     char *obj = (char *)calloc(strlen(temp1), sizeof(char));
@@ -511,7 +542,8 @@ void freeBundle(HandlerBundle hb) {
     strcpy(chan, temp2);
     redisAsyncContext *localAsyncCtx = [self connectAndDispatch];
     if (localAsyncCtx) {
-        uint result = redisAsyncCommand(localAsyncCtx, rcPublish, NULL, "PUBLISH %s %b", chan, obj, strlen(obj));
+        //uint result = redisAsyncCommand(localAsyncCtx, rcPublish, NULL, "PUBLISH %s %b", chan, obj, strlen(obj));
+        uint result = redisAsyncCommand(localAsyncCtx, rcPublishWithOptions, [options retain], "PUBLISH %s %b", chan, obj, strlen(obj));
         if (result != REDIS_OK) {
             DLog(@"REDIS: Error buffering PUBLISH command for this session : %s", localAsyncCtx->errstr);
             redisAsyncDisconnect(localAsyncCtx);
@@ -531,7 +563,7 @@ void freeBundle(HandlerBundle hb) {
     return EXIT_SUCCESS;
 }
 
-- (NSUInteger)publish:(const char *)bytes toChannel:(NSString *)channel {
+- (NSUInteger)publish:(const char *)bytes channel:(NSString *)channel  options:(NSDictionary *)options {
     DLog(@"REDIS: PUBLISH : Publishing [%zd] bytes to channel :%@ ", strlen(bytes), channel);
     const char *temp = [channel UTF8String];
     char *chan = (char *)calloc(strlen(temp), sizeof(char));
@@ -542,7 +574,8 @@ void freeBundle(HandlerBundle hb) {
     strcpy(chan, temp);
     redisAsyncContext *localAsyncCtx = [self connectAndDispatch];
     if (localAsyncCtx) {
-        uint result = redisAsyncCommand(localAsyncCtx, rcPublish, NULL, "PUBLISH %s %b", chan, bytes, strlen(bytes));
+        //uint result = redisAsyncCommand(localAsyncCtx, rcPublish, NULL, "PUBLISH %s %b", chan, bytes, strlen(bytes));
+        uint result = redisAsyncCommand(localAsyncCtx, rcPublishWithOptions, [options retain], "PUBLISH %s %b", chan, bytes, strlen(bytes));
         if (result != REDIS_OK) {
             DLog(@"REDIS: Error buffering PUBLISH command for this session : %s", localAsyncCtx->errstr);
             redisAsyncDisconnect(localAsyncCtx);

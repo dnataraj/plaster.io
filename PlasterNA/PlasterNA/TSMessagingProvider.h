@@ -13,8 +13,8 @@ typedef void (*mpCallback)(char *reply, void *data);
 
 @protocol TSMessagingProvider <NSObject>
 
-- (NSUInteger)publishObject:(NSString *)object toChannel:(NSString *)channel;
-- (NSUInteger)publish:(const char *)bytes toChannel:(NSString *)channel;
+- (NSUInteger)publishObject:(NSString *)object channel:(NSString *)channel options:(NSDictionary *)options;
+- (NSUInteger)publish:(const char *)bytes channel:(NSString *)channel options:(NSDictionary *)options;
 - (NSUInteger)subscribeToChannels:(NSArray *)channels options:(NSDictionary *)someOptions;
 - (NSUInteger)subscribeToChannel:(NSString *)channel options:(NSDictionary *)someOptions;
 - (void)unsubscribeAll;

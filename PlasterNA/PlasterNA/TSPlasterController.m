@@ -24,6 +24,8 @@
 #define TEST_LOG_FILE "plaster_in.log"
 #define JSON_LOG_FILE "plaster_json_out.log"
 
+static double MB = 1024 * 1024;
+
 @implementation TSPlasterController {
     NSString *_clientID;
     NSPasteboard *_pb;
@@ -92,7 +94,15 @@
         invocation = [NSInvocation invocationWithMethodSignature:signature];
         [invocation setSelector:handler];
         options = [NSDictionary dictionaryWithObjects:@[self, invocation] forKeys:@[@"target", @"invocation"]];
-        [_handlerTable setObject:options forKey:NSStringFromSelector(handler)];        
+        [_handlerTable setObject:options forKey:NSStringFromSelector(handler)];
+        
+        // Handler : -handlePlasterNotificationForDataWithSize:
+        handler = @selector(handlePlasterNotificationForDataWithSize:);
+        signature = [TSPlasterController instanceMethodSignatureForSelector:handler];
+        invocation = [NSInvocation invocationWithMethodSignature:signature];
+        [invocation setSelector:handler];
+        options = [NSDictionary dictionaryWithObjects:@[self, invocation] forKeys:@[@"target", @"invocation"]];
+        [_handlerTable setObject:options forKey:NSStringFromSelector(handler)];
         
         _testMode = [[NSUserDefaults standardUserDefaults] boolForKey:@"plaster-test-mode"];
         if (_testMode) {
@@ -125,7 +135,7 @@
     NSString *broadcastChannel = [NSString stringWithFormat:SESSION_BROADCAST_CHANNEL, self.sessionKey];
     DLog(@"PLASTER: BOOT : Publishing HELLO to broadcast channel : %@", broadcastChannel);
     NSString *hello = [NSString stringWithFormat:@"HELLO:%@", clientIdentifier];
-    result = [_provider publishObject:hello toChannel:broadcastChannel];
+    result = [_provider publishObject:hello channel:broadcastChannel options:nil];
     NSAssert(result == EXIT_SUCCESS, @"PLASTER: FATAL : Unable to publish to broadcast channel %@", broadcastChannel);
         
     // Subscribe to the plaster broadcast channel to listen to broadcasts from new participants
@@ -218,7 +228,7 @@
     NSString *broadcastChannel = [NSString stringWithFormat:SESSION_BROADCAST_CHANNEL, self.sessionKey];
     DLog(@"PLASTER: BOOT : Publishing GOODBYE to broadcast channel : %@", broadcastChannel);
     NSString *goodbye = [NSString stringWithFormat:@"GOODBYE:%@", clientIdentifier];
-    result = [_provider publishObject:goodbye toChannel:broadcastChannel];
+    result = [_provider publishObject:goodbye channel:broadcastChannel options:nil];
     NSAssert(result == EXIT_SUCCESS, @"PLASTER: STOP : Unable to broadcast goodbye to channel : %@", broadcastChannel);
     
     // Unsubscribe from both broadcast and peer channels...
@@ -313,7 +323,7 @@
     BOOL allowOutText = [[_sessionProfile objectForKey:TSPlasterOutAllowText] boolValue];
     if (allowOutText) {
         DLog(@"PLASTER: PLASTER OUT : Allowing text to be plastered out.");
-        [readables addObjectsFromArray:@[[NSString class], [NSAttributedString class]]];
+        [readables addObjectsFromArray:@[[NSAttributedString class], [NSString class]]];
     }
     NSArray *pbContents = [_pb readObjectsForClasses:readables options:nil];
     DLog(@"PLASTER: Read %ld items from pasteboard.", (unsigned long)[pbContents count]);
@@ -321,9 +331,9 @@
         // Now we have to extract the bytes
         id packet = [pbContents objectAtIndex:0];
         const char *jsonBytes = NULL;
-        if ([packet isKindOfClass:[NSString class]]) {
+        if ([packet isKindOfClass:[NSString class]] || [packet isKindOfClass:[NSAttributedString class]]) {
             DLog(@"PLASTER : PLASTER OUT : Processing NSString packet and publishing...");
-            jsonBytes = [TSPacketSerializer JSONWithStringPacket:packet sender:[self alias]];
+            jsonBytes = [TSPacketSerializer JSONWithTextPacket:packet sender:[self alias]];
         } else if ([packet isKindOfClass:[NSImage class]]) {
             DLog(@"PLASTER : PLASTER OUT : Processing NSImage packet and publishing...");
             jsonBytes = [TSPacketSerializer JSONWithImagePacket:packet  sender:[self alias]];
@@ -338,7 +348,19 @@
             return;
         }
         strcpy(bytes, (const char *)jsonBytes);
-        [_provider publish:jsonBytes toChannel:_clientID];
+        size_t length = strlen(bytes);
+        if (length > (2 * MB)) {
+            DLog(@"PLASTER: PLASTER OUT : Plaster size > 2MB, requesting sent notification...");
+            NSMutableDictionary *options = [[NSMutableDictionary alloc]
+                                            initWithDictionary:[_handlerTable objectForKey:@"handlePlasterNotificationForDataWithSize:"]];
+            [options setObject:[NSNumber numberWithLong:length] forKey:@"packetSize"];
+            [_handlerTable setObject:options forKey:@"handlePlasterNotificationForDataWithSize:"];
+            
+            [_provider publish:jsonBytes channel:_clientID
+                       options:[self createHandlerOptionsForHandler:@"handlePlasterNotificationForDataWithSize:"]];
+        } else {
+            [_provider publish:jsonBytes channel:_clientID options:nil];
+        }
         free(bytes);
         return;
     } else {
@@ -569,6 +591,12 @@
         }
         
     }
+    return;
+}
+
+- (void)handlePlasterNotificationForDataWithSize:(NSNumber *)size {
+    DLog(@"Plaster: HANDLE SENT NOTIFICATION : For size : %@", size);
+    
     return;
 }
 

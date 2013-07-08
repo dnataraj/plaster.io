@@ -13,12 +13,17 @@
 
 @implementation TSPacketSerializer
 
-+ (const char *)JSONWithStringPacket:(NSString *)packet {
-    return [TSPacketSerializer JSONWithStringPacket:packet sender:nil];
++ (const char *)JSONWithTextPacket:(NSString *)packet {
+    return [TSPacketSerializer JSONWithTextPacket:packet sender:nil];
 }
 
-+ (const char *)JSONWithStringPacket:(NSString *)packet sender:(NSString *)sender{
-    NSString *stringRep = [NSString stringWithString:packet];
++ (const char *)JSONWithTextPacket:(id)packet sender:(NSString *)sender{
+    NSString *stringRep = nil;
+    if ([packet isKindOfClass:[NSAttributedString class]]) {
+        stringRep = [(NSAttributedString *)packet string];
+    } else {
+        stringRep = [NSString stringWithString:packet];
+    }
     if (stringRep) {
         NSMutableDictionary *kvDictionary = [NSMutableDictionary dictionary];
         [kvDictionary setObject:PLASTER_TEXT_TYPE_JSON_VALUE forKey:PLASTER_TYPE_JSON_KEY];
