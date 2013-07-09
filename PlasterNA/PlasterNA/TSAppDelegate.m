@@ -90,12 +90,26 @@
     // Set up the HUD's for join and new sessions
     [_joinProfileConfigurationView addSubview:[_joinProfileConfigurationViewController view]];
     [_freshProfileConfigurationView addSubview:[_freshProfileConfigurationViewController view]];
+    
+    // Clean up any stale sessions in case there was a dirty exit previously
+    NSString *staleSessionKey = [_userDefaults stringForKey:TSCurrentSessionKey];
+    if (staleSessionKey) {
+        NSArray *staleSessions = @[staleSessionKey];
+        NSString *alias = [_userDefaults stringForKey:TSPlasterDeviceName];
+        [_plaster setAlias:alias];
+        DLog(@"AD: Verifying disconnect from sessions : %@", staleSessions);
+        [_plaster disconnectFromSessions:staleSessions];        
+    }
 }
 
 - (IBAction)start:(id)sender {
     NSString *alias = [_userDefaults stringForKey:TSPlasterDeviceName];
     [_plaster setAlias:alias];
     [_plaster start];
+    
+    // Save the current session key. This is critical to clean up from a crash/failure
+    [_userDefaults setObject:[self sessionKey] forKey:TSCurrentSessionKey];
+    [_userDefaults synchronize];
     
     // When plaster is running, the user cannot join another session or create a new one
     // without stopping it first.

@@ -282,10 +282,6 @@ static double MB = 1024 * 1024;
     return [peers autorelease];
 }
 
-- (void)disconnect:(id)sender {
-    DLog(@"PLASTER: Disconnect called!");
-}
-
 #pragma mark Timer and Handler Methods
 
 - (void)onTimer {
@@ -619,6 +615,39 @@ static double MB = 1024 * 1024;
     }
     
     return NO;
+}
+
+#pragma mark Handle Zombie Sessions
+
+/*
+    This method tries to remove stale participation in the provided sessions. 
+    This happens when the client crashes/fails before disconnecting from a session
+    and cleaning up.
+*/
+- (void)disconnectFromSessions:(NSArray *)sessions {
+    NSUInteger result;
+    NSString *clientIdentifier = [NSString stringWithFormat:@"%@_%@", _clientID, [self alias]];
+    for (NSString *sessionKey in sessions) {
+        NSString *peersKey = [NSString stringWithFormat:SESSION_PEERS_KEY, sessionKey];
+        NSString *peers = [_provider stringValueForKey:peersKey];
+        if (!peers) {
+            DLog(@"PLASTER: DISCONNECT FROM SESSIONS : No live session found with key : %@", peersKey);
+            continue;
+        }
+        DLog(@"PLASTER: DISCONNECT FROM SESSIONS : Found peers : [%@]", peers);
+        NSMutableArray *peerList = [NSMutableArray arrayWithArray:[peers componentsSeparatedByString:@":"]];
+        // If this is the only participant, then remove the session key entirely.
+        if ([peerList count] == 1) {
+            DLog(@"PLASTER: DISCONNECT FROM SESSIONS : Only participant, removing session key...");
+            result = [_provider deleteKey:peersKey];
+            NSAssert(result == EXIT_SUCCESS, @"PLASTER: STOP : Unable to delete session key : %@", peersKey);
+        } else {
+            DLog(@"PLASTER: DISCONNECT FROM SESSIONS : Removing stale client from peers...");
+            [peerList removeObject:clientIdentifier];
+            result = [_provider setStringValue:[peerList componentsJoinedByString:@":"] forKey:peersKey];
+            NSAssert(result == EXIT_SUCCESS, @"PLASTER: DISCONNECT FROM SESSIONS : Unable to disconnect from session : %@", peersKey);
+        }
+    }
 }
 
 - (void)dealloc {

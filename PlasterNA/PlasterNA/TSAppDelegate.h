@@ -60,6 +60,5 @@
 - (IBAction)cancelSaveProfile:(id)sender;
 
 - (IBAction)pasteCurrentPasscode:(id)sender;
-- (void)deleteZombieSessions;
 
 @end

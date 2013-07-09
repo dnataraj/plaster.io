@@ -24,6 +24,7 @@
 - (void)start;
 - (void)stop;
 - (NSArray *)connectedPeers;
-- (IBAction)disconnect:(id)sender;
+
+- (void)disconnectFromSessions:(NSArray *)sessions;
 
 @end
