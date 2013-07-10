@@ -16,7 +16,7 @@
 @property (copy) NSDictionary *sessionProfile;
 @property (readwrite, nonatomic, copy) NSString *alias;
 @property NSInteger changeCount;
-@property BOOL started;
+@property BOOL started, running;
 
 - (id)initWithPasteboard:(NSPasteboard *)pasteboard provider:(id<TSMessagingProvider, TSDataStoreProvider>)provider;
 
@@ -26,5 +26,6 @@
 - (NSArray *)connectedPeers;
 
 - (void)disconnectFromSessions:(NSArray *)sessions;
+- (void)plaster:(NSPasteboard *)pboard userData:(NSString *)userData error:(NSString **)error;
 
 @end

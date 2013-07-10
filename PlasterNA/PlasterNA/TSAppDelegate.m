@@ -90,11 +90,21 @@
     // Set up the HUD's for join and new sessions
     [_joinProfileConfigurationView addSubview:[_joinProfileConfigurationViewController view]];
     [_freshProfileConfigurationView addSubview:[_freshProfileConfigurationViewController view]];
-    
-    // Clean up any stale sessions in case there was a dirty exit previously
-    NSString *staleSessionKey = [_userDefaults stringForKey:TSCurrentSessionKey];
-    if (staleSessionKey) {
-        NSArray *staleSessions = @[staleSessionKey];
+
+    // Set up the last session profile and alias for the Plaster Controller to operate on without starting (for services menu access, for example)
+    NSString *alias = [_userDefaults stringForKey:TSPlasterDeviceName];
+    [_plaster setAlias:alias];
+    NSString *lastSessionKey = [_userDefaults stringForKey:TSCurrentSessionKey];
+    [_plaster setSessionKey:lastSessionKey];
+    NSDictionary *profiles = [_userDefaults dictionaryForKey:TSPlasterProfiles];
+    NSDictionary *profile = [profiles objectForKey:lastSessionKey];
+    if (!profile) {
+        profile = [[self newProfileWithName:@"*untitled"] autorelease];
+    }
+    [_plaster setSessionProfile:profile];
+    if (lastSessionKey) {
+        // Clean up any stale sessions in case there was a dirty exit previously
+        NSArray *staleSessions = @[lastSessionKey];
         NSString *alias = [_userDefaults stringForKey:TSPlasterDeviceName];
         [_plaster setAlias:alias];
         DLog(@"AD: Verifying disconnect from sessions : %@", staleSessions);
@@ -128,7 +138,7 @@
     [_startWithProfileMenuItem setHidden:YES];
     [_stopMenuItem setHidden:NO];
     
-    [_passcodeMenuItem setEnabled:YES];
+    [_passcodeMenuItem setEnabled:YES];    
 }
 
 - (void)startPlasterWithProfile:(id)sender {
@@ -390,6 +400,9 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
     [self.joinSessionHUD orderOut:nil];
+    // After plater starts, register it as a service provider
+    [NSApp setServicesProvider:_plaster];
+    NSUpdateDynamicServices();
     DLog(@"AD: Application Launched.");
 }
 

@@ -141,7 +141,7 @@ static double MB = 1024 * 1024;
     // Subscribe to the plaster broadcast channel to listen to broadcasts from new participants
     DLog(@"PLASTER: BOOT : Subscribing to broadcast channel to accept new peers.");
     result = [_provider subscribeToChannel:broadcastChannel
-                           options:[self createHandlerOptionsForHandler:NSStringFromSelector(@selector(handlePeerAttachAndDetachWithData:))]];
+                           options:[self handlerOptionsForHandler:NSStringFromSelector(@selector(handlePeerAttachAndDetachWithData:))]];
     NSAssert(result == EXIT_SUCCESS, @"PLASTER: FATAL : Unable to subscribe to broadcast channel %@", broadcastChannel);
     
         
@@ -177,7 +177,7 @@ static double MB = 1024 * 1024;
         }
         // TODO: What if subscribing to channel fails?
         result = [_provider subscribeToChannel:peerIDs
-                               options:[self createHandlerOptionsForHandler:NSStringFromSelector(@selector(handlePlasterInWithData:))]];
+                               options:[self handlerOptionsForHandler:NSStringFromSelector(@selector(handlePlasterInWithData:))]];
         NSAssert(result == EXIT_SUCCESS, @"PLASTER: FATAL : Unable to subscribe to plaster peers  : %@", peerIDs);
         [peerIDs release];
     }
@@ -185,13 +185,13 @@ static double MB = 1024 * 1024;
     if (_testMode) {
         DLog(@"PLASTER: BOOT : Test mode : Subscribing to our plaster board");
         [_provider subscribeToChannel:_clientID
-                               options:[self createHandlerOptionsForHandler:NSStringFromSelector(@selector(testHandlePlasterInWithData:))]];
+                               options:[self handlerOptionsForHandler:NSStringFromSelector(@selector(testHandlePlasterInWithData:))]];
     }
     
     DLog(@"PLASTER: BOOT : Done.");
 }
 
-- (NSDictionary *)createHandlerOptionsForHandler:(NSString *)handler {
+- (NSDictionary *)handlerOptionsForHandler:(NSString *)handler {
     return [NSDictionary dictionaryWithObjects:@[handler, _handlerTable] forKeys:@[@"HANDLER_NAME", @"HANDLER_TABLE"]];
 }
 
@@ -202,6 +202,7 @@ static double MB = 1024 * 1024;
     */
     DLog(@"PLASTER: START : Starting...");
     self.started = YES;
+    self.running = YES;
     [self bootWithPeers:10];
     DLog(@"PLASTER: START : Starting pasteboard monitoring every 100ms");
     [self scheduleMonitorWithID:_clientID andTimeInterval:0.100];
@@ -210,6 +211,7 @@ static double MB = 1024 * 1024;
 
 - (void)stop {
     self.started = NO;
+    self.running = NO;
     /*
         Stop monitoring the local pasteboard.
         Unsubscribe from the broadcast channel, and from all peer paste channels.
@@ -284,6 +286,21 @@ static double MB = 1024 * 1024;
 
 #pragma mark Timer and Handler Methods
 
+- (void)plaster:(NSPasteboard *)pboard userData:(NSString *)userData error:(NSString **)error {
+    DLog(@"PLASTER: Handling plaster from external application.");
+    if (!self.running) {
+        DLog(@"PLASTER: Plaster is not running.");
+        *error = @"PLASTER: Plaster is not running.";
+        return;
+    }
+    if (self.sessionKey && self.alias) {
+        [self plaster:pboard];
+    } else {
+        *error = @"PLASTER: Unable to complete copy operation. Invalid session key or alias.";
+    }
+    return;
+}
+
 - (void)onTimer {
     // If there are no peers to publish to, don't do anything.
     if ([_plasterPeers count] == 0) {
@@ -310,6 +327,10 @@ static double MB = 1024 * 1024;
         return;
     }
     
+    [self plaster:_pb];
+}
+
+- (void)plaster:(NSPasteboard *)pboard {
     NSMutableArray *readables = [NSMutableArray array];
     BOOL allowOutImages = [[_sessionProfile objectForKey:TSPlasterOutAllowImages] boolValue];
     if (allowOutImages) {
@@ -321,7 +342,7 @@ static double MB = 1024 * 1024;
         DLog(@"PLASTER: PLASTER OUT : Allowing text to be plastered out.");
         [readables addObjectsFromArray:@[[NSAttributedString class], [NSString class]]];
     }
-    NSArray *pbContents = [_pb readObjectsForClasses:readables options:nil];
+    NSArray *pbContents = [pboard readObjectsForClasses:readables options:nil];
     DLog(@"PLASTER: Read %ld items from pasteboard.", (unsigned long)[pbContents count]);
     if ([pbContents count] > 0) {
         // Now we have to extract the bytes
@@ -353,7 +374,8 @@ static double MB = 1024 * 1024;
             [_handlerTable setObject:options forKey:@"handlePlasterNotificationForDataWithSize:"];
             
             [_provider publish:jsonBytes channel:_clientID
-                       options:[self createHandlerOptionsForHandler:@"handlePlasterNotificationForDataWithSize:"]];
+                       options:[self handlerOptionsForHandler:@"handlePlasterNotificationForDataWithSize:"]];
+            [options release];
         } else {
             [_provider publish:jsonBytes channel:_clientID options:nil];
         }
@@ -361,7 +383,7 @@ static double MB = 1024 * 1024;
         return;
     } else {
         DLog(@"PLASTER: PLASTER OUT : Nothing retrieved from pasteboard.");
-    }
+    }    
 }
 
 - (void)testHandlePlasterInWithData:(char *)data {
@@ -548,7 +570,7 @@ static double MB = 1024 * 1024;
             
             // Now subscribe to this new peer...
             [_provider subscribeToChannel:[plpeer peerID]
-                                  options:[self createHandlerOptionsForHandler:NSStringFromSelector(@selector(handlePlasterInWithData:))]];
+                                  options:[self handlerOptionsForHandler:NSStringFromSelector(@selector(handlePlasterInWithData:))]];
             if (![_plasterPeers containsObject:plpeer]) {
                 @synchronized(self) {
                     [_plasterPeers addObject:plpeer];
@@ -636,14 +658,14 @@ static double MB = 1024 * 1024;
         }
         DLog(@"PLASTER: DISCONNECT FROM SESSIONS : Found peers : [%@]", peers);
         NSMutableArray *peerList = [NSMutableArray arrayWithArray:[peers componentsSeparatedByString:@":"]];
+        [peerList removeObject:clientIdentifier];
         // If this is the only participant, then remove the session key entirely.
-        if ([peerList count] == 1) {
+        if ([peerList count] == 0) {
             DLog(@"PLASTER: DISCONNECT FROM SESSIONS : Only participant, removing session key...");
             result = [_provider deleteKey:peersKey];
             NSAssert(result == EXIT_SUCCESS, @"PLASTER: STOP : Unable to delete session key : %@", peersKey);
         } else {
             DLog(@"PLASTER: DISCONNECT FROM SESSIONS : Removing stale client from peers...");
-            [peerList removeObject:clientIdentifier];
             result = [_provider setStringValue:[peerList componentsJoinedByString:@":"] forKey:peersKey];
             NSAssert(result == EXIT_SUCCESS, @"PLASTER: DISCONNECT FROM SESSIONS : Unable to disconnect from session : %@", peersKey);
         }
