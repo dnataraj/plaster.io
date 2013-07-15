@@ -213,6 +213,8 @@
 }
 
 - (void)dealloc {
+    [_deviceName release];
+    
     [_userDefaults release];
     [_sessionKeys release];
     [_profileConfigurations release];

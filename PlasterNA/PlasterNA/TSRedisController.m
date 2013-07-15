@@ -840,10 +840,7 @@ void freeBundle(HandlerBundle hb) {
     }
     _asyncPubSessionContext = nil;
     
-    //NSLog(@"REDIS: Deallocating blocking context...");
-    //redisFree(_blockingContext);
-    //_blockingContext = nil;
-    
+    [_redisHost release];
     [_dispatcher release];
     
     [super dealloc];

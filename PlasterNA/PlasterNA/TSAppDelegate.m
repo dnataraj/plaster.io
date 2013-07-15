@@ -409,6 +409,9 @@
 #pragma mark Deallocations
 
 - (void)dealloc {
+    [_sessionKey release];
+    [_currentProfileName release];
+    
     [_plaster release];
     [_redisController release];
     [_plasterStatusItem release];

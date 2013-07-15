@@ -160,6 +160,9 @@
 - (void)dealloc {
     _mutableProfileConfiguration = nil;
     
+    [_plasterFolder release];
+    [_plasterMode release];
+    
     [super dealloc];
 }
 

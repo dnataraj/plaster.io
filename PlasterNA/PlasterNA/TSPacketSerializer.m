@@ -146,7 +146,7 @@
             NSData *packet = [(NSString*)packet64 dataFromBase64];
             if (packet) {
                 NSString *type = (NSString *)[dictionary objectForKey:TSPlasterJSONKeyForPlasterType];
-                if ([type isEqualToString:TSPlasterTypeText]) {
+                if ([type isEqualToString:TSPlasterTypeText] || [type isEqualToString:TSPlasterTypeNotification]) {
                     NSString *cleared = [[NSString alloc] initWithData:packet encoding:NSUTF8StringEncoding];
                     [dictionary setObject:cleared forKey:TSPlasterPacketText];
                     [cleared release];

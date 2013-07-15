@@ -12,9 +12,10 @@
 
 @interface TSPlasterController : NSObject <NSUserNotificationCenterDelegate>
 
-@property (readwrite, atomic, copy) NSString *sessionKey;
+@property (copy) NSString *sessionKey;
+@property (copy) NSString *clientID;
 @property (copy) NSDictionary *sessionProfile;
-@property (readwrite, nonatomic, copy) NSString *alias;
+@property (nonatomic, copy) NSString *alias;
 @property NSInteger changeCount;
 @property BOOL started, running;
 
