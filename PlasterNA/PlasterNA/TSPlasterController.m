@@ -19,7 +19,7 @@
 
 #define SESSION_BROADCAST_CHANNEL @"plaster:session:%@:broadcast"
 #define SESSION_PEERS_KEY @"plaster:session:%@:peers"
-#define SESSION_PEER_CHANNEL @"plaster:session:%@:%@"
+NSString *const TSPlasterSessionFileTransferKey = @"plaster:session:%@:file:%@";
 
 #define TEST_LOG_FILE "plaster_in.log"
 #define JSON_LOG_FILE "plaster_json_out.log"
@@ -331,6 +331,60 @@ static double MB = 1024 * 1024;
 }
 
 - (void)plaster:(NSPasteboard *)pboard {
+    BOOL allowOutFiles = [[_sessionProfile objectForKey:TSPlasterOutAllowFiles] boolValue];
+    if (allowOutFiles) {
+        DLog(@"PLASTER: PLASTER OUT : Allowing files to be plastered out.");
+        NSArray *classes = @[[NSURL class]];
+        NSDictionary *options = [NSDictionary dictionaryWithObject:@YES forKey:NSPasteboardURLReadingFileURLsOnlyKey];
+        if ([pboard canReadObjectForClasses:classes options:options]) {
+            @autoreleasepool {
+                DLog(@"PLASTER: PLASTER OUT : File URLS can be obtained from pasteboard.");
+                NSArray *fileURLs = [pboard readObjectsForClasses:classes options:options];
+                DLog(@"PLASTER: PLASTER OUT : Read URLs : %@", fileURLs);
+                // TODO : Convert to chunked & asynchronous implementation!
+                NSError *error;
+                NSFileHandle *handle = [NSFileHandle fileHandleForReadingFromURL:fileURLs[0] error:&error];
+                if (error) {
+                    DLog(@"PLASTER: PLASTER OUT : Error occured accessing file URL : %@", error);
+                    return;
+                }
+                if (handle) {
+                    NSData *contents = [handle readDataToEndOfFile];
+                    if (contents) {
+                        unsigned long length = ([contents length] / (1024 * 1024));
+                        DLog(@"PLASTER : PLASTER OUT : Read file contents with length : %luMB", length);
+                        if (length > 102) {
+                            DLog(@"PLASTER: PLASTER OUT : Will not transmit files of length greater than 500MB.");
+                            contents = nil;
+                            return;
+                        }
+                        // We prepare a notification of type content_identifier#length and broadcast this to all peers
+                        // This will allow the peers to decide whether they want to fetch the content
+                        // The content key will expire in 10 minutes
+                        NSString *fileTransferID = [TSClientIdentifier createUUID];
+                        NSString *plasterNotification = [NSString stringWithFormat:@"FILE:%@#%lu", fileTransferID, length];
+                        DLog(@"PLASTER: PLASTER OUT : Notifying peers with notification string : %@", plasterNotification);
+                        const char *notification = [TSPacketSerializer JSONWithNotificationPacket:plasterNotification sender:self.alias];
+                        [self transmitJSON:notification];
+                        
+                        const char *jsonBytes = NULL;
+                        jsonBytes = [TSPacketSerializer JSONWithDataPacket:contents sender:self.alias];
+                        if (jsonBytes == NULL) {
+                            DLog(@"PLASTER: PLASTER OUT : Unable to complete operation, no data.");
+                            return;
+                        }
+                        NSString *fileTransferKey = [NSString stringWithFormat:TSPlasterSessionFileTransferKey, self.sessionKey, fileTransferID];
+                        DLog(@"PLASTER: PLASTER OUT : Creating key for file transfer : %@", fileTransferKey);
+                        [_provider setByteValue:jsonBytes forKey:fileTransferKey];
+                        //[self transmitJSON:jsonBytes];
+                        DLog(@"PLASTER: PLASTER OUT : File transmission initiated.");
+                    }
+                }
+            }
+            
+            return;
+        }
+    }
     NSMutableArray *readables = [NSMutableArray array];
     BOOL allowOutImages = [[_sessionProfile objectForKey:TSPlasterOutAllowImages] boolValue];
     if (allowOutImages) {
@@ -345,45 +399,45 @@ static double MB = 1024 * 1024;
     NSArray *pbContents = [pboard readObjectsForClasses:readables options:nil];
     DLog(@"PLASTER: Read %ld items from pasteboard.", (unsigned long)[pbContents count]);
     if ([pbContents count] > 0) {
-        // Now we have to extract the bytes
-        id packet = [pbContents objectAtIndex:0];
         const char *jsonBytes = NULL;
-        if ([packet isKindOfClass:[NSString class]] || [packet isKindOfClass:[NSAttributedString class]]) {
-            DLog(@"PLASTER : PLASTER OUT : Processing NSString packet and publishing...");
-            jsonBytes = [TSPacketSerializer JSONWithTextPacket:packet sender:[self alias]];
-        } else if ([packet isKindOfClass:[NSImage class]]) {
-            DLog(@"PLASTER : PLASTER OUT : Processing NSImage packet and publishing...");
-            jsonBytes = [TSPacketSerializer JSONWithImagePacket:packet  sender:[self alias]];
+        @autoreleasepool {
+            // Now we have to extract the bytes
+            id packet = [pbContents objectAtIndex:0];
+            if ([packet isKindOfClass:[NSString class]] || [packet isKindOfClass:[NSAttributedString class]]) {
+                DLog(@"PLASTER : PLASTER OUT : Processing NSString packet and publishing...");
+                jsonBytes = [TSPacketSerializer JSONWithTextPacket:packet sender:[self alias]];
+            } else if ([packet isKindOfClass:[NSImage class]]) {
+                DLog(@"PLASTER : PLASTER OUT : Processing NSImage packet and publishing...");
+                jsonBytes = [TSPacketSerializer JSONWithImagePacket:packet  sender:[self alias]];
+            }
+            if (jsonBytes == NULL) {
+                DLog(@"PLASTER: PLASTER OUT : Unable to complete operation, no data.");
+                return;
+            }
         }
-        if (jsonBytes == NULL) {
-            DLog(@"PLASTER: PLASTER OUT : Unable to complete operation, no data.");
-            return;
-        }
-        char *bytes = (char *)calloc(strlen(jsonBytes), sizeof(char));
-        if (bytes == NULL) {
-            DLog(@"PLASTER: PLASTER OUT : Unable to allocate memory for operation to complete.");
-            return;
-        }
-        strcpy(bytes, (const char *)jsonBytes);
-        size_t length = strlen(bytes);
-        if (length > (2 * MB)) {
-            DLog(@"PLASTER: PLASTER OUT : Plaster size > 2MB, requesting sent notification...");
-            NSMutableDictionary *options = [[NSMutableDictionary alloc]
-                                            initWithDictionary:[_handlerTable objectForKey:@"handlePlasterNotificationForDataWithSize:"]];
-            [options setObject:[NSNumber numberWithLong:length] forKey:@"packetSize"];
-            [_handlerTable setObject:options forKey:@"handlePlasterNotificationForDataWithSize:"];
-            
-            [_provider publish:jsonBytes channel:_clientID
-                       options:[self handlerOptionsForHandler:@"handlePlasterNotificationForDataWithSize:"]];
-            [options release];
-        } else {
-            [_provider publish:jsonBytes channel:_clientID options:nil];
-        }
-        free(bytes);
-        return;
+
+        [self transmitJSON:jsonBytes];
     } else {
         DLog(@"PLASTER: PLASTER OUT : Nothing retrieved from pasteboard.");
     }    
+}
+
+- (void)transmitJSON:(const char *)json {
+    size_t length = strlen(json);
+    if (length > (2 * MB)) {
+        DLog(@"PLASTER: PLASTER OUT : Plaster size > 2MB, requesting sent notification...");
+        NSMutableDictionary *options = [[NSMutableDictionary alloc]
+                                        initWithDictionary:[_handlerTable objectForKey:@"handlePlasterNotificationForDataWithSize:"]];
+        [options setObject:[NSNumber numberWithLong:length] forKey:@"packetSize"];
+        [_handlerTable setObject:options forKey:@"handlePlasterNotificationForDataWithSize:"];
+        
+        [_provider publish:json channel:_clientID
+                   options:[self handlerOptionsForHandler:@"handlePlasterNotificationForDataWithSize:"]];
+        [options release];
+    } else {
+        [_provider publish:json channel:_clientID options:nil];
+    }
+    return;
 }
 
 - (void)testHandlePlasterInWithData:(char *)data {
@@ -392,10 +446,10 @@ static double MB = 1024 * 1024;
     if (data) {
         payload = [TSPacketSerializer dictionaryFromJSON:data];
         if (payload) {
-            NSString *type = [payload objectForKey:PLASTER_TYPE_JSON_KEY];
-            if ([type isEqualToString:PLASTER_TEXT_TYPE_JSON_VALUE]) {
-                TSPasteboardPacket *packet = [[TSPasteboardPacket alloc] initWithTag:PLASTER_PACKET_TEXT
-                                                                              string:[payload objectForKey:PLASTER_PACKET_TEXT]];
+            NSString *type = [payload objectForKey:TSPlasterJSONKeyForPlasterType];
+            if ([type isEqualToString:TSPlasterTypeText]) {
+                TSPasteboardPacket *packet = [[TSPasteboardPacket alloc] initWithTag:TSPlasterPacketText
+                                                                              string:[payload objectForKey:TSPlasterPacketText]];
                 //NSString *sender = [payload objectForKey:PLASTER_SENDER_JSON_KEY];
                 
                 DLog(@"PLASTER: TESTING : Obtained packet [%@]", packet);
@@ -424,7 +478,7 @@ static double MB = 1024 * 1024;
                 }
                 [packet release];
                 return;
-            } else if ([type isEqualToString:PLASTER_IMAGE_TYPE_JSON_VALUE]) {
+            } else if ([type isEqualToString:TSPlasterTypeImage]) {
                 DLog(@"PLASTER: TESTING: Processing image packet...");
                 return;
             }
@@ -441,26 +495,32 @@ static double MB = 1024 * 1024;
     if (data) {
         payload = [TSPacketSerializer dictionaryFromJSON:data];
         if (payload) {
+            BOOL allowFileType = [[_sessionProfile objectForKey:TSPlasterAllowFiles] boolValue];
             BOOL allowTextType = [[_sessionProfile objectForKey:TSPlasterAllowText] boolValue];
-            BOOL allowImageType = [[_sessionProfile objectForKey:TSPlasterAllowImages] boolValue];;
+            BOOL allowImageType = [[_sessionProfile objectForKey:TSPlasterAllowImages] boolValue];
             
-            NSString *type = [payload objectForKey:PLASTER_TYPE_JSON_KEY];
+            NSString *type = [payload objectForKey:TSPlasterJSONKeyForPlasterType];
             id packet = nil;
             
-            if ([type isEqualToString:PLASTER_TEXT_TYPE_JSON_VALUE]) {
+            if ([type isEqualToString:TSPlasterTypeText]) {
                 if (!allowTextType) {
                     DLog(@"PLASTER: HANDLE IN : This session does not support incoming text-type plasters.");
                     return;
                 }
                 DLog(@"PLASTER: HANDLE IN : Processing text packet...");
-                packet = [[TSPlasterString alloc] initWithString:[payload objectForKey:PLASTER_PACKET_TEXT]];
-            } else if ([type isEqualToString:PLASTER_IMAGE_TYPE_JSON_VALUE]) {
+                packet = [[TSPlasterString alloc] initWithString:[payload objectForKey:TSPlasterPacketText]];
+            } else if ([type isEqualToString:TSPlasterTypeImage]) {
                 if (!allowImageType) {
                     DLog(@"PLASTER: HANDLE IN : This session does not support incoming image-type plasters.");
                     return;                    
                 }
                 DLog(@"PLASTER: HANDLE IN : Processing image packet...");
-                packet = [[TSPlasterImage alloc] initWithImage:[payload objectForKey:PLASTER_PACKET_IMAGE]];
+                packet = [[TSPlasterImage alloc] initWithImage:[payload objectForKey:TSPlasterPacketImage]];
+            } else if ([type isEqualToString:TSPlasterTypeFile]) {
+                if (!allowFileType) {
+                    DLog(@"PLASTER: HANDLE IN : This session does not support incoming file-type plasters.");
+                    return;
+                }
             }
             
             if (!packet) {
@@ -469,7 +529,7 @@ static double MB = 1024 * 1024;
             }
             DLog(@"PLASTER: HANDLE IN : Obtained packet [%@]", packet);
             
-            NSString *sender = [payload objectForKey:PLASTER_SENDER_JSON_KEY];
+            NSString *sender = [payload objectForKey:TSPlasterJSONKeyForSenderID];
             
             // Figure out how the user wants to write out the packet - pasteboard or file
             NSString *mode = [_sessionProfile objectForKey:TSPlasterMode];
@@ -507,10 +567,10 @@ static double MB = 1024 * 1024;
                 NSString *plasterFolderPath = [_sessionProfile objectForKey:TSPlasterFolderPath];
                 NSString *plasterFileName = nil;
                 NSData *blob = nil;
-                if ([type isEqualToString:PLASTER_TEXT_TYPE_JSON_VALUE]) {
+                if ([type isEqualToString:TSPlasterTypeText]) {
                     plasterFileName = [NSString stringWithFormat:@"%@_%@.txt", date, sender];
                     blob = [packet dataUsingEncoding:NSUTF8StringEncoding];
-                } else if ([type isEqualToString:PLASTER_IMAGE_TYPE_JSON_VALUE]) {
+                } else if ([type isEqualToString:TSPlasterTypeImage]) {
                     plasterFileName = [NSString stringWithFormat:@"%@_%@.tiff", date, sender];
                     blob = [packet TIFFRepresentation];
                 }

@@ -38,19 +38,18 @@ extern NSString *const TSPlasterModeFile;
 extern NSString *const TSPlasterFolderPath;
 
 // Keys used in the JSON packet
-#define PLASTER_TYPE_JSON_KEY @"plaster-type"
-#define PLASTER_DATA_JSON_KEY @"plaster-data"
-#define PLASTER_SENDER_JSON_KEY @"plaster-sender"
-#define PLASTER_FILENAME_JSON_KEY @"plaster-file-name"
+extern NSString *const TSPlasterJSONKeyForPlasterType;
+extern NSString *const TSPlasterJSONKeyForData;
+extern NSString *const TSPlasterJSONKeyForSenderID;
 
-// Standard values used in the JSON packet
-#define PLASTER_TEXT_TYPE_JSON_VALUE @"plaster-text"
-#define PLASTER_IMAGE_TYPE_JSON_VALUE @"plaster-image"
-#define PLASTER_FILE_TYPE_JSON_VALUE @"plaster-file"
+extern NSString *const TSPlasterTypeNotification;
+extern NSString *const TSPlasterTypeText;
+extern NSString *const TSPlasterTypeImage;
+extern NSString *const TSPlasterTypeFile;
 
 // Keys used for decoded data
-#define PLASTER_PACKET_TEXT @"plaster-packet-text"
-#define PLASTER_PACKET_IMAGE @"plaster-packet-image"
-#define PLASTER_PACKET_FILE @"plaster-packet-file"
+extern NSString *const TSPlasterPacketText;
+extern NSString *const TSPlasterPacketImage;
+extern NSString *const TSPlasterPacketFile;
 
 #endif

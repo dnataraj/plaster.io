@@ -30,3 +30,18 @@ NSString *const TSPlasterModePasteboard = @"PASTEBOARD";
 NSString *const TSPlasterModeFile = @"FILE";
 NSString *const TSPlasterFolderPath = @"folder-path";
 
+// Constants for plaster transfers
+NSString *const TSPlasterJSONKeyForPlasterType = @"plaster-type";
+NSString *const TSPlasterJSONKeyForData = @"plaster-data";
+NSString *const TSPlasterJSONKeyForSenderID = @"plaster-sender";
+
+NSString *const TSPlasterTypeNotification = @"plaster-notification";
+NSString *const TSPlasterTypeText = @"plaster-text";
+NSString *const TSPlasterTypeImage = @"plaster-image";
+NSString *const TSPlasterTypeFile = @"plaster-file";
+
+NSString *const TSPlasterPacketText = @"plaster-packet-text";
+NSString *const TSPlasterPacketImage = @"plaster-packet-image";
+NSString *const TSPlasterPacketFile = @"plaster-packet-file";
+
+

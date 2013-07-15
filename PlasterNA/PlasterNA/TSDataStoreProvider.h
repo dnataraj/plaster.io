@@ -12,7 +12,9 @@
 
 @optional
 -(NSUInteger)setStringValue:(NSString *)stringValue forKey:(NSString *)key;
+-(NSUInteger)setByteValue:(const char *)byteValue forKey:(NSString *)key;
 -(NSString *)stringValueForKey:(NSString *)key;
+-(void)setExpiry:(NSUInteger)expiry forKey:(NSString *)key;
 
 -(void)setDictionaryValue:(NSDictionary *)dictionary forKey:(NSString *)key;
 -(NSDictionary *)dictionaryValueForKey:(NSString *)key;

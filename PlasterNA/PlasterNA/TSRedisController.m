@@ -653,6 +653,66 @@ void freeBundle(HandlerBundle hb) {
     return EXIT_SUCCESS;
 }
 
+-(NSUInteger)setByteValue:(const char *)byteValue forKey:(NSString *)aKey {
+    DLog(@"REDIS: Setting value for key [%@]...", aKey);
+    const char *ckey = [aKey UTF8String];
+    char *key = (char *)calloc(strlen(ckey), sizeof(char));
+    if (key == NULL) {
+        DLog(@"REDIS: SET : Error allocating memory for key.");
+        return EXIT_FAILURE;
+    }
+    strcpy(key, ckey);
+    char *value = (char *)calloc(strlen(byteValue), sizeof(char));
+    if (value == NULL) {
+        DLog(@"REDIS: SET : Error allocating memory for value.");
+        free(key);
+        return EXIT_FAILURE;
+    }
+    strcpy(value, byteValue);
+    redisReply *reply = NULL;
+    redisContext *blockingContext = [self connect];
+    if (blockingContext == NULL) {
+        // Try again, otherwise leave
+        blockingContext = [self connect];
+        if (blockingContext == NULL) {
+            DLog(@"REDIS: Unable to initialize synchronouse REDIS context.");
+            free(key);
+            free(value);
+            return EXIT_FAILURE;
+        }
+    }
+    void *response = redisCommand(blockingContext, "SET %s %b", key, value, strlen(value));
+    if ([self processReply:blockingContext withReply:response andData:NULL]) {
+        reply = (redisReply *)response;
+        if (reply->type == REDIS_REPLY_STATUS) {
+            if (strcmp(reply->str, "OK")) {
+                DLog(@"REDIS: SET replied with OK.");
+            }
+        } else if (reply->type == REDIS_REPLY_NIL) {
+            DLog(@"REDIS: SET replied with (nil).");
+        }
+    } else {
+        DLog(@"REDIS: Error processing SET.");
+        if (reply) {
+            freeReplyObject(reply);
+        }
+        free(key);
+        free(value);
+        redisFree(blockingContext);
+        return EXIT_FAILURE;
+    }
+    
+    DLog(@"REDIS: SET : Finishing...");
+    if (reply) {
+        freeReplyObject(reply);
+    }
+    free(key);
+    free(value);
+    redisFree(blockingContext);
+    
+    return EXIT_SUCCESS;
+}
+
 -(NSString *)stringValueForKey:(NSString *)aKey {
     DLog(@"REDIS: Getting value for key [%@]...", aKey);
     char *key = (char *)malloc((sizeof(char) * strlen([aKey UTF8String])));
