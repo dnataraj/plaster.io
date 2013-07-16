@@ -37,7 +37,7 @@
     [[self.plasterLocationSelectionMatrix cellAtRow:1 column:0] setState:0];
     [self.plasterFolderLocationTextField setEnabled:NO];
     [self.plasterFolderLocationBrowseButton setEnabled:NO];
-    [self.handleInFileTypeButton setEnabled:NO];
+    //[self.handleInFileTypeButton setEnabled:NO];
     self.plasterMode = TSPlasterModePasteboard;
 }
 
@@ -46,7 +46,7 @@
     [[self.plasterLocationSelectionMatrix cellAtRow:1 column:0] setState:1];
     [self.plasterFolderLocationTextField setEnabled:YES];
     [self.plasterFolderLocationBrowseButton setEnabled:YES];
-    [self.handleInFileTypeButton setEnabled:YES];
+    //[self.handleInFileTypeButton setEnabled:YES];
     self.plasterMode = TSPlasterModeFile;
 }
 

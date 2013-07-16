@@ -752,6 +752,57 @@ void freeBundle(HandlerBundle hb) {
     return stringValue;
 }
 
+- (NSUInteger)setExpiry:(NSUInteger)expiry forKey:(NSString *)aKey {
+    NSUInteger result = EXIT_FAILURE;
+    DLog(@"REDIS: Setting expiry for key [%@]...", aKey);
+    const char *temp = [aKey UTF8String];
+    char *key = (char *)calloc(strlen(temp), sizeof(char));
+    if (key == NULL) {
+        DLog(@"REDIS: Unable to allocate memory for key.");
+        return EXIT_FAILURE;
+    }
+    strcpy(key, temp);
+    redisReply *reply = NULL;
+    NSUInteger setExpiry = 0;
+    redisContext *blockingContext = [self connect];
+    if (blockingContext == NULL) {
+        // Try again, otherwise leave
+        blockingContext = [self connect];
+        if (blockingContext == NULL) {
+            DLog(@"REDIS: Unable to initialize synchronouse REDIS context.");
+            free(key);
+            return EXIT_FAILURE;
+        }
+    }
+    void *response = redisCommand(blockingContext, "EXPIRE %s %s", key, [[NSString stringWithFormat:@"%ld", (unsigned long)expiry] UTF8String]);
+    if ([self processReply:blockingContext withReply:response andData:NULL]) {
+        reply = (redisReply *)response;
+        if (reply->type == REDIS_REPLY_INTEGER) {
+            setExpiry = reply->integer;
+        } else {
+            DLog(@"REDIS: EXPIRE replied with (nil).");
+            result = EXIT_FAILURE;
+        }
+        
+    } else {
+        DLog(@"REDIS: Error processing EXPIRE.");
+        result = EXIT_FAILURE;
+    }
+    
+    DLog(@"REDIS: EXPIRE : Finishing...");
+    if (reply) {
+        freeReplyObject(reply);
+    }
+    free(key);
+    redisFree(blockingContext);
+    
+    if (setExpiry) {
+        result = EXIT_SUCCESS;
+    }
+    
+    return result;
+}
+
 -(NSUInteger)incrementKey:(NSString *)key {
     DLog(@"REDIS: Incrementing key [%@]...", key);
     NSUInteger incremented = UINT32_MAX;

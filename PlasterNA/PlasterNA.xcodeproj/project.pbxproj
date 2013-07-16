@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		410140C11795468300F6F3C6 /* TSPlasterFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 410140C01795468300F6F3C6 /* TSPlasterFile.m */; };
 		410EC43E1769A56B00D4826D /* pause.png in Resources */ = {isa = PBXBuildFile; fileRef = 410EC43D1769A56B00D4826D /* pause.png */; };
 		410EC4401769A57E00D4826D /* play.png in Resources */ = {isa = PBXBuildFile; fileRef = 410EC43F1769A57E00D4826D /* play.png */; };
 		410EC4421769DC6900D4826D /* stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 410EC4411769DC6900D4826D /* stop.png */; };
@@ -68,6 +69,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		410140BF1795468300F6F3C6 /* TSPlasterFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSPlasterFile.h; sourceTree = "<group>"; };
+		410140C01795468300F6F3C6 /* TSPlasterFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSPlasterFile.m; sourceTree = "<group>"; };
 		410EC43D1769A56B00D4826D /* pause.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pause.png; sourceTree = "<group>"; };
 		410EC43F1769A57E00D4826D /* play.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = play.png; sourceTree = "<group>"; };
 		410EC4411769DC6900D4826D /* stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stop.png; sourceTree = "<group>"; };
@@ -252,6 +255,8 @@
 				41BF51C6176EFC5400D5CCD4 /* TSPlasterString.m */,
 				41BF51C9176F173D00D5CCD4 /* TSPlasterImage.h */,
 				41BF51CA176F173D00D5CCD4 /* TSPlasterImage.m */,
+				410140BF1795468300F6F3C6 /* TSPlasterFile.h */,
+				410140C01795468300F6F3C6 /* TSPlasterFile.m */,
 			);
 			path = PlasterNA;
 			sourceTree = "<group>";
@@ -455,6 +460,7 @@
 				41BF51CC176F173E00D5CCD4 /* TSPlasterImage.m in Sources */,
 				41FCC37E177AD34700859EF1 /* TSPlasterGlobals.m in Sources */,
 				41FCC384177B573600859EF1 /* TSProfileConfigurationViewController.m in Sources */,
+				410140C11795468300F6F3C6 /* TSPlasterFile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

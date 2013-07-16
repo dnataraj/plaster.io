@@ -115,8 +115,7 @@
         NSData *data = [[NSData alloc] initWithData:packet]; // just so we have access to our b64 category
         NSString *b64 = [data base64String];
         [data release];
-        [kvDictionary setObject:b64 forKey:TSPlasterTypeFile];
-        [b64 release];
+        [kvDictionary setObject:b64 forKey:TSPlasterJSONKeyForData];
         NSError *error = nil;
         NSData *json = [NSJSONSerialization dataWithJSONObject:kvDictionary options:0 error:&error];
         if (error) {
@@ -142,11 +141,13 @@
     if ([kvStore isKindOfClass:[NSMutableDictionary class]]) {
         NSMutableDictionary *dictionary = (NSMutableDictionary *)kvStore;
         id packet64 = [dictionary objectForKey:TSPlasterJSONKeyForData];
-        if ([packet64 isKindOfClass:[NSString class]]) {
+        if (packet64 && [packet64 isKindOfClass:[NSString class]]) {
             NSData *packet = [(NSString*)packet64 dataFromBase64];
+            DLog(@"PACKET SERIALIZER: Obtained data packet.");
             if (packet) {
                 NSString *type = (NSString *)[dictionary objectForKey:TSPlasterJSONKeyForPlasterType];
                 if ([type isEqualToString:TSPlasterTypeText] || [type isEqualToString:TSPlasterTypeNotification]) {
+                    DLog(@"PACKET SERIALIZER: Converting data to text...");
                     NSString *cleared = [[NSString alloc] initWithData:packet encoding:NSUTF8StringEncoding]; // TODO : This could be optimized in FILE_MODE??
                     [dictionary setObject:cleared forKey:TSPlasterPacketText];
                     [cleared release];
@@ -159,11 +160,13 @@
                     DLog(@"PACKET SERIALIZER: Packet is a file...");
                     [dictionary setObject:packet forKey:TSPlasterPacketFile];
                 }
+                return dictionary;
+            } else {
+                DLog(@"PACKET SERIALIZER: Packet was empty.");
             }
         }
-        return dictionary;
     }
-
+    
     return nil;
 }
 

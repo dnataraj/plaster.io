@@ -44,4 +44,4 @@ NSString *const TSPlasterPacketText = @"plaster-packet-text";
 NSString *const TSPlasterPacketImage = @"plaster-packet-image";
 NSString *const TSPlasterPacketFile = @"plaster-packet-file";
 
-
+const NSUInteger TSPlasterRedisKeyExpiry = 600;

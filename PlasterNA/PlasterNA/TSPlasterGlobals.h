@@ -52,4 +52,6 @@ extern NSString *const TSPlasterPacketText;
 extern NSString *const TSPlasterPacketImage;
 extern NSString *const TSPlasterPacketFile;
 
+extern const NSUInteger TSPlasterRedisKeyExpiry;
+
 #endif

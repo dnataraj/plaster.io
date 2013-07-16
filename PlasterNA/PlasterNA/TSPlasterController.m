@@ -16,15 +16,17 @@
 #import "TSPlasterGlobals.h"
 #import "TSPlasterString.h"
 #import "TSPlasterImage.h"
+#import "TSPlasterFile.h"
 
 #define SESSION_BROADCAST_CHANNEL @"plaster:session:%@:broadcast"
 #define SESSION_PEERS_KEY @"plaster:session:%@:peers"
 NSString *const TSPlasterSessionFileTransferKey = @"plaster:session:%@:file:%@";
+NSString *const TSPlasterSessionFileNotificationPattern = @"FILE:%@#%@#%lu";
 
 #define TEST_LOG_FILE "plaster_in.log"
 #define JSON_LOG_FILE "plaster_json_out.log"
 
-static double MB = 1024 * 1024;
+static const double MB = 1024 * 1024;
 
 @implementation TSPlasterController {
     //NSString *_clientID;
@@ -53,7 +55,7 @@ static double MB = 1024 * 1024;
             DLog(@"PLASTER: INIT : The pasteboard controller needs both a valid pasteboard and a message provider.");
             return nil;
         }
-        self.clientID = [TSClientIdentifier clientID];
+        _clientID = [[TSClientIdentifier clientID] retain];
         NSString *aliasPref = [[NSUserDefaults standardUserDefaults] stringForKey:TSPlasterDeviceName];
         if (aliasPref) {
             [self setAlias:aliasPref];
@@ -123,13 +125,14 @@ static double MB = 1024 * 1024;
             }
             
         }
-    }
-    NSLog(@"PLASTER: INIT : Temporary directory : %@", NSTemporaryDirectory());
-    TSPlasterTemporaryDirectory = [[NSString stringWithFormat:@"%@plaster", NSTemporaryDirectory()] retain];
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    if (![fileManager fileExistsAtPath:TSPlasterTemporaryDirectory]) {
-        DLog(@"PLASTER: INIT : Creating temporary Plaster folder at path : [%@]", TSPlasterTemporaryDirectory);
-        [fileManager createDirectoryAtPath:TSPlasterTemporaryDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+        NSLog(@"PLASTER: INIT : Temporary directory : %@", NSTemporaryDirectory());
+        TSPlasterTemporaryDirectory = [[NSString stringWithFormat:@"%@plaster", NSTemporaryDirectory()] retain];
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        if (![fileManager fileExistsAtPath:TSPlasterTemporaryDirectory]) {
+            DLog(@"PLASTER: INIT : Creating temporary Plaster folder at path : [%@]", TSPlasterTemporaryDirectory);
+            [fileManager createDirectoryAtPath:TSPlasterTemporaryDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+        }
+        
     }
     
     return self;
@@ -330,7 +333,7 @@ static double MB = 1024 * 1024;
     }
     [self setChangeCount:newChangeCount];
     
-    BOOL isPeerPaste = [_pb canReadItemWithDataConformingToTypes:@[PLASTER_STRING_UTI, PLASTER_IMAGE_UTI]];
+    BOOL isPeerPaste = [_pb canReadItemWithDataConformingToTypes:@[PLASTER_STRING_UTI, PLASTER_IMAGE_UTI, PLASTER_FILE_UTI]];
     if (isPeerPaste) {
         DLog(@"PLASTER: PLASTER OUT : Packet is from a peer, discarding publish..");
         return;
@@ -346,43 +349,52 @@ static double MB = 1024 * 1024;
         if ([pboard availableTypeFromArray:@[NSFilenamesPboardType]]) {
             NSArray *fileNames = [pboard propertyListForType:NSFilenamesPboardType];
             DLog(@"PLASTER: PLASTER OUT : File URLS can be obtained from pasteboard : %@", fileNames);
+            // Check the file size to verify it is under the limit.
+            NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:fileNames[0] error:nil];
+            if (fileAttributes) {
+                DLog(@"PLASTER : PLASTER OUT : FILE : Verifying size...");
+                if ([fileAttributes fileSize] > (100 * MB)) {
+                    DLog(@"PLASTER: PLASTER OUT : Will not transmit files of length greater than 500MB.");
+                    return;
+                }
+            }
             NSFileHandle *handle = [NSFileHandle fileHandleForReadingAtPath:fileNames[0]];
             if (handle) {
                 NSData *contents = [handle readDataToEndOfFile];
+                [handle closeFile];
+                handle = nil;
                 if (contents) {
-                    unsigned long length = ([contents length] / (1024 * 1024));
+                    unsigned long length = ([contents length] / MB);
                     DLog(@"PLASTER : PLASTER OUT : Read file contents with length : %luMB", length);
-                    if (length > 102) {
-                        DLog(@"PLASTER: PLASTER OUT : Will not transmit files of length greater than 500MB.");
-                        contents = nil;
-                        return;
-                    }
-                    // We prepare a notification of type content_identifier#length and broadcast this to all peers
-                    // This will allow the peers to decide whether they want to fetch the content
-                    // The content key will expire in 10 minutes
-                    NSString *fileTransferID = [TSClientIdentifier createUUID];
-                    NSString *plasterNotification = [NSString stringWithFormat:@"FILE:%@#%@#%lu", fileTransferID, [fileNames[0] lastPathComponent], length];
-                    DLog(@"PLASTER: PLASTER OUT : Notifying peers with notification string : %@", plasterNotification);
-                    const char *notification = [TSPacketSerializer JSONWithNotificationPacket:plasterNotification sender:self.alias];
-                    [self transmitJSON:notification];
-                    
                     const char *jsonBytes = NULL;
                     jsonBytes = [TSPacketSerializer JSONWithDataPacket:contents sender:self.alias];
                     if (jsonBytes == NULL) {
                         DLog(@"PLASTER: PLASTER OUT : Unable to complete operation, no data.");
                         return;
                     }
+                    NSString *fileTransferID = [TSClientIdentifier createUUID];
                     NSString *fileTransferKey = [NSString stringWithFormat:TSPlasterSessionFileTransferKey, self.sessionKey, fileTransferID];
-                    DLog(@"PLASTER: PLASTER OUT : Creating key for file transfer : %@", fileTransferKey);
+                    DLog(@"PLASTER: PLASTER OUT : Setting key for file transfer : %@", fileTransferKey);
                     [_provider setByteValue:jsonBytes forKey:fileTransferKey];
-                    //[self transmitJSON:jsonBytes];
-                    DLog(@"PLASTER: PLASTER OUT : File transmission initiated.");
+                    // Set a 600 second expirey for this key
+                    [_provider setExpiry:TSPlasterRedisKeyExpiry forKey:fileTransferKey];
+                    DLog(@"PLASTER: PLASTER OUT : File transmission complete.");
+                    
+                    // We prepare a notification of type content_identifier#length and broadcast this to all peers
+                    // This will allow the peers to decide whether they want to fetch the content
+                    // The content key will expire in 10 minutes
+                    NSString *plasterNotification = [NSString stringWithFormat:TSPlasterSessionFileNotificationPattern, fileTransferID,
+                                                     [fileNames[0] lastPathComponent], length];
+                    DLog(@"PLASTER: PLASTER OUT : Notifying peers with notification string : %@", plasterNotification);
+                    const char *notification = [TSPacketSerializer JSONWithNotificationPacket:plasterNotification sender:self.alias];
+                    [self transmitJSON:notification];
                 }
             }
  
             return;
         }
     }
+    
     NSMutableArray *readables = [NSMutableArray array];
     BOOL allowOutImages = [[_sessionProfile objectForKey:TSPlasterOutAllowImages] boolValue];
     if (allowOutImages) {
@@ -490,6 +502,7 @@ static double MB = 1024 * 1024;
     if (data) {
         payload = [TSPacketSerializer dictionaryFromJSON:data];
         if (payload) {
+            //[payload retain];
             BOOL allowFileType = [[_sessionProfile objectForKey:TSPlasterAllowFiles] boolValue];
             BOOL allowTextType = [[_sessionProfile objectForKey:TSPlasterAllowText] boolValue];
             BOOL allowImageType = [[_sessionProfile objectForKey:TSPlasterAllowImages] boolValue];
@@ -500,33 +513,34 @@ static double MB = 1024 * 1024;
             if ([type isEqualToString:TSPlasterTypeText]) {
                 if (!allowTextType) {
                     DLog(@"PLASTER: HANDLE IN : This session does not support incoming text-type plasters.");
-                    return;
+                } else {
+                    DLog(@"PLASTER: HANDLE IN : Processing text packet...");
+                    packet = [[TSPlasterString alloc] initWithString:[payload objectForKey:TSPlasterPacketText]];
                 }
-                DLog(@"PLASTER: HANDLE IN : Processing text packet...");
-                packet = [[TSPlasterString alloc] initWithString:[payload objectForKey:TSPlasterPacketText]];
             } else if ([type isEqualToString:TSPlasterTypeImage]) {
                 if (!allowImageType) {
                     DLog(@"PLASTER: HANDLE IN : This session does not support incoming image-type plasters.");
-                    return;                    
+                } else {
+                    DLog(@"PLASTER: HANDLE IN : Processing image packet...");
+                    packet = [[TSPlasterImage alloc] initWithImage:[payload objectForKey:TSPlasterPacketImage]];
                 }
-                DLog(@"PLASTER: HANDLE IN : Processing image packet...");
-                packet = [[TSPlasterImage alloc] initWithImage:[payload objectForKey:TSPlasterPacketImage]];
             } else if ([type isEqualToString:TSPlasterTypeNotification]) {
                 if (!allowFileType) {
                     DLog(@"PLASTER: HANDLE IN : This session does not support incoming file-type plasters.");
-                    return;
+                } else {
+                    // Peek at the notification and extract the file retrieval key
+                    DLog(@"PLASTER: HANDLE IN : Processing notification packet...");
+                    packet = [[TSPlasterString alloc] initWithString:[payload objectForKey:TSPlasterPacketText]];
                 }
-                // Peek at the notification and extract the file retrieval key
-                DLog(@"PLASTER: HANDLE IN : Processing notification packet...");
-                packet = [[TSPlasterString alloc] initWithString:[payload objectForKey:TSPlasterPacketText]];
             }
             
             if (!packet) {
                 DLog(@"PLASTER: HANDLE IN : Unable to initialize text or image packet.");
+                //[payload release];
                 return;
             }
-            DLog(@"PLASTER: HANDLE IN : Obtained packet [%@]", packet);
             
+            DLog(@"PLASTER: HANDLE IN : Obtained packet [%@]", packet);
             NSString *sender = [payload objectForKey:TSPlasterJSONKeyForSenderID];
             
             // Figure out how the user wants to write out the packet - pasteboard or file
@@ -536,6 +550,7 @@ static double MB = 1024 * 1024;
                 NSPasteboard *pb = [NSPasteboard generalPasteboard];
                 if (!pb) {
                     DLog(@"PLASTER: PLASTER IN : No pasteboard available...");
+                    //[payload release];
                     [packet release];
                     return;
                 }
@@ -544,10 +559,11 @@ static double MB = 1024 * 1024;
                 // and save it locally. Add a file URL to the pasteboard (will it work!?)
                 if ([type isEqualToString:TSPlasterTypeNotification]) {
                     // TODO : Save the file to a temp directory and paste the file URLs
-                    [self handleFileNotificationPacket:packet];
-                    DLog(@"PLASTER: HANDLE IN : File notification handled, returning for now.");
+                    NSString *storedPath = [self handleFileNotificationPacket:packet path:nil];
+                    DLog(@"PLASTER: HANDLE IN : File notification handled, file stored at : %@", storedPath);
+                    //[payload  release];
                     [packet release];
-                    return;
+                    packet = [[TSPlasterFile alloc] initWithURL:[NSURL fileURLWithPath:storedPath]];
                 }
                 
                 [pb clearContents];
@@ -567,13 +583,14 @@ static double MB = 1024 * 1024;
                     // If we recieve a file notification when in file mode,
                     // we just retrieve the file and save it in the plaster folder
                     // rather than the pasteboard
-                    [self handleFileNotificationPacket:packet];
-                    DLog(@"PLASTER: HANDLE IN : File notification handled, returning for now.");
+                    [self handleFileNotificationPacket:packet path:[_sessionProfile objectForKey:TSPlasterFolderPath]];
+                    DLog(@"PLASTER: HANDLE IN : File notification handled.");
                     BOOL notify = [[_sessionProfile objectForKey:TSPlasterNotifyPlasters] boolValue];
                     if (notify) {
                         NSString *pasteInfo = [NSString stringWithFormat:@"[%@]", sender];
                         [self sendNotificationWithSubtitle:@"You have recieved a new file from :" informativeText:pasteInfo];
                     }
+                    //[payload release];
                     [packet release];
                     return;                    
                 }
@@ -599,6 +616,7 @@ static double MB = 1024 * 1024;
                 }
                 if (!blob) {
                     DLog(@"PLASTER: HANDLE IN : Error obtaining data representations for incoming plaster.");
+                    //[payload release];
                     [packet release];
                     return;
                 }
@@ -616,7 +634,8 @@ static double MB = 1024 * 1024;
             }
             
             [packet release];
-            return;            
+            //[payload release];
+            return;
         }
     }
     
@@ -624,8 +643,9 @@ static double MB = 1024 * 1024;
     return;
 }
 
-- (void)handleFileNotificationPacket:(TSPlasterString *)packet {
+- (NSString *)handleFileNotificationPacket:(TSPlasterString *)packet path:(NSString *)aPath {
     [packet retain];
+    NSString *filePath = nil;
     if ([packet hasPrefix:@"FILE:"]) {
         NSString *idAndLength = [packet substringFromIndex:5];
         DLog(@"PLASTER: HANDLE IN : Handling notification with id and length : %@", idAndLength);
@@ -637,23 +657,27 @@ static double MB = 1024 * 1024;
         if (len > 100) {
             DLog(@"PLASTER: HANDLE IN : File length exceeds allowed limit, not retrieving.");
             [packet release];
-            return;
+            return nil;
         }
         NSString *fileTransferKey = [NSString stringWithFormat:TSPlasterSessionFileTransferKey, self.sessionKey, fileTransferID];
         DLog(@"PLASTER: HANDLE IN : Retrieving file with key : %@", fileTransferKey);
-        NSString *JSONFileContainerString = [[_provider stringValueForKey:fileTransferKey] retain];
+        NSString *JSONFileContainerString = [_provider stringValueForKey:fileTransferKey];
         DLog(@"PLASTER: HANDLE IN : Obtained JSON file container of length : %ld", [JSONFileContainerString length]);
         NSDictionary *filePayload = [TSPacketSerializer dictionaryFromJSON:[JSONFileContainerString UTF8String]];
-        NSData *file = [filePayload objectForKey:TSPlasterPacketFile];
-        NSFileManager *fileManager = [NSFileManager defaultManager];
-        NSString *filePath = [NSString stringWithFormat:@"%@/%@", TSPlasterTemporaryDirectory, fileName];
-        DLog(@"PLASER: HANDLE IN : Writing retrieved file to path : %@", filePath);
-        if (![fileManager createFileAtPath:filePath contents:file attributes:nil]) {
-            DLog(@"PLASTER: HANDLE IN : Unable to create file at path : %@", filePath);
+        if (filePayload) {
+            NSData *file = [filePayload objectForKey:TSPlasterPacketFile];
+            NSFileManager *fileManager = [NSFileManager defaultManager];
+            filePath = (aPath != nil) ? [aPath stringByAppendingPathComponent:fileName] :
+                                                        [NSString stringWithFormat:@"%@/%@", TSPlasterTemporaryDirectory, fileName];
+            DLog(@"PLASTER: HANDLE IN : Writing retrieved file to path : %@", filePath);
+            if (![fileManager createFileAtPath:filePath contents:file attributes:nil]) {
+                
+                DLog(@"PLASTER: HANDLE IN : Unable to create file at path : %@", filePath);
+            }
         }
     }
     [packet release];
-    return;
+    return filePath;
 }
 
 /*
@@ -729,6 +753,8 @@ static double MB = 1024 * 1024;
 
 - (void)handlePlasterNotificationForDataWithSize:(NSNumber *)size {
     DLog(@"Plaster: HANDLE SENT NOTIFICATION : For size : %@", size);
+    NSString *pasteInfo = [NSString stringWithFormat:@"Size [%@]", size];
+    [self sendNotificationWithSubtitle:@"Packet has been sent : " informativeText:pasteInfo];
     
     return;
 }
