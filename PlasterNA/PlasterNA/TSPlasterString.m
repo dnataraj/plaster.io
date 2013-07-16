@@ -63,6 +63,14 @@ NSString *PLASTER_STRING_UTI = @"com.trilobytesystems.plaster.string.uti";
     return [self.string dataUsingEncoding:encoding];
 }
 
+- (BOOL)hasPrefix:(NSString *)aString {
+    return [self.string hasPrefix:aString];
+}
+
+- (NSString *)substringFromIndex:(NSUInteger)anIndex {
+    return [self.string substringFromIndex:anIndex];
+}
+
 - (NSString *)description {
         return [NSString stringWithFormat:@"Packet with [%ld] characters.", (unsigned long)[self.string length]];
 }

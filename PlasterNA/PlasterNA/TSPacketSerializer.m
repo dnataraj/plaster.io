@@ -136,7 +136,7 @@
     NSError *error = nil;
     id kvStore = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
     if (error) {
-        DLog(@"SERIALIZER: Error occured during de-serialization: %@", error);
+        DLog(@"PACKET SERIALIZER: Error occured during de-serialization: %@", error);
         return nil;
     }
     if ([kvStore isKindOfClass:[NSMutableDictionary class]]) {
@@ -147,7 +147,7 @@
             if (packet) {
                 NSString *type = (NSString *)[dictionary objectForKey:TSPlasterJSONKeyForPlasterType];
                 if ([type isEqualToString:TSPlasterTypeText] || [type isEqualToString:TSPlasterTypeNotification]) {
-                    NSString *cleared = [[NSString alloc] initWithData:packet encoding:NSUTF8StringEncoding];
+                    NSString *cleared = [[NSString alloc] initWithData:packet encoding:NSUTF8StringEncoding]; // TODO : This could be optimized in FILE_MODE??
                     [dictionary setObject:cleared forKey:TSPlasterPacketText];
                     [cleared release];
                 } else if ([type isEqualToString:TSPlasterTypeImage]) {

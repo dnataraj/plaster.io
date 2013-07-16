@@ -138,7 +138,8 @@
     [_startWithProfileMenuItem setHidden:YES];
     [_stopMenuItem setHidden:NO];
     
-    [_passcodeMenuItem setEnabled:YES];    
+    [_passcodeMenuItem setEnabled:YES];
+    [_preferencesMenuItem setEnabled:NO];
 }
 
 - (void)startPlasterWithProfile:(id)sender {
@@ -171,6 +172,7 @@
     [_stopMenuItem setHidden:YES];
     
     [_passcodeMenuItem setEnabled:NO];
+    [_preferencesMenuItem setEnabled:YES];
 }
 
 #pragma mark Joining a Session

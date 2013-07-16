@@ -16,5 +16,7 @@ extern const NSString *PLASTER_STRING_UTI;
 
 - (id)initWithString:(NSString *)aString;
 - (NSData *)dataUsingEncoding:(NSStringEncoding)encoding;
+- (BOOL)hasPrefix:(NSString *)aString;
+- (NSString *)substringFromIndex:(NSUInteger)anIndex;
 
 @end
