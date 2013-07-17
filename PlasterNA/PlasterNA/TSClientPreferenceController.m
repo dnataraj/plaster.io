@@ -129,9 +129,11 @@
     NSInteger row = [self.profileListTableView selectedRow];
     if ( (row >= 0) && (row < [_sessionKeys count]) ) {
         NSDictionary *edits = [_profileViewController getProfileConfiguration];
-        NSMutableDictionary *profileChanges = [_profileConfigurations objectAtIndex:row];
-        [profileChanges addEntriesFromDictionary:edits];
-        [_profiles setObject:profileChanges forKey:[_sessionKeys objectAtIndex:row]];
+        if (edits) {
+            NSMutableDictionary *profileChanges = [_profileConfigurations objectAtIndex:row];
+            [profileChanges addEntriesFromDictionary:edits];
+            [_profiles setObject:profileChanges forKey:[_sessionKeys objectAtIndex:row]];            
+        }
     }
     
     [self.profileListTableView reloadData];

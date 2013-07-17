@@ -29,6 +29,9 @@ NSString *const TSPlasterMode = @"mode";
 NSString *const TSPlasterModePasteboard = @"PASTEBOARD";
 NSString *const TSPlasterModeFile = @"FILE";
 NSString *const TSPlasterFolderPath = @"folder-path";
+NSString *const TSPlasterNotifySends = @"notify-sends";
+NSString *const TSPlasterAllowCMDC = @"allow-cmdc";
+
 
 // Constants for plaster transfers
 NSString *const TSPlasterJSONKeyForPlasterType = @"plaster-type";

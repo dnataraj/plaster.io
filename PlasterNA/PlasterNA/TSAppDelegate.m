@@ -243,8 +243,8 @@
 - (void)saveProfile:(id)sender {
     // Reload the profile container since the user might have changed this using preferences.
     NSMutableDictionary *mutableProfiles = [[_userDefaults dictionaryForKey:TSPlasterProfiles] mutableCopy];
-    NSMutableDictionary *profiles = [[NSMutableDictionary alloc] initWithDictionary:mutableProfiles];
-    [mutableProfiles release];
+    //NSMutableDictionary *profiles = [[NSMutableDictionary alloc] initWithDictionary:mutableProfiles];
+    //[mutableProfiles release];
     
     NSString *profileName = [self.profileNameTextField stringValue];
     DLog(@"AD: Saving profile with name : %@", profileName);
@@ -252,7 +252,7 @@
     [profileConfiguration setObject:profileName forKey:TSPlasterProfileName];
     
     DLog(@"Adding profile : %@ to profiles with key : %@", profileName, self.sessionKey);
-    [profiles setObject:profileConfiguration forKey:self.sessionKey];
+    [mutableProfiles setObject:profileConfiguration forKey:self.sessionKey];
     // Replace the "dummy" profile that the plaster controller started with.
     [_plaster setSessionProfile:profileConfiguration];
     
@@ -261,7 +261,7 @@
     [self.saveProfileHUD orderOut:nil];
     
     // Save the user preferences.
-    [_userDefaults setObject:profiles forKey:TSPlasterProfiles];
+    [_userDefaults setObject:mutableProfiles forKey:TSPlasterProfiles];
     [_userDefaults synchronize];
     
     // Set the current profile and necessary tooltips
@@ -270,7 +270,7 @@
     [_stopMenuItem setToolTip:profileName];
     
     [profileConfiguration release];
-    [profiles release];
+    [mutableProfiles release];
 }
 
 #pragma mark Paste current session key to pasteboard
@@ -290,7 +290,7 @@
     // By default the user can recieve text and images, but not files.
     [profileConfiguration setObject:@YES forKey:TSPlasterAllowText];
     [profileConfiguration setObject:@YES forKey:TSPlasterAllowImages];
-    [profileConfiguration setObject:@NO forKey:TSPlasterAllowFiles];
+    [profileConfiguration setObject:@YES forKey:TSPlasterAllowFiles];
     
     // By default the user only sends out images and files, but not clipboard text.
     [profileConfiguration setObject:@YES forKey:TSPlasterOutAllowText];
@@ -302,6 +302,9 @@
     [profileConfiguration setObject:@YES forKey:TSPlasterNotifyJoins];
     [profileConfiguration setObject:@YES forKey:TSPlasterNotifyDepartures];
     [profileConfiguration setObject:@YES forKey:TSPlasterNotifyPlasters];
+    [profileConfiguration setObject:@YES forKey:TSPlasterNotifySends];
+    
+    [profileConfiguration setObject:@YES forKey:TSPlasterAllowCMDC];
     
     return profileConfiguration;
 }

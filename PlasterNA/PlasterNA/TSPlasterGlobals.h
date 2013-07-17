@@ -36,6 +36,8 @@ extern NSString *const TSPlasterMode;
 extern NSString *const TSPlasterModePasteboard;
 extern NSString *const TSPlasterModeFile;
 extern NSString *const TSPlasterFolderPath;
+extern NSString *const TSPlasterNotifySends;
+extern NSString *const TSPlasterAllowCMDC;
 
 // Keys used in the JSON packet
 extern NSString *const TSPlasterJSONKeyForPlasterType;

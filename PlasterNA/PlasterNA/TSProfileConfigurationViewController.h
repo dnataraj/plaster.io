@@ -28,11 +28,15 @@
 @property (assign) IBOutlet NSButton *shouldNotifyDeparturesButton;
 @property (assign) IBOutlet NSButton *shouldNotifyPlastersButton;
 
+@property (assign) IBOutlet NSButton *shouldNotifySendsButton;
+@property (assign) IBOutlet NSButton *allowCMDCButton;
+
+
 @property (copy) NSString *plasterFolder;
 @property (copy) NSString *plasterMode;
 @property (readwrite) BOOL handlesInTextType, handlesInImageType, handlesInFileType;
 @property (readwrite) BOOL handlesOutTextType, handlesOutImageType, handlesOutFileType;
-@property (readwrite) BOOL shouldNotifyJoins, shouldNotifyDepartures, shouldNotifyPlasters;
+@property (readwrite) BOOL shouldNotifyJoins, shouldNotifyDepartures, shouldNotifyPlasters, shouldNotifySends, allowCMDC;
 
 - (IBAction)plasterFolderLocationBrowse:(id)sender;
 - (IBAction)switchPlasterDestination:(id)sender;

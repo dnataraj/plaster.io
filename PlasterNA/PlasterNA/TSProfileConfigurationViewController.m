@@ -63,6 +63,8 @@
     [self.shouldNotifyJoinsButton setEnabled:NO];
     [self.shouldNotifyPlastersButton setEnabled:NO];
     [self.shouldNotifyDeparturesButton setEnabled:NO];
+    [self.shouldNotifySendsButton setEnabled:NO];
+    [self.allowCMDCButton setEnabled:NO];
 }
 
 - (NSMutableDictionary *)getProfileConfiguration {
@@ -85,6 +87,9 @@
     [_mutableProfileConfiguration setObject:[NSNumber numberWithBool:self.shouldNotifyDepartures] forKey:TSPlasterNotifyDepartures];
     [_mutableProfileConfiguration setObject:[NSNumber numberWithBool:self.shouldNotifyPlasters] forKey:TSPlasterNotifyPlasters];
     
+    [_mutableProfileConfiguration setObject:[NSNumber numberWithBool:self.allowCMDC] forKey:TSPlasterAllowCMDC];
+    [_mutableProfileConfiguration setObject:[NSNumber numberWithBool:self.shouldNotifySends] forKey:TSPlasterNotifySends];
+    
     return [_mutableProfileConfiguration autorelease];
 }
 
@@ -102,7 +107,7 @@
         self.handlesOutTextType = [[profileConfiguration objectForKey:TSPlasterOutAllowText] boolValue];
         [_handleOutImageTypeButton setEnabled:YES];
         self.handlesOutImageType = [[profileConfiguration objectForKey:TSPlasterOutAllowImages] boolValue];
-        [_handleOutFileTypeButton setEnabled:NO];
+        [_handleOutFileTypeButton setEnabled:YES];
         self.handlesOutFileType = [[profileConfiguration objectForKey:TSPlasterOutAllowFiles] boolValue];
         
         NSString *mode = [profileConfiguration objectForKey:TSPlasterMode];
@@ -123,6 +128,11 @@
         self.shouldNotifyDepartures = [[profileConfiguration objectForKey:TSPlasterNotifyDepartures] boolValue];
         [_shouldNotifyPlastersButton setEnabled:YES];
         self.shouldNotifyPlasters = [[profileConfiguration objectForKey:TSPlasterNotifyPlasters] boolValue];
+        
+        [_shouldNotifySendsButton setEnabled:YES];
+        self.shouldNotifySends = [[profileConfiguration objectForKey:TSPlasterNotifySends] boolValue];
+        [_allowCMDCButton setEnabled:YES];
+        self.allowCMDC = [[profileConfiguration objectForKey:TSPlasterAllowCMDC] boolValue];
     }
 }
 
