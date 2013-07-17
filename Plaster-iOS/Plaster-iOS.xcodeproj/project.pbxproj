@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4176EB6917968AC2005CF2E3 /* libhiredis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4176EB6817968AC2005CF2E3 /* libhiredis.a */; };
+		4176EB7017968B62005CF2E3 /* libTSBase64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4176EB6F17968B44005CF2E3 /* libTSBase64.a */; };
 		41F985D617673B360031609C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41F985D517673B360031609C /* UIKit.framework */; };
 		41F985D817673B360031609C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41F985D717673B360031609C /* Foundation.framework */; };
 		41F985DA17673B360031609C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41F985D917673B360031609C /* CoreGraphics.framework */; };
@@ -27,6 +29,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		4176EB6E17968B44005CF2E3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4176EB6A17968B44005CF2E3 /* TSBase64.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 41FE136F174BA99A00511395;
+			remoteInfo = TSBase64;
+		};
 		41F9860017673B360031609C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 41F985CA17673B360031609C /* Project object */;
@@ -37,6 +46,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4176EB6617968AC2005CF2E3 /* async.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = async.h; sourceTree = "<group>"; };
+		4176EB6717968AC2005CF2E3 /* hiredis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hiredis.h; sourceTree = "<group>"; };
+		4176EB6817968AC2005CF2E3 /* libhiredis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libhiredis.a; sourceTree = "<group>"; };
+		4176EB6A17968B44005CF2E3 /* TSBase64.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TSBase64.xcodeproj; path = /Users/dnataraj/dev/plaster.io/Plaster/Plaster/../../TSBase64/TSBase64.xcodeproj; sourceTree = "<absolute>"; };
 		41F985D217673B360031609C /* Plaster-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Plaster-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		41F985D517673B360031609C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		41F985D717673B360031609C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -67,9 +80,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4176EB7017968B62005CF2E3 /* libTSBase64.a in Frameworks */,
 				41F985D617673B360031609C /* UIKit.framework in Frameworks */,
 				41F985D817673B360031609C /* Foundation.framework in Frameworks */,
 				41F985DA17673B360031609C /* CoreGraphics.framework in Frameworks */,
+				4176EB6917968AC2005CF2E3 /* libhiredis.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -86,9 +101,29 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4176EB65179687CC005CF2E3 /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				4176EB6A17968B44005CF2E3 /* TSBase64.xcodeproj */,
+				4176EB6617968AC2005CF2E3 /* async.h */,
+				4176EB6717968AC2005CF2E3 /* hiredis.h */,
+				4176EB6817968AC2005CF2E3 /* libhiredis.a */,
+			);
+			name = Libraries;
+			sourceTree = "<group>";
+		};
+		4176EB6B17968B44005CF2E3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4176EB6F17968B44005CF2E3 /* libTSBase64.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		41F985C917673B360031609C = {
 			isa = PBXGroup;
 			children = (
+				4176EB65179687CC005CF2E3 /* Libraries */,
 				41F985DB17673B360031609C /* Plaster-iOS */,
 				41F9860217673B360031609C /* Plaster-iOSTests */,
 				41F985D417673B360031609C /* Frameworks */,
@@ -222,6 +257,12 @@
 			mainGroup = 41F985C917673B360031609C;
 			productRefGroup = 41F985D317673B360031609C /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 4176EB6B17968B44005CF2E3 /* Products */;
+					ProjectRef = 4176EB6A17968B44005CF2E3 /* TSBase64.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				41F985D117673B360031609C /* Plaster-iOS */,
@@ -229,6 +270,16 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		4176EB6F17968B44005CF2E3 /* libTSBase64.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libTSBase64.a;
+			remoteRef = 4176EB6E17968B44005CF2E3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		41F985D017673B360031609C /* Resources */ = {
@@ -397,6 +448,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Plaster-iOS/Plaster-iOS-Prefix.pch";
 				INFOPLIST_FILE = "Plaster-iOS/Plaster-iOS-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -408,6 +463,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Plaster-iOS/Plaster-iOS-Prefix.pch";
 				INFOPLIST_FILE = "Plaster-iOS/Plaster-iOS-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -466,6 +525,7 @@
 				41F9860F17673B360031609C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		41F9861017673B360031609C /* Build configuration list for PBXNativeTarget "Plaster-iOSTests" */ = {
 			isa = XCConfigurationList;
@@ -474,6 +534,7 @@
 				41F9861217673B360031609C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
