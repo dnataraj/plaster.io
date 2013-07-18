@@ -243,6 +243,10 @@
 - (void)saveProfile:(id)sender {
     // Reload the profile container since the user might have changed this using preferences.
     NSMutableDictionary *mutableProfiles = [[_userDefaults dictionaryForKey:TSPlasterProfiles] mutableCopy];
+    if (!mutableProfiles) {
+        DLog(@"AD: User profile dictionary was nil, creating a new one.");
+        mutableProfiles = [[NSMutableDictionary alloc] init];
+    }
     //NSMutableDictionary *profiles = [[NSMutableDictionary alloc] initWithDictionary:mutableProfiles];
     //[mutableProfiles release];
     
@@ -262,7 +266,7 @@
     
     // Save the user preferences.
     [_userDefaults setObject:mutableProfiles forKey:TSPlasterProfiles];
-    [_userDefaults synchronize];
+    //[_userDefaults synchronize];
     
     // Set the current profile and necessary tooltips
     [self setCurrentProfileName:profileName];
