@@ -96,6 +96,37 @@ void rcSet(redisAsyncContext *ctx, void *r, void *data) {
     return;
 }
 
+void rcSetWithOptions(redisAsyncContext *ctx, void *r, void *data) {
+    if (rcProcessReply(ctx, r, data)) {
+        if (data != NULL) {
+            NSDictionary *options = (NSDictionary *)data;
+            if (options) {
+                NSString *handlerName = [options objectForKey:@"HANDLER_NAME"];
+                NSDictionary *handlerTable = [options objectForKey:@"HANDLER_TABLE"];
+                NSDictionary *handlerOptions = [handlerTable objectForKey:handlerName];
+                if (handlerOptions) {
+                    id target = [handlerOptions objectForKey:@"target"];
+                    NSInvocation *invocation = [handlerOptions objectForKey:@"invocation"];
+                    NSDictionary *setOptions = [handlerOptions objectForKey:@"set-options"];
+                    if (invocation) {
+                        [invocation setTarget:target];
+                        [invocation retainArguments];
+                        [invocation setArgument:&setOptions atIndex:2];
+                        [invocation invoke];
+                    }
+                }
+                [options release];
+            }
+        } else {
+            printf("REDIS: SET : No handler : %p\n", data);
+        }
+        
+        printf("REDIS: SET : Disconnecting...\n");
+        redisAsyncDisconnect(ctx);
+    }
+    return;
+}
+
 void rcGet(redisAsyncContext *ctx, void *r, void *data) {
     if (rcProcessReply(ctx, r, data)) {
         redisReply *reply = r;
@@ -592,7 +623,7 @@ void freeBundle(HandlerBundle hb) {
     return EXIT_SUCCESS;
 }
 
--(NSUInteger)setStringValue:(NSString *)stringValue forKey:(NSString *)aKey {
+- (NSUInteger)setStringValue:(NSString *)stringValue forKey:(NSString *)aKey {
     DLog(@"REDIS: Setting value [%@] for key [%@]...", stringValue, aKey);
     const char *ckey = [aKey UTF8String];
     char *key = (char *)calloc(strlen(ckey), sizeof(char));
@@ -653,7 +684,7 @@ void freeBundle(HandlerBundle hb) {
     return EXIT_SUCCESS;
 }
 
--(NSUInteger)setByteValue:(const char *)byteValue forKey:(NSString *)aKey {
+- (NSUInteger)setByteValue:(const char *)byteValue forKey:(NSString *)aKey {
     DLog(@"REDIS: Setting value for key [%@]...", aKey);
     const char *ckey = [aKey UTF8String];
     char *key = (char *)calloc(strlen(ckey), sizeof(char));
@@ -713,7 +744,46 @@ void freeBundle(HandlerBundle hb) {
     return EXIT_SUCCESS;
 }
 
--(NSString *)stringValueForKey:(NSString *)aKey {
+// This method is asynchronous
+- (NSUInteger)setByteValue:(const char *)byteValue forKey:(NSString *)aKey withOptions:(NSDictionary *)options {
+    NSUInteger result = EXIT_FAILURE;
+    DLog(@"REDIS: Setting value for key [%@]...", aKey);
+    const char *ckey = [aKey UTF8String];
+    char *key = (char *)calloc(strlen(ckey), sizeof(char));
+    if (key == NULL) {
+        DLog(@"REDIS: SET : Error allocating memory for key.");
+        return EXIT_FAILURE;
+    }
+    strcpy(key, ckey);
+    char *value = (char *)calloc(strlen(byteValue), sizeof(char));
+    if (value == NULL) {
+        DLog(@"REDIS: SET : Error allocating memory for value.");
+        free(key);
+        return EXIT_FAILURE;
+    }
+    strcpy(value, byteValue);
+    redisAsyncContext *localAsyncContext = [self connectAndDispatch];
+    if (localAsyncContext) {
+        uint result = redisAsyncCommand(localAsyncContext, rcSetWithOptions, [options retain], "SET %s %b", key, value, strlen(value));
+        if (result != REDIS_OK) {
+            DLog(@"REDIS: Error buffering SET command for this session : %s", localAsyncContext->errstr);
+            redisAsyncDisconnect(localAsyncContext);
+            result = EXIT_FAILURE;
+        } else {
+            result = EXIT_SUCCESS;
+        }
+    } else {
+        DLog(@"REDIS: Unable to complete PUBLISH OBJ.");
+        result = EXIT_FAILURE;
+    }
+    
+    free(key);
+    free(value);
+    
+    return result;
+}
+
+- (NSString *)stringValueForKey:(NSString *)aKey {
     DLog(@"REDIS: Getting value for key [%@]...", aKey);
     char *key = (char *)malloc((sizeof(char) * strlen([aKey UTF8String])));
     strcpy(key, [aKey UTF8String]);
@@ -803,7 +873,7 @@ void freeBundle(HandlerBundle hb) {
     return result;
 }
 
--(NSUInteger)incrementKey:(NSString *)key {
+- (NSUInteger)incrementKey:(NSString *)key {
     DLog(@"REDIS: Incrementing key [%@]...", key);
     NSUInteger incremented = UINT32_MAX;
     HandlerBundle bundle = NULL;
@@ -832,7 +902,7 @@ void freeBundle(HandlerBundle hb) {
     return incremented;
 }
 
--(NSUInteger)deleteKey:(NSString *)aKey {
+- (NSUInteger)deleteKey:(NSString *)aKey {
     NSUInteger result = EXIT_FAILURE;
     DLog(@"REDIS: Deleting key [%@]...", aKey);
     const char *temp = [aKey UTF8String];

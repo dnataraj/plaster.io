@@ -39,13 +39,13 @@ static const double MB = 1024 * 1024;
     
     // Notification variables
     NSUserNotificationCenter *_userNotificationCenter;
-
     
     // Variables for test mode
     BOOL _testMode;
     NSString *_testLog;
     
     NSString *TSPlasterTemporaryDirectory;
+    NSOperationQueue *_operationQueue;
 }
 
 - (id)initWithPasteboard:(NSPasteboard *)pasteboard provider:(id<TSMessagingProvider, TSDataStoreProvider>)provider {
@@ -108,6 +108,14 @@ static const double MB = 1024 * 1024;
         options = [NSDictionary dictionaryWithObjects:@[self, invocation] forKeys:@[@"target", @"invocation"]];
         [_handlerTable setObject:options forKey:NSStringFromSelector(handler)];
         
+        // Handler : -handlePlasterNotificationForFileWithOptions:
+        handler = @selector(handlePlasterNotificationForFileWithOptions:);
+        signature = [TSPlasterController instanceMethodSignatureForSelector:handler];
+        invocation = [NSInvocation invocationWithMethodSignature:signature];
+        [invocation setSelector:handler];
+        options = [NSDictionary dictionaryWithObjects:@[self, invocation] forKeys:@[@"target", @"invocation"]];
+        [_handlerTable setObject:options forKey:NSStringFromSelector(handler)];
+        
         _testMode = [[NSUserDefaults standardUserDefaults] boolForKey:@"plaster-test-mode"];
         if (_testMode) {
             DLog(@"PLASTER: INIT : Test mode is enabled.");
@@ -132,6 +140,8 @@ static const double MB = 1024 * 1024;
             DLog(@"PLASTER: INIT : Creating temporary Plaster folder at path : [%@]", TSPlasterTemporaryDirectory);
             [fileManager createDirectoryAtPath:TSPlasterTemporaryDirectory withIntermediateDirectories:YES attributes:nil error:nil];
         }
+        
+        _operationQueue = [[NSOperationQueue alloc] init];
         
     }
     
@@ -210,15 +220,20 @@ static const double MB = 1024 * 1024;
 - (void)start {
     NSAssert(_sessionKey != nil, @"PLASTER: FATAL : Will not start without a valid session key");
     /*
-        Start a plaster session, OR join an existing one.
-    */
+     Start a plaster session, OR join an existing one.
+     */
     DLog(@"PLASTER: START : Starting...");
     self.started = YES;
     self.running = YES;
     [self bootWithPeers:10];
-    DLog(@"PLASTER: START : Starting pasteboard monitoring every 100ms");
-    [self scheduleMonitorWithID:self.clientID andTimeInterval:0.100];
-    DLog(@"PLASTER: START : Done.");
+    BOOL isCopyEnabled = [[self.sessionProfile objectForKey:TSPlasterAllowCMDC] boolValue];
+    if (isCopyEnabled) {
+        DLog(@"PLASTER: START : Starting pasteboard monitoring every 100ms");
+        [self scheduleMonitorWithID:self.clientID andTimeInterval:0.100];
+        DLog(@"PLASTER: START : Done.");
+    } else {
+        DLog(@"PLASTER : START : Starting Plaster in non-copy mode - use Services to Plaster.");
+    }
 }
 
 - (void)stop {
@@ -364,7 +379,7 @@ static const double MB = 1024 * 1024;
                 [handle closeFile];
                 handle = nil;
                 if (contents) {
-                    unsigned long length = ([contents length] / MB);
+                    unsigned long length = ceil(([contents length] / MB));
                     DLog(@"PLASTER : PLASTER OUT : Read file contents with length : %luMB", length);
                     const char *jsonBytes = NULL;
                     jsonBytes = [TSPacketSerializer JSONWithDataPacket:contents sender:self.alias];
@@ -375,19 +390,39 @@ static const double MB = 1024 * 1024;
                     NSString *fileTransferID = [TSClientIdentifier createUUID];
                     NSString *fileTransferKey = [NSString stringWithFormat:TSPlasterSessionFileTransferKey, self.sessionKey, fileTransferID];
                     DLog(@"PLASTER: PLASTER OUT : Setting key for file transfer : %@", fileTransferKey);
-                    [_provider setByteValue:jsonBytes forKey:fileTransferKey];
+                    //[_provider setByteValue:jsonBytes forKey:fileTransferKey];
+                    NSMutableDictionary *options = [[NSMutableDictionary alloc]
+                                                    initWithDictionary:[_handlerTable objectForKey:@"handlePlasterNotificationForFileWithOptions:"]];
+                    NSMutableDictionary *fileTransferOptions = [[NSMutableDictionary alloc] init];
+                    [fileTransferOptions setObject:fileTransferID forKey:@"file-transfer-id"];
+                    [fileTransferOptions setObject:fileTransferKey forKey:@"file-transfer-key"];
+                    [fileTransferOptions setObject:fileNames[0] forKey:@"file-name"];
+                    [fileTransferOptions setObject:[NSNumber numberWithLongLong:length] forKey:@"file-size"];
+                    [options setObject:fileTransferOptions forKey:@"set-options"];
+                    [_handlerTable setObject:options forKey:@"handlePlasterNotificationForFileWithOptions:"];
+                    [fileTransferOptions release];
+                    
+                    [_provider setByteValue:jsonBytes forKey:fileTransferKey
+                                withOptions:[self handlerOptionsForHandler:@"handlePlasterNotificationForFileWithOptions:"]];
+                    DLog(@"PLASTER: PLASTER OUT : Started file transfer.");
+                    [options release];
+                    
                     // Set a 600 second expirey for this key
+                    /*
                     [_provider setExpiry:TSPlasterRedisKeyExpiry forKey:fileTransferKey];
-                    DLog(@"PLASTER: PLASTER OUT : File transmission complete.");
+                    DLog(@"PLASTER: PLASTER OUT : File transmission started asynchronously, and is in progress.");
+                    */
                     
                     // We prepare a notification of type content_identifier#length and broadcast this to all peers
                     // This will allow the peers to decide whether they want to fetch the content
                     // The content key will expire in 10 minutes
+                    /*
                     NSString *plasterNotification = [NSString stringWithFormat:TSPlasterSessionFileNotificationPattern, fileTransferID,
                                                      [fileNames[0] lastPathComponent], length];
                     DLog(@"PLASTER: PLASTER OUT : Notifying peers with notification string : %@", plasterNotification);
                     const char *notification = [TSPacketSerializer JSONWithNotificationPacket:plasterNotification sender:self.alias];
                     [self transmitJSON:notification];
+                    */
                 }
             }
  
@@ -758,6 +793,36 @@ static const double MB = 1024 * 1024;
     
     return;
 }
+
+- (void)handlePlasterNotificationForFileWithOptions:(NSDictionary *)options {
+    // Now send notification to peers to retrieve file.
+    // We prepare a notification of type content_identifier#name#length and broadcast this to all peers
+    // This will allow the peers to decide whether they want to fetch the content
+    // The content key will expire in 10 minutes
+    // Set a 600 second expirey for this key
+    NSString *fileTransferKey = [options objectForKey:@"file-transfer-key"];
+    NSString *fileTransferID = [options objectForKey:@"file-transfer-id"];
+    NSString *fileName = [options objectForKey:@"file-name"];
+    NSNumber *fileSize = [options objectForKey:@"file-size"];
+    
+    [_operationQueue addOperationWithBlock:^(void) {
+        [_provider setExpiry:TSPlasterRedisKeyExpiry forKey:fileTransferKey];
+        DLog(@"PLASTER: PLASTER OUT : File transmission started asynchronously, and is in progress.");
+        
+        NSString *plasterNotification = [NSString stringWithFormat:TSPlasterSessionFileNotificationPattern, fileTransferID,
+                                         [fileName lastPathComponent], [fileSize longValue]];
+        DLog(@"PLASTER: PLASTER OUT : Notifying peers with notification string : %@", plasterNotification);
+        const char *notification = [TSPacketSerializer JSONWithNotificationPacket:plasterNotification sender:self.alias];
+        [self transmitJSON:notification];
+        
+        DLog(@"Plaster: HANDLE FILE NOTIFICATION : For size : %@MB", fileSize);
+        NSString *pasteInfo = [NSString stringWithFormat:@"Size [%@MB]", fileSize];
+        [self sendNotificationWithSubtitle:@"File has been sent : " informativeText:pasteInfo];
+    }];
+    
+    return;
+}
+
 
 #pragma mark Notification Methods
 
