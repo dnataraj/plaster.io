@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4176EB6917968AC2005CF2E3 /* libhiredis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4176EB6817968AC2005CF2E3 /* libhiredis.a */; };
-		4176EB7017968B62005CF2E3 /* libTSBase64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4176EB6F17968B44005CF2E3 /* libTSBase64.a */; };
+		41B82DC3179A9FBF00CF6EE3 /* libTSLBase64-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41B82DC2179A9FBB00CF6EE3 /* libTSLBase64-iOS.a */; };
 		41F985D617673B360031609C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41F985D517673B360031609C /* UIKit.framework */; };
 		41F985D817673B360031609C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41F985D717673B360031609C /* Foundation.framework */; };
 		41F985DA17673B360031609C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41F985D917673B360031609C /* CoreGraphics.framework */; };
@@ -35,6 +35,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 41FE136F174BA99A00511395;
 			remoteInfo = TSBase64;
+		};
+		41B82DC1179A9FBB00CF6EE3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4176EB6A17968B44005CF2E3 /* TSBase64.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 41B82DAA179A9DBE00CF6EE3;
+			remoteInfo = "TSLBase64-iOS";
 		};
 		41F9860017673B360031609C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -80,7 +87,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4176EB7017968B62005CF2E3 /* libTSBase64.a in Frameworks */,
+				41B82DC3179A9FBF00CF6EE3 /* libTSLBase64-iOS.a in Frameworks */,
 				41F985D617673B360031609C /* UIKit.framework in Frameworks */,
 				41F985D817673B360031609C /* Foundation.framework in Frameworks */,
 				41F985DA17673B360031609C /* CoreGraphics.framework in Frameworks */,
@@ -116,6 +123,7 @@
 			isa = PBXGroup;
 			children = (
 				4176EB6F17968B44005CF2E3 /* libTSBase64.a */,
+				41B82DC2179A9FBB00CF6EE3 /* libTSLBase64-iOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -277,6 +285,13 @@
 			fileType = archive.ar;
 			path = libTSBase64.a;
 			remoteRef = 4176EB6E17968B44005CF2E3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		41B82DC2179A9FBB00CF6EE3 /* libTSLBase64-iOS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libTSLBase64-iOS.a";
+			remoteRef = 41B82DC1179A9FBB00CF6EE3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */

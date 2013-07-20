@@ -10,13 +10,37 @@
 		415123A51785A026002D7E70 /* TSBase64.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FE138A174BAABF00511395 /* TSBase64.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		415123A61785A029002D7E70 /* NSString+TSBase64.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FE138B174BAFED00511395 /* NSString+TSBase64.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		415123A71785A02E002D7E70 /* NSData+TSBase64.h in Headers */ = {isa = PBXBuildFile; fileRef = 41BF51C0176E0DF300D5CCD4 /* NSData+TSBase64.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		41B82DAB179A9DBE00CF6EE3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41FE1372174BA99A00511395 /* Foundation.framework */; };
+		41B82DBC179A9F8100CF6EE3 /* NSData+TSBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B82DB7179A9F8100CF6EE3 /* NSData+TSBase64.m */; };
+		41B82DBD179A9F8100CF6EE3 /* NSString+TSBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = 41B82DB9179A9F8100CF6EE3 /* NSString+TSBase64.m */; };
+		41B82DBE179A9F8100CF6EE3 /* TSBase64.c in Sources */ = {isa = PBXBuildFile; fileRef = 41B82DBA179A9F8100CF6EE3 /* TSBase64.c */; };
 		41BF51C2176E0DF300D5CCD4 /* NSData+TSBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = 41BF51C1176E0DF300D5CCD4 /* NSData+TSBase64.m */; };
 		41FE1373174BA99A00511395 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41FE1372174BA99A00511395 /* Foundation.framework */; };
 		41FE1389174BAAB500511395 /* TSBase64.c in Sources */ = {isa = PBXBuildFile; fileRef = 41FE1388174BAAB500511395 /* TSBase64.c */; };
 		41FE138D174BAFED00511395 /* NSString+TSBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = 41FE138C174BAFED00511395 /* NSString+TSBase64.m */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		41B82DA8179A9DBE00CF6EE3 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/${PRODUCT_NAME}";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		41B82DAA179A9DBE00CF6EE3 /* libTSLBase64-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libTSLBase64-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		41B82DAE179A9DBE00CF6EE3 /* TSLBase64-iOS-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TSLBase64-iOS-Prefix.pch"; sourceTree = "<group>"; };
+		41B82DB6179A9F8100CF6EE3 /* NSData+TSBase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+TSBase64.h"; sourceTree = "<group>"; };
+		41B82DB7179A9F8100CF6EE3 /* NSData+TSBase64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+TSBase64.m"; sourceTree = "<group>"; };
+		41B82DB8179A9F8100CF6EE3 /* NSString+TSBase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+TSBase64.h"; sourceTree = "<group>"; };
+		41B82DB9179A9F8100CF6EE3 /* NSString+TSBase64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+TSBase64.m"; sourceTree = "<group>"; };
+		41B82DBA179A9F8100CF6EE3 /* TSBase64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TSBase64.c; sourceTree = "<group>"; };
+		41B82DBB179A9F8100CF6EE3 /* TSBase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSBase64.h; sourceTree = "<group>"; };
 		41BF51C0176E0DF300D5CCD4 /* NSData+TSBase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+TSBase64.h"; sourceTree = "<group>"; };
 		41BF51C1176E0DF300D5CCD4 /* NSData+TSBase64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+TSBase64.m"; sourceTree = "<group>"; };
 		41FE136F174BA99A00511395 /* libTSBase64.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTSBase64.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -29,6 +53,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		41B82DA7179A9DBE00CF6EE3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				41B82DAB179A9DBE00CF6EE3 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		41FE136C174BA99A00511395 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -40,10 +72,33 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		41B82DAC179A9DBE00CF6EE3 /* TSLBase64-iOS */ = {
+			isa = PBXGroup;
+			children = (
+				41B82DB6179A9F8100CF6EE3 /* NSData+TSBase64.h */,
+				41B82DB7179A9F8100CF6EE3 /* NSData+TSBase64.m */,
+				41B82DB8179A9F8100CF6EE3 /* NSString+TSBase64.h */,
+				41B82DB9179A9F8100CF6EE3 /* NSString+TSBase64.m */,
+				41B82DBA179A9F8100CF6EE3 /* TSBase64.c */,
+				41B82DBB179A9F8100CF6EE3 /* TSBase64.h */,
+				41B82DAD179A9DBE00CF6EE3 /* Supporting Files */,
+			);
+			path = "TSLBase64-iOS";
+			sourceTree = "<group>";
+		};
+		41B82DAD179A9DBE00CF6EE3 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				41B82DAE179A9DBE00CF6EE3 /* TSLBase64-iOS-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		41FE1366174BA99A00511395 = {
 			isa = PBXGroup;
 			children = (
 				41FE1374174BA99A00511395 /* TSBase64 */,
+				41B82DAC179A9DBE00CF6EE3 /* TSLBase64-iOS */,
 				41FE1371174BA99A00511395 /* Frameworks */,
 				41FE1370174BA99A00511395 /* Products */,
 			);
@@ -53,6 +108,7 @@
 			isa = PBXGroup;
 			children = (
 				41FE136F174BA99A00511395 /* libTSBase64.a */,
+				41B82DAA179A9DBE00CF6EE3 /* libTSLBase64-iOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -68,13 +124,13 @@
 		41FE1374174BA99A00511395 /* TSBase64 */ = {
 			isa = PBXGroup;
 			children = (
-				41FE1375174BA99A00511395 /* Supporting Files */,
 				41FE1388174BAAB500511395 /* TSBase64.c */,
 				41FE138A174BAABF00511395 /* TSBase64.h */,
 				41FE138B174BAFED00511395 /* NSString+TSBase64.h */,
 				41FE138C174BAFED00511395 /* NSString+TSBase64.m */,
 				41BF51C0176E0DF300D5CCD4 /* NSData+TSBase64.h */,
 				41BF51C1176E0DF300D5CCD4 /* NSData+TSBase64.m */,
+				41FE1375174BA99A00511395 /* Supporting Files */,
 			);
 			path = TSBase64;
 			sourceTree = "<group>";
@@ -103,6 +159,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		41B82DA9179A9DBE00CF6EE3 /* TSLBase64-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 41B82DB5179A9DBE00CF6EE3 /* Build configuration list for PBXNativeTarget "TSLBase64-iOS" */;
+			buildPhases = (
+				41B82DA6179A9DBE00CF6EE3 /* Sources */,
+				41B82DA7179A9DBE00CF6EE3 /* Frameworks */,
+				41B82DA8179A9DBE00CF6EE3 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "TSLBase64-iOS";
+			productName = "TSLBase64-iOS";
+			productReference = 41B82DAA179A9DBE00CF6EE3 /* libTSLBase64-iOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		41FE136E174BA99A00511395 /* TSBase64 */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 41FE137D174BA99A00511395 /* Build configuration list for PBXNativeTarget "TSBase64" */;
@@ -142,11 +215,22 @@
 			projectRoot = "";
 			targets = (
 				41FE136E174BA99A00511395 /* TSBase64 */,
+				41B82DA9179A9DBE00CF6EE3 /* TSLBase64-iOS */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		41B82DA6179A9DBE00CF6EE3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				41B82DBC179A9F8100CF6EE3 /* NSData+TSBase64.m in Sources */,
+				41B82DBD179A9F8100CF6EE3 /* NSString+TSBase64.m in Sources */,
+				41B82DBE179A9F8100CF6EE3 /* TSBase64.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		41FE136B174BA99A00511395 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -160,6 +244,30 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		41B82DB3179A9DBE00CF6EE3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/TSLBase64_iOS.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "TSLBase64-iOS/TSLBase64-iOS-Prefix.pch";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		41B82DB4179A9DBE00CF6EE3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/TSLBase64_iOS.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "TSLBase64-iOS/TSLBase64-iOS-Prefix.pch";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
 		41FE137B174BA99A00511395 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -251,6 +359,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		41B82DB5179A9DBE00CF6EE3 /* Build configuration list for PBXNativeTarget "TSLBase64-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				41B82DB3179A9DBE00CF6EE3 /* Debug */,
+				41B82DB4179A9DBE00CF6EE3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		41FE136A174BA99A00511395 /* Build configuration list for PBXProject "TSBase64" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
