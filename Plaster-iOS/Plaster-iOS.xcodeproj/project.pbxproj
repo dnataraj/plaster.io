@@ -43,6 +43,13 @@
 			remoteGlobalIDString = 41B82DAA179A9DBE00CF6EE3;
 			remoteInfo = "TSLBase64-iOS";
 		};
+		41E713BF179D3AE800F766CB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 41E713B9179D3AE800F766CB /* TSLHiredisiOS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 41E713A8179D3AE800F766CB;
+			remoteInfo = TSLHiredisiOS;
+		};
 		41F9860017673B360031609C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 41F985CA17673B360031609C /* Project object */;
@@ -57,6 +64,7 @@
 		4176EB6717968AC2005CF2E3 /* hiredis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hiredis.h; sourceTree = "<group>"; };
 		4176EB6817968AC2005CF2E3 /* libhiredis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libhiredis.a; sourceTree = "<group>"; };
 		4176EB6A17968B44005CF2E3 /* TSBase64.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TSBase64.xcodeproj; path = /Users/dnataraj/dev/plaster.io/Plaster/Plaster/../../TSBase64/TSBase64.xcodeproj; sourceTree = "<absolute>"; };
+		41E713B9179D3AE800F766CB /* TSLHiredisiOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TSLHiredisiOS.xcodeproj; path = ../TSLHiredisiOS/TSLHiredisiOS.xcodeproj; sourceTree = "<group>"; };
 		41F985D217673B360031609C /* Plaster-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Plaster-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		41F985D517673B360031609C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		41F985D717673B360031609C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -111,6 +119,7 @@
 		4176EB65179687CC005CF2E3 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				41E713B9179D3AE800F766CB /* TSLHiredisiOS.xcodeproj */,
 				4176EB6A17968B44005CF2E3 /* TSBase64.xcodeproj */,
 				4176EB6617968AC2005CF2E3 /* async.h */,
 				4176EB6717968AC2005CF2E3 /* hiredis.h */,
@@ -124,6 +133,14 @@
 			children = (
 				4176EB6F17968B44005CF2E3 /* libTSBase64.a */,
 				41B82DC2179A9FBB00CF6EE3 /* libTSLBase64-iOS.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		41E713BA179D3AE800F766CB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				41E713C0179D3AE800F766CB /* libTSLHiredisiOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -270,6 +287,10 @@
 					ProductGroup = 4176EB6B17968B44005CF2E3 /* Products */;
 					ProjectRef = 4176EB6A17968B44005CF2E3 /* TSBase64.xcodeproj */;
 				},
+				{
+					ProductGroup = 41E713BA179D3AE800F766CB /* Products */;
+					ProjectRef = 41E713B9179D3AE800F766CB /* TSLHiredisiOS.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -292,6 +313,13 @@
 			fileType = archive.ar;
 			path = "libTSLBase64-iOS.a";
 			remoteRef = 41B82DC1179A9FBB00CF6EE3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		41E713C0179D3AE800F766CB /* libTSLHiredisiOS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libTSLHiredisiOS.a;
+			remoteRef = 41E713BF179D3AE800F766CB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */

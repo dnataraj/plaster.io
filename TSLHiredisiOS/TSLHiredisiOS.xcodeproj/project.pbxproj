@@ -1,0 +1,283 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		41E713AC179D3AE800F766CB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41E713AB179D3AE800F766CB /* Foundation.framework */; };
+		41E713B1179D3AE800F766CB /* TSLHiredisiOS.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 41E713B0179D3AE800F766CB /* TSLHiredisiOS.h */; };
+		41E713B3179D3AE800F766CB /* TSLHiredisiOS.m in Sources */ = {isa = PBXBuildFile; fileRef = 41E713B2179D3AE800F766CB /* TSLHiredisiOS.m */; };
+		41E713CD179D3B6900F766CB /* async.c in Sources */ = {isa = PBXBuildFile; fileRef = 41E713C1179D3B6900F766CB /* async.c */; };
+		41E713CE179D3B6900F766CB /* dict.c in Sources */ = {isa = PBXBuildFile; fileRef = 41E713C3179D3B6900F766CB /* dict.c */; };
+		41E713CF179D3B6900F766CB /* hiredis.c in Sources */ = {isa = PBXBuildFile; fileRef = 41E713C6179D3B6900F766CB /* hiredis.c */; };
+		41E713D0179D3B6900F766CB /* net.c in Sources */ = {isa = PBXBuildFile; fileRef = 41E713C8179D3B6900F766CB /* net.c */; };
+		41E713D1179D3B6900F766CB /* sds.c in Sources */ = {isa = PBXBuildFile; fileRef = 41E713CA179D3B6900F766CB /* sds.c */; };
+		41E713D2179D3B6900F766CB /* test.c in Sources */ = {isa = PBXBuildFile; fileRef = 41E713CC179D3B6900F766CB /* test.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		41E713A6179D3AE800F766CB /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/${PRODUCT_NAME}";
+			dstSubfolderSpec = 16;
+			files = (
+				41E713B1179D3AE800F766CB /* TSLHiredisiOS.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		41E713A8179D3AE800F766CB /* libTSLHiredisiOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTSLHiredisiOS.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		41E713AB179D3AE800F766CB /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		41E713AF179D3AE800F766CB /* TSLHiredisiOS-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TSLHiredisiOS-Prefix.pch"; sourceTree = "<group>"; };
+		41E713B0179D3AE800F766CB /* TSLHiredisiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TSLHiredisiOS.h; sourceTree = "<group>"; };
+		41E713B2179D3AE800F766CB /* TSLHiredisiOS.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TSLHiredisiOS.m; sourceTree = "<group>"; };
+		41E713C1179D3B6900F766CB /* async.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = async.c; sourceTree = "<group>"; };
+		41E713C2179D3B6900F766CB /* async.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = async.h; sourceTree = "<group>"; };
+		41E713C3179D3B6900F766CB /* dict.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dict.c; sourceTree = "<group>"; };
+		41E713C4179D3B6900F766CB /* dict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dict.h; sourceTree = "<group>"; };
+		41E713C5179D3B6900F766CB /* fmacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fmacros.h; sourceTree = "<group>"; };
+		41E713C6179D3B6900F766CB /* hiredis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hiredis.c; sourceTree = "<group>"; };
+		41E713C7179D3B6900F766CB /* hiredis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hiredis.h; sourceTree = "<group>"; };
+		41E713C8179D3B6900F766CB /* net.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = net.c; sourceTree = "<group>"; };
+		41E713C9179D3B6900F766CB /* net.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = net.h; sourceTree = "<group>"; };
+		41E713CA179D3B6900F766CB /* sds.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sds.c; sourceTree = "<group>"; };
+		41E713CB179D3B6900F766CB /* sds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sds.h; sourceTree = "<group>"; };
+		41E713CC179D3B6900F766CB /* test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test.c; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		41E713A5179D3AE800F766CB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				41E713AC179D3AE800F766CB /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		41E7139F179D3AE800F766CB = {
+			isa = PBXGroup;
+			children = (
+				41E713AD179D3AE800F766CB /* TSLHiredisiOS */,
+				41E713AA179D3AE800F766CB /* Frameworks */,
+				41E713A9179D3AE800F766CB /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		41E713A9179D3AE800F766CB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				41E713A8179D3AE800F766CB /* libTSLHiredisiOS.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		41E713AA179D3AE800F766CB /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				41E713AB179D3AE800F766CB /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		41E713AD179D3AE800F766CB /* TSLHiredisiOS */ = {
+			isa = PBXGroup;
+			children = (
+				41E713C1179D3B6900F766CB /* async.c */,
+				41E713C2179D3B6900F766CB /* async.h */,
+				41E713C3179D3B6900F766CB /* dict.c */,
+				41E713C4179D3B6900F766CB /* dict.h */,
+				41E713C5179D3B6900F766CB /* fmacros.h */,
+				41E713C6179D3B6900F766CB /* hiredis.c */,
+				41E713C7179D3B6900F766CB /* hiredis.h */,
+				41E713C8179D3B6900F766CB /* net.c */,
+				41E713C9179D3B6900F766CB /* net.h */,
+				41E713CA179D3B6900F766CB /* sds.c */,
+				41E713CB179D3B6900F766CB /* sds.h */,
+				41E713CC179D3B6900F766CB /* test.c */,
+				41E713B0179D3AE800F766CB /* TSLHiredisiOS.h */,
+				41E713B2179D3AE800F766CB /* TSLHiredisiOS.m */,
+				41E713AE179D3AE800F766CB /* Supporting Files */,
+			);
+			path = TSLHiredisiOS;
+			sourceTree = "<group>";
+		};
+		41E713AE179D3AE800F766CB /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				41E713AF179D3AE800F766CB /* TSLHiredisiOS-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		41E713A7179D3AE800F766CB /* TSLHiredisiOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 41E713B6179D3AE800F766CB /* Build configuration list for PBXNativeTarget "TSLHiredisiOS" */;
+			buildPhases = (
+				41E713A4179D3AE800F766CB /* Sources */,
+				41E713A5179D3AE800F766CB /* Frameworks */,
+				41E713A6179D3AE800F766CB /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TSLHiredisiOS;
+			productName = TSLHiredisiOS;
+			productReference = 41E713A8179D3AE800F766CB /* libTSLHiredisiOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		41E713A0179D3AE800F766CB /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0460;
+				ORGANIZATIONNAME = "Trilobyte Systems ApS";
+			};
+			buildConfigurationList = 41E713A3179D3AE800F766CB /* Build configuration list for PBXProject "TSLHiredisiOS" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 41E7139F179D3AE800F766CB;
+			productRefGroup = 41E713A9179D3AE800F766CB /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				41E713A7179D3AE800F766CB /* TSLHiredisiOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		41E713A4179D3AE800F766CB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				41E713B3179D3AE800F766CB /* TSLHiredisiOS.m in Sources */,
+				41E713CD179D3B6900F766CB /* async.c in Sources */,
+				41E713CE179D3B6900F766CB /* dict.c in Sources */,
+				41E713CF179D3B6900F766CB /* hiredis.c in Sources */,
+				41E713D0179D3B6900F766CB /* net.c in Sources */,
+				41E713D1179D3B6900F766CB /* sds.c in Sources */,
+				41E713D2179D3B6900F766CB /* test.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		41E713B4179D3AE800F766CB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		41E713B5179D3AE800F766CB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		41E713B7179D3AE800F766CB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/TSLHiredisiOS.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "TSLHiredisiOS/TSLHiredisiOS-Prefix.pch";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		41E713B8179D3AE800F766CB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/TSLHiredisiOS.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "TSLHiredisiOS/TSLHiredisiOS-Prefix.pch";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		41E713A3179D3AE800F766CB /* Build configuration list for PBXProject "TSLHiredisiOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				41E713B4179D3AE800F766CB /* Debug */,
+				41E713B5179D3AE800F766CB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		41E713B6179D3AE800F766CB /* Build configuration list for PBXNativeTarget "TSLHiredisiOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				41E713B7179D3AE800F766CB /* Debug */,
+				41E713B8179D3AE800F766CB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 41E713A0179D3AE800F766CB /* Project object */;
+}
