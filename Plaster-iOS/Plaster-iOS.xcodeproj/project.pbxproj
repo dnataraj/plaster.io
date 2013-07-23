@@ -7,14 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4176EB6917968AC2005CF2E3 /* libhiredis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4176EB6817968AC2005CF2E3 /* libhiredis.a */; };
+		417FF595179E69BB0070CE9B /* TSLProfilesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 417FF593179E69BB0070CE9B /* TSLProfilesViewController.m */; };
+		417FF596179E69BB0070CE9B /* TSLProfilesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 417FF594179E69BB0070CE9B /* TSLProfilesViewController.xib */; };
+		417FF597179E75140070CE9B /* libTSLHiredisiOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41E713C0179D3AE800F766CB /* libTSLHiredisiOS.a */; };
+		417FF59A179E7EC10070CE9B /* TSLUserProfileDictator.m in Sources */ = {isa = PBXBuildFile; fileRef = 417FF599179E7EC00070CE9B /* TSLUserProfileDictator.m */; };
+		417FF5A0179E81CB0070CE9B /* TSLPlasterGlobals.m in Sources */ = {isa = PBXBuildFile; fileRef = 417FF59F179E81CB0070CE9B /* TSLPlasterGlobals.m */; };
+		417FF5A4179E91180070CE9B /* TSLNewSessionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 417FF5A2179E91170070CE9B /* TSLNewSessionViewController.m */; };
+		417FF5A5179E91180070CE9B /* TSLNewSessionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 417FF5A3179E91180070CE9B /* TSLNewSessionViewController.xib */; };
+		417FF5A8179EA1240070CE9B /* TSLClientIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 417FF5A7179EA1240070CE9B /* TSLClientIdentifier.m */; };
 		41B82DC3179A9FBF00CF6EE3 /* libTSLBase64-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41B82DC2179A9FBB00CF6EE3 /* libTSLBase64-iOS.a */; };
 		41F985D617673B360031609C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41F985D517673B360031609C /* UIKit.framework */; };
 		41F985D817673B360031609C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41F985D717673B360031609C /* Foundation.framework */; };
 		41F985DA17673B360031609C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41F985D917673B360031609C /* CoreGraphics.framework */; };
 		41F985E017673B360031609C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 41F985DE17673B360031609C /* InfoPlist.strings */; };
 		41F985E217673B360031609C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 41F985E117673B360031609C /* main.m */; };
-		41F985E617673B360031609C /* TSAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 41F985E517673B360031609C /* TSAppDelegate.m */; };
+		41F985E617673B360031609C /* TSLPlasterAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 41F985E517673B360031609C /* TSLPlasterAppDelegate.m */; };
 		41F985E817673B360031609C /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 41F985E717673B360031609C /* Default.png */; };
 		41F985EA17673B360031609C /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 41F985E917673B360031609C /* Default@2x.png */; };
 		41F985EC17673B360031609C /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 41F985EB17673B360031609C /* Default-568h@2x.png */; };
@@ -64,6 +71,18 @@
 		4176EB6717968AC2005CF2E3 /* hiredis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hiredis.h; sourceTree = "<group>"; };
 		4176EB6817968AC2005CF2E3 /* libhiredis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libhiredis.a; sourceTree = "<group>"; };
 		4176EB6A17968B44005CF2E3 /* TSBase64.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TSBase64.xcodeproj; path = /Users/dnataraj/dev/plaster.io/Plaster/Plaster/../../TSBase64/TSBase64.xcodeproj; sourceTree = "<absolute>"; };
+		417FF592179E69BB0070CE9B /* TSLProfilesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLProfilesViewController.h; sourceTree = "<group>"; };
+		417FF593179E69BB0070CE9B /* TSLProfilesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLProfilesViewController.m; sourceTree = "<group>"; };
+		417FF594179E69BB0070CE9B /* TSLProfilesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TSLProfilesViewController.xib; sourceTree = "<group>"; };
+		417FF598179E7EC00070CE9B /* TSLUserProfileDictator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLUserProfileDictator.h; sourceTree = "<group>"; };
+		417FF599179E7EC00070CE9B /* TSLUserProfileDictator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLUserProfileDictator.m; sourceTree = "<group>"; };
+		417FF59E179E81BF0070CE9B /* TSLPlasterGlobals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLPlasterGlobals.h; sourceTree = "<group>"; };
+		417FF59F179E81CB0070CE9B /* TSLPlasterGlobals.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLPlasterGlobals.m; sourceTree = "<group>"; };
+		417FF5A1179E91170070CE9B /* TSLNewSessionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLNewSessionViewController.h; sourceTree = "<group>"; };
+		417FF5A2179E91170070CE9B /* TSLNewSessionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLNewSessionViewController.m; sourceTree = "<group>"; };
+		417FF5A3179E91180070CE9B /* TSLNewSessionViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TSLNewSessionViewController.xib; sourceTree = "<group>"; };
+		417FF5A6179EA1240070CE9B /* TSLClientIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLClientIdentifier.h; sourceTree = "<group>"; };
+		417FF5A7179EA1240070CE9B /* TSLClientIdentifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLClientIdentifier.m; sourceTree = "<group>"; };
 		41E713B9179D3AE800F766CB /* TSLHiredisiOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TSLHiredisiOS.xcodeproj; path = ../TSLHiredisiOS/TSLHiredisiOS.xcodeproj; sourceTree = "<group>"; };
 		41F985D217673B360031609C /* Plaster-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Plaster-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		41F985D517673B360031609C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -73,8 +92,8 @@
 		41F985DF17673B360031609C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		41F985E117673B360031609C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		41F985E317673B360031609C /* Plaster-iOS-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Plaster-iOS-Prefix.pch"; sourceTree = "<group>"; };
-		41F985E417673B360031609C /* TSAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TSAppDelegate.h; sourceTree = "<group>"; };
-		41F985E517673B360031609C /* TSAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TSAppDelegate.m; sourceTree = "<group>"; };
+		41F985E417673B360031609C /* TSLPlasterAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TSLPlasterAppDelegate.h; sourceTree = "<group>"; };
+		41F985E517673B360031609C /* TSLPlasterAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TSLPlasterAppDelegate.m; sourceTree = "<group>"; };
 		41F985E717673B360031609C /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		41F985E917673B360031609C /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		41F985EB17673B360031609C /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
@@ -95,11 +114,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				417FF597179E75140070CE9B /* libTSLHiredisiOS.a in Frameworks */,
 				41B82DC3179A9FBF00CF6EE3 /* libTSLBase64-iOS.a in Frameworks */,
 				41F985D617673B360031609C /* UIKit.framework in Frameworks */,
 				41F985D817673B360031609C /* Foundation.framework in Frameworks */,
 				41F985DA17673B360031609C /* CoreGraphics.framework in Frameworks */,
-				4176EB6917968AC2005CF2E3 /* libhiredis.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -179,13 +198,25 @@
 		41F985DB17673B360031609C /* Plaster-iOS */ = {
 			isa = PBXGroup;
 			children = (
-				41F985E417673B360031609C /* TSAppDelegate.h */,
-				41F985E517673B360031609C /* TSAppDelegate.m */,
+				417FF5A6179EA1240070CE9B /* TSLClientIdentifier.h */,
+				417FF5A7179EA1240070CE9B /* TSLClientIdentifier.m */,
+				417FF59E179E81BF0070CE9B /* TSLPlasterGlobals.h */,
+				417FF59F179E81CB0070CE9B /* TSLPlasterGlobals.m */,
+				41F985E417673B360031609C /* TSLPlasterAppDelegate.h */,
+				41F985E517673B360031609C /* TSLPlasterAppDelegate.m */,
 				41F985ED17673B360031609C /* TSViewController.h */,
 				41F985EE17673B360031609C /* TSViewController.m */,
 				41F985F017673B360031609C /* TSViewController_iPhone.xib */,
 				41F985F317673B360031609C /* TSViewController_iPad.xib */,
 				41F985DC17673B360031609C /* Supporting Files */,
+				417FF592179E69BB0070CE9B /* TSLProfilesViewController.h */,
+				417FF593179E69BB0070CE9B /* TSLProfilesViewController.m */,
+				417FF594179E69BB0070CE9B /* TSLProfilesViewController.xib */,
+				417FF598179E7EC00070CE9B /* TSLUserProfileDictator.h */,
+				417FF599179E7EC00070CE9B /* TSLUserProfileDictator.m */,
+				417FF5A1179E91170070CE9B /* TSLNewSessionViewController.h */,
+				417FF5A2179E91170070CE9B /* TSLNewSessionViewController.m */,
+				417FF5A3179E91180070CE9B /* TSLNewSessionViewController.xib */,
 			);
 			path = "Plaster-iOS";
 			sourceTree = "<group>";
@@ -335,6 +366,8 @@
 				41F985EC17673B360031609C /* Default-568h@2x.png in Resources */,
 				41F985F217673B360031609C /* TSViewController_iPhone.xib in Resources */,
 				41F985F517673B360031609C /* TSViewController_iPad.xib in Resources */,
+				417FF596179E69BB0070CE9B /* TSLProfilesViewController.xib in Resources */,
+				417FF5A5179E91180070CE9B /* TSLNewSessionViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -370,8 +403,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				41F985E217673B360031609C /* main.m in Sources */,
-				41F985E617673B360031609C /* TSAppDelegate.m in Sources */,
+				41F985E617673B360031609C /* TSLPlasterAppDelegate.m in Sources */,
 				41F985EF17673B360031609C /* TSViewController.m in Sources */,
+				417FF595179E69BB0070CE9B /* TSLProfilesViewController.m in Sources */,
+				417FF59A179E7EC10070CE9B /* TSLUserProfileDictator.m in Sources */,
+				417FF5A0179E81CB0070CE9B /* TSLPlasterGlobals.m in Sources */,
+				417FF5A4179E91180070CE9B /* TSLNewSessionViewController.m in Sources */,
+				417FF5A8179EA1240070CE9B /* TSLClientIdentifier.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

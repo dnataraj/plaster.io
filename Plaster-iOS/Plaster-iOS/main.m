@@ -8,11 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-#import "TSAppDelegate.h"
+#import "TSLPlasterAppDelegate.h"
 
 int main(int argc, char *argv[])
 {
     @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([TSAppDelegate class]));
+        return UIApplicationMain(argc, argv, nil, NSStringFromClass([TSLPlasterAppDelegate class]));
     }
 }

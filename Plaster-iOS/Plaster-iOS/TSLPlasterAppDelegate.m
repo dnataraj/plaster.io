@@ -6,11 +6,12 @@
 //  Copyright (c) 2013 Trilobyte Systems ApS. All rights reserved.
 //
 
-#import "TSAppDelegate.h"
+#import "TSLPlasterAppDelegate.h"
 
 #import "TSViewController.h"
+#import "TSLProfilesViewController.h"
 
-@implementation TSAppDelegate
+@implementation TSLPlasterAppDelegate
 
 - (void)dealloc
 {
@@ -28,7 +29,15 @@
     } else {
         self.viewController = [[[TSViewController alloc] initWithNibName:@"TSViewController_iPad" bundle:nil] autorelease];
     }
-    self.window.rootViewController = self.viewController;
+    // The navigation controller will handle plaster session views.
+    UIViewController *profilesViewController = [[[TSLProfilesViewController alloc] initWithNibName:@"TSLProfilesViewController" bundle:nil] autorelease];
+    self.navController = [[UINavigationController alloc] initWithRootViewController:profilesViewController];
+    
+    // The plaster iOS tab bar (bottom)
+    self.tabBarController = [[[UITabBarController alloc] init] autorelease];
+    self.tabBarController.viewControllers = @[self.navController];
+    
+    self.window.rootViewController = self.tabBarController;
     [self.window makeKeyAndVisible];
     return YES;
 }

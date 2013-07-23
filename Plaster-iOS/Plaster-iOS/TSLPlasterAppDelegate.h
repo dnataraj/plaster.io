@@ -10,10 +10,12 @@
 
 @class TSViewController;
 
-@interface TSAppDelegate : UIResponder <UIApplicationDelegate>
+@interface TSLPlasterAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 
+@property (strong, nonatomic) UITabBarController *tabBarController;
+@property (strong, nonatomic) UINavigationController *navController;
 @property (strong, nonatomic) TSViewController *viewController;
 
 @end
