@@ -33,11 +33,15 @@
 }
 
 - (void)addProfile:(NSDictionary *)profile withKey:(NSString *)key {
-    
+    NSMutableDictionary *updatedProfiles = [NSMutableDictionary dictionaryWithDictionary:[self plasterProfiles]];
+    [updatedProfiles setObject:profile forKey:key];
+    [self setPlasterProfiles:updatedProfiles];
 }
 
 - (void)removeProfileWithKey:(NSString *)sessionKey {
-    
+    NSMutableDictionary *updatedProfiles = [NSMutableDictionary dictionaryWithDictionary:[self plasterProfiles]];
+    [updatedProfiles removeObjectForKey:sessionKey];
+    [self setPlasterProfiles:updatedProfiles];
 }
 
 - (void)dealloc {

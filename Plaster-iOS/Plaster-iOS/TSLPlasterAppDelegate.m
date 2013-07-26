@@ -23,12 +23,16 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
+    
     // Override point for customization after application launch.
+    /*
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
         self.viewController = [[[TSViewController alloc] initWithNibName:@"TSViewController_iPhone" bundle:nil] autorelease];
     } else {
         self.viewController = [[[TSViewController alloc] initWithNibName:@"TSViewController_iPad" bundle:nil] autorelease];
     }
+    */
+     
     // The navigation controller will handle plaster session views.
     UIViewController *profilesViewController = [[[TSLProfilesViewController alloc] initWithNibName:@"TSLProfilesViewController" bundle:nil] autorelease];
     self.navController = [[UINavigationController alloc] initWithRootViewController:profilesViewController];
@@ -68,5 +72,6 @@
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
+
 
 @end

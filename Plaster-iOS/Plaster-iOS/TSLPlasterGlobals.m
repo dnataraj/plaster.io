@@ -32,6 +32,7 @@ NSString *const TSPlasterFolderPath = @"folder-path";
 NSString *const TSPlasterNotifySends = @"notify-sends";
 NSString *const TSPlasterAllowCMDC = @"allow-cmdc";
 
+NSString *const TSPlasterNotifyAll = @"notify-all";
 
 // Constants for plaster transfers
 NSString *const TSPlasterJSONKeyForPlasterType = @"plaster-type";

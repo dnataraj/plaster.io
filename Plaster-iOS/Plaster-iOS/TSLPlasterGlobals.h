@@ -39,6 +39,8 @@ extern NSString *const TSPlasterFolderPath;
 extern NSString *const TSPlasterNotifySends;
 extern NSString *const TSPlasterAllowCMDC;
 
+extern NSString *const TSPlasterNotifyAll;
+
 // Keys used in the JSON packet
 extern NSString *const TSPlasterJSONKeyForPlasterType;
 extern NSString *const TSPlasterJSONKeyForData;

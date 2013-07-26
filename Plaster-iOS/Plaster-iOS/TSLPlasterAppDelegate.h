@@ -16,6 +16,6 @@
 
 @property (strong, nonatomic) UITabBarController *tabBarController;
 @property (strong, nonatomic) UINavigationController *navController;
-@property (strong, nonatomic) TSViewController *viewController;
+@property (strong, nonatomic, retain) TSViewController *viewController;
 
 @end

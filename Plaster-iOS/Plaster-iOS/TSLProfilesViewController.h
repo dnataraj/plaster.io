@@ -12,7 +12,6 @@
 
 @property (retain, nonatomic) IBOutlet UITableView *sessionTableView;
 
-//@property (strong, nonatomic) UIBarButtonItem *startSessionBarButtonItem;
 @property (atomic) NSUInteger numberOfProfiles;
 
 - (void)startSession:(id)sender;

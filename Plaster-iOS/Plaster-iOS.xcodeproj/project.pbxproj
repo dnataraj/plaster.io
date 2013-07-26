@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		41076B5C179FFC4E00F28F40 /* TSLModalAlertDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 41076B5B179FFC4E00F28F40 /* TSLModalAlertDelegate.m */; };
 		417FF595179E69BB0070CE9B /* TSLProfilesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 417FF593179E69BB0070CE9B /* TSLProfilesViewController.m */; };
 		417FF596179E69BB0070CE9B /* TSLProfilesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 417FF594179E69BB0070CE9B /* TSLProfilesViewController.xib */; };
 		417FF597179E75140070CE9B /* libTSLHiredisiOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41E713C0179D3AE800F766CB /* libTSLHiredisiOS.a */; };
@@ -67,6 +68,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		41076B5A179FFC4E00F28F40 /* TSLModalAlertDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLModalAlertDelegate.h; sourceTree = "<group>"; };
+		41076B5B179FFC4E00F28F40 /* TSLModalAlertDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLModalAlertDelegate.m; sourceTree = "<group>"; };
 		4176EB6617968AC2005CF2E3 /* async.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = async.h; sourceTree = "<group>"; };
 		4176EB6717968AC2005CF2E3 /* hiredis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hiredis.h; sourceTree = "<group>"; };
 		4176EB6817968AC2005CF2E3 /* libhiredis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libhiredis.a; sourceTree = "<group>"; };
@@ -217,6 +220,8 @@
 				417FF5A1179E91170070CE9B /* TSLNewSessionViewController.h */,
 				417FF5A2179E91170070CE9B /* TSLNewSessionViewController.m */,
 				417FF5A3179E91180070CE9B /* TSLNewSessionViewController.xib */,
+				41076B5A179FFC4E00F28F40 /* TSLModalAlertDelegate.h */,
+				41076B5B179FFC4E00F28F40 /* TSLModalAlertDelegate.m */,
 			);
 			path = "Plaster-iOS";
 			sourceTree = "<group>";
@@ -410,6 +415,7 @@
 				417FF5A0179E81CB0070CE9B /* TSLPlasterGlobals.m in Sources */,
 				417FF5A4179E91180070CE9B /* TSLNewSessionViewController.m in Sources */,
 				417FF5A8179EA1240070CE9B /* TSLClientIdentifier.m in Sources */,
+				41076B5C179FFC4E00F28F40 /* TSLModalAlertDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
