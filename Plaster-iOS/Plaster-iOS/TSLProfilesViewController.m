@@ -41,6 +41,7 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     [self resetDisplayKeys];    
 }
 
@@ -55,16 +56,18 @@
         }
         NSArray *lastIndex = @[[NSIndexPath indexPathForRow:self.numberOfProfiles inSection:0], [NSIndexPath indexPathForRow:(self.numberOfProfiles + 1) inSection:0]];
         if (editing == YES) {
-            for (int i=0; i < self.numberOfProfiles; i++) {
+            for (int i = 0; i < self.numberOfProfiles; i++) {
                 UITableViewCell *cell = [self.sessionTableView cellForRowAtIndexPath:indices[i]];
-                [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
+                DLog(@"Setting accessory type for cell in Edit mode...");
+                [cell setEditingAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
             }
             [self.sessionTableView deleteRowsAtIndexPaths:lastIndex withRowAnimation:UITableViewRowAnimationLeft];
         } else {
-            for (int i=0; i < self.numberOfProfiles; i++) {
+            for (int i = 0; i < self.numberOfProfiles; i++) {
                 UITableViewCell *cell = [self.sessionTableView cellForRowAtIndexPath:indices[i]];
-                [cell setSelectionStyle:UITableViewCellSelectionStyleBlue];
+                [cell setEditingAccessoryType:UITableViewCellAccessoryNone];
             }
+            
             [self.sessionTableView insertRowsAtIndexPaths:lastIndex withRowAnimation:UITableViewRowAnimationLeft];
         }
         
@@ -80,9 +83,11 @@
     [_displayProfiles release];
     _displayProfiles = nil;
     _displayProfiles = [[NSMutableArray alloc] init];
+    
     [_displaySessionKeys release];
     _displaySessionKeys = nil;
     _displaySessionKeys = [[NSMutableArray alloc] init];
+    
     NSDictionary *profiles = [_userProfileDicatator plasterProfiles];
     for (NSString *key in [profiles keyEnumerator]) {
         NSDictionary *profileConfiguration = [profiles objectForKey:key];
@@ -125,9 +130,6 @@
     if (indexPath.row >= self.numberOfProfiles) {
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
-    if (self.editing) {
-        [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
-    }
     
     return cell;
 }
@@ -160,6 +162,13 @@
         } else {
             DLog(@"Will not load profle configuration view without a valid profile name.");
         }
+    }
+    if (self.editing) {
+        DLog(@"Pushing new session view controller onto the nav for editing existing profiles...");
+        NSDictionary *profile = [[_userProfileDicatator plasterProfiles] objectForKey:_displaySessionKeys[indexPath.row]];
+        TSLNewSessionViewController *newSessionViewController = [[TSLNewSessionViewController alloc] initWithProfile:profile
+                                                                                                          sessionKey:_displaySessionKeys[indexPath.row] editing:self.editing];
+        [delegate.navController pushViewController:newSessionViewController animated:YES];
     }
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];

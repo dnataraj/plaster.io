@@ -21,13 +21,20 @@
 @property (retain, nonatomic) IBOutlet UITableViewCell *allowOutgoingImagesCell;
 @property (retain, nonatomic) IBOutlet UITableViewCell *profileNameCell;
 
+@property (retain, nonatomic) IBOutlet UISwitch *notificationsSwitch;
+@property (retain, nonatomic) IBOutlet UISwitch *allowIncomingTextSwitch;
+@property (retain, nonatomic) IBOutlet UISwitch *allowIncomingImagesSwitch;
+@property (retain, nonatomic) IBOutlet UISwitch *allowOutgoingTextSwitch;
+@property (retain, nonatomic) IBOutlet UISwitch *allowOutgoingImagesSwitch;
 
 @property BOOL shouldNotify, allowIncomingText, allowIncomingImages, allowOutgoingText, allowOutgoingImages;
 @property (copy, nonatomic) NSString *profileName;
 
 @property (copy, readonly) NSString *sessionKey;
+@property BOOL editProfile;
 
 - (id)initWithProfileName:(NSString *)profileName;
+- (id)initWithProfile:(NSDictionary *)profile sessionKey:(NSString *)key editing:(BOOL)editing;
 
 - (IBAction)switchNotifications:(id)sender;
 - (IBAction)switchAllowIncomingText:(id)sender;

@@ -33,6 +33,12 @@
         DLog(@"Initializing rows and section headers...");
         _rowsInSection = [@[@1, @1, @2, @2] retain];
         _sectionHeaders = [@[@"Profile", @"Notifications", @"Incoming Plasters", @"Outgoing Plasters"] retain];
+        
+        self.shouldNotify = YES;
+        self.allowIncomingText = YES;
+        self.allowIncomingImages = YES;
+        self.allowOutgoingText = YES;
+        self.allowOutgoingImages = YES;
     }
     return self;
 }
@@ -46,21 +52,41 @@
     return self;
 }
 
+- (id)initWithProfile:(NSDictionary *)profile sessionKey:(NSString *)key editing:(BOOL)editing {
+    self = [self initWithNibName:@"TSLNewSessionViewController" bundle:nil];
+    if (self) {
+        self.editProfile = editing;
+        self.sessionKey = key;
+        self.profileName = [profile objectForKey:TSPlasterProfileName];
+        self.notificationsSwitch.on = [[profile objectForKey:TSPlasterNotifyAll] boolValue];
+        self.allowIncomingTextSwitch.on = [[profile objectForKey:TSPlasterAllowText] boolValue];
+        self.allowIncomingImagesSwitch.on = [[profile objectForKey:TSPlasterAllowImages] boolValue];
+        self.allowOutgoingTextSwitch.on = [[profile objectForKey:TSPlasterOutAllowText] boolValue];
+        self.allowOutgoingImagesSwitch.on = [[profile objectForKey:TSPlasterOutAllowImages] boolValue];
+    }
+    
+    return self;
+}
+
 - (id)init {
     return [self initWithNibName:@"TSLNewSessionViewController" bundle:nil];
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    self.sessionKey = [TSLClientIdentifier createUUID];
-    self.profileNameLabel.text = self.profileName;
-    
     // set up navigation bar items
     UIBarButtonItem *doneButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(done:)];
     UIBarButtonItem *cancelButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel:)];
     
     self.navigationItem.rightBarButtonItems = @[doneButtonItem, cancelButtonItem];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    if (!self.editProfile) {
+        self.sessionKey = [TSLClientIdentifier createUUID];
+    }
+    self.profileNameLabel.text = self.profileName;
 }
 
 #pragma mark UITableView data source methods
@@ -124,6 +150,7 @@
 - (IBAction)switchNotifications:(id)sender {
     UISwitch *notificationSwitch = (UISwitch *)sender;
     self.shouldNotify = notificationSwitch.on;
+    DLog(@"Swittching notify all to : %i", self.shouldNotify);
 }
 
 - (IBAction)switchAllowIncomingText:(id)sender {
@@ -165,6 +192,7 @@
     [profile setObject:[NSNumber numberWithBool:self.allowOutgoingText] forKey:TSPlasterOutAllowText];
     [profile setObject:[NSNumber numberWithBool:self.allowOutgoingImages] forKey:TSPlasterOutAllowImages];
     
+    DLog(@"Saving profile with values : %@", profile);
     [_userProfileDicatator addProfile:profile withKey:self.sessionKey];
     [profile release];
     
@@ -189,6 +217,11 @@
     [_sectionHeaders release];
     [_profileNameCell release];
     [_profileNameLabel release];
+    [_notificationsSwitch release];
+    [_allowIncomingTextSwitch release];
+    [_allowIncomingImagesSwitch release];
+    [_allowOutgoingTextSwitch release];
+    [_allowOutgoingImagesSwitch release];
     [super dealloc];
 }
 @end

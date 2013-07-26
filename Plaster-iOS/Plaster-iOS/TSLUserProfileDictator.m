@@ -29,7 +29,6 @@
 
 - (void)setPlasterProfiles:(NSDictionary *)profiles {
     [_userDefaults setObject:profiles forKey:TSPlasterProfiles];
-    [_userDefaults synchronize];
 }
 
 - (void)addProfile:(NSDictionary *)profile withKey:(NSString *)key {
