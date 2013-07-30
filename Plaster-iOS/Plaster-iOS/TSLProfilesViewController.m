@@ -91,12 +91,15 @@
     NSDictionary *profiles = [_userProfileDicatator plasterProfiles];
     for (NSString *key in [profiles keyEnumerator]) {
         NSDictionary *profileConfiguration = [profiles objectForKey:key];
+        DLog(@"Found profile : %@", profileConfiguration);
+        
         [_displayProfiles addObject:[profileConfiguration objectForKey:TSPlasterProfileName]];
         [_displaySessionKeys addObject:key];
     }
     
     DLog(@"Found profiles : %@", _displayProfiles);
     self.numberOfProfiles = [_displayProfiles count];
+    DLog(@"Found session keys : %@", _displaySessionKeys);
     
     [_displayProfiles addObjectsFromArray:@[@"New Plaster session", @"Join a session..."]];
     [self.sessionTableView reloadData];
@@ -124,7 +127,7 @@
         NSLog(@"TSL: Session View Controller : Initializing cell at index path : %@", indexPath);
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"] autorelease];
     }
-    DLog(@"Returning cell for index row : %d with label : %@", indexPath.row, _displayProfiles[indexPath.row]);
+    //DLog(@"Returning cell for index row : %d with label : %@", indexPath.row, _displayProfiles[indexPath.row]);
     cell.textLabel.text = _displayProfiles[indexPath.row];
     cell.accessoryType = UITableViewCellAccessoryNone;
     if (indexPath.row >= self.numberOfProfiles) {
@@ -166,6 +169,7 @@
     if (self.editing) {
         DLog(@"Pushing new session view controller onto the nav for editing existing profiles...");
         NSDictionary *profile = [[_userProfileDicatator plasterProfiles] objectForKey:_displaySessionKeys[indexPath.row]];
+        DLog(@"Obtained stored profile : %@", profile);
         TSLNewSessionViewController *newSessionViewController = [[TSLNewSessionViewController alloc] initWithProfile:profile
                                                                                                           sessionKey:_displaySessionKeys[indexPath.row] editing:self.editing];
         [delegate.navController pushViewController:newSessionViewController animated:YES];

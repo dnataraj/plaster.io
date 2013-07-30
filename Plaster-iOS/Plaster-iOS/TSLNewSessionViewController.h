@@ -27,20 +27,13 @@
 @property (retain, nonatomic) IBOutlet UISwitch *allowOutgoingTextSwitch;
 @property (retain, nonatomic) IBOutlet UISwitch *allowOutgoingImagesSwitch;
 
-@property BOOL shouldNotify, allowIncomingText, allowIncomingImages, allowOutgoingText, allowOutgoingImages;
 @property (copy, nonatomic) NSString *profileName;
 
 @property (copy, readonly) NSString *sessionKey;
+@property (retain, readonly) NSDictionary *profile;
 @property BOOL editProfile;
 
 - (id)initWithProfileName:(NSString *)profileName;
 - (id)initWithProfile:(NSDictionary *)profile sessionKey:(NSString *)key editing:(BOOL)editing;
-
-- (IBAction)switchNotifications:(id)sender;
-- (IBAction)switchAllowIncomingText:(id)sender;
-- (IBAction)switchAllowIncomingImages:(id)sender;
-- (IBAction)switchAllowOutgoingText:(id)sender;
-- (IBAction)switchAllowOutgoingImages:(id)sender;
-
 
 @end
