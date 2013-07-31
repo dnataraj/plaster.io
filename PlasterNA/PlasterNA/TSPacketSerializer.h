@@ -12,7 +12,7 @@
 
 + (const char *)JSONWithTextPacket:(id)packet;
 + (const char *)JSONWithTextPacket:(id)packet sender:(NSString *)sender;
-+ (const char *)JSONWithImagePacket:(NSString *)packet sender:(NSString *)sender;
++ (const char *)JSONWithImagePacket:(NSImage *)packet sender:(NSString *)sender;
 + (const char *)JSONWithNotificationPacket:(id)packet sender:(NSString *)sender;
 + (const char *)JSONWithDataPacket:(NSData *)packet sender:(NSString *)sender;
 
