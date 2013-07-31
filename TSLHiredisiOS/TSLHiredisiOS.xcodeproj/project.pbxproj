@@ -15,7 +15,6 @@
 		41E713CF179D3B6900F766CB /* hiredis.c in Sources */ = {isa = PBXBuildFile; fileRef = 41E713C6179D3B6900F766CB /* hiredis.c */; };
 		41E713D0179D3B6900F766CB /* net.c in Sources */ = {isa = PBXBuildFile; fileRef = 41E713C8179D3B6900F766CB /* net.c */; };
 		41E713D1179D3B6900F766CB /* sds.c in Sources */ = {isa = PBXBuildFile; fileRef = 41E713CA179D3B6900F766CB /* sds.c */; };
-		41E713D2179D3B6900F766CB /* test.c in Sources */ = {isa = PBXBuildFile; fileRef = 41E713CC179D3B6900F766CB /* test.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -48,7 +47,6 @@
 		41E713C9179D3B6900F766CB /* net.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = net.h; sourceTree = "<group>"; };
 		41E713CA179D3B6900F766CB /* sds.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sds.c; sourceTree = "<group>"; };
 		41E713CB179D3B6900F766CB /* sds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sds.h; sourceTree = "<group>"; };
-		41E713CC179D3B6900F766CB /* test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,7 +100,6 @@
 				41E713C9179D3B6900F766CB /* net.h */,
 				41E713CA179D3B6900F766CB /* sds.c */,
 				41E713CB179D3B6900F766CB /* sds.h */,
-				41E713CC179D3B6900F766CB /* test.c */,
 				41E713B0179D3AE800F766CB /* TSLHiredisiOS.h */,
 				41E713B2179D3AE800F766CB /* TSLHiredisiOS.m */,
 				41E713AE179D3AE800F766CB /* Supporting Files */,
@@ -175,7 +172,6 @@
 				41E713CF179D3B6900F766CB /* hiredis.c in Sources */,
 				41E713D0179D3B6900F766CB /* net.c in Sources */,
 				41E713D1179D3B6900F766CB /* sds.c in Sources */,
-				41E713D2179D3B6900F766CB /* test.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -276,6 +272,7 @@
 				41E713B8179D3AE800F766CB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
