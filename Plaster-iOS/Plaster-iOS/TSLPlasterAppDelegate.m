@@ -14,6 +14,7 @@
 #import "TSLSessionViewController.h"
 #import "TSLPlasterController.h"
 #import "TSLRedisController.h"
+#import "TSLModalAlertDelegate.h"
 
 @implementation TSLPlasterAppDelegate
 
@@ -47,6 +48,22 @@
     self.window.rootViewController = self.tabBarController;
     [self.window makeKeyAndVisible];
     return YES;
+}
+
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
+    DLog(@"Recieved local notification : %@", notification.alertBody);
+    
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Plaster" message:notification.alertBody delegate:nil
+                                              cancelButtonTitle:@"Cancel" otherButtonTitles:@"Okay", nil];
+    alertView.alertViewStyle = UIAlertViewStyleDefault;
+    
+    TSLModalAlertDelegate *delegate = [TSLModalAlertDelegate delegateWithAlert:alertView];
+    NSUInteger result;
+    if ((result = [delegate show])) {
+        DLog(@"Alert for plaster returned with : %d", result);
+    }
+
+    return;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

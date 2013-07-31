@@ -559,7 +559,29 @@ static const double MB = 1024 * 1024;
 
 #pragma mark Notification Methods
 
-- (void)sendNotificationWithSubtitle:(NSString *)subtitle informativeText:(NSString *)text {    
+- (void)sendNotificationWithSubtitle:(NSString *)subtitle informativeText:(NSString *)text {
+    UILocalNotification *localNotification = [[UILocalNotification alloc] init];
+    localNotification.alertAction = @"OK";
+    if (text) {
+        localNotification.alertBody = [NSString stringWithFormat:@"%@ : %@", subtitle, text];
+    } else {
+        localNotification.alertBody = subtitle;
+    }
+    
+    localNotification.fireDate = nil;
+    
+    [[UIApplication sharedApplication] presentLocalNotificationNow:localNotification];
+    
+    /*
+    NSString *message = subtitle;
+    if (text) {
+        message = [NSString stringWithFormat:@"%@ : %@", subtitle, text];
+    }
+    DLog(@"Creating alert with message : %@", message);
+     
+    */
+    
+    return;
 }
 
 #pragma mark Handle Zombie Sessions
