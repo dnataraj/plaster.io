@@ -7,6 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+@class TSLPlasterController;
+@class TSLRedisController;
 
 @class TSViewController;
 
@@ -17,5 +19,8 @@
 @property (strong, nonatomic) UITabBarController *tabBarController;
 @property (strong, nonatomic) UINavigationController *navController;
 @property (strong, nonatomic, retain) TSViewController *viewController;
+
+@property (strong, nonatomic) TSLPlasterController *plasterController;
+@property (strong, nonatomic) TSLRedisController *redisController;
 
 @end

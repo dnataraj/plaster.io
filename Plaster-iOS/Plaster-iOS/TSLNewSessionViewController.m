@@ -12,6 +12,7 @@
 #import "TSLPlasterAppDelegate.h"
 #import "TSLPlasterGlobals.h"
 #import "TSLUserProfileDictator.h"
+#import "TSLSessionViewController.h"
 
 @interface TSLNewSessionViewController () {
     TSLUserProfileDictator *_userProfileDicatator;    
@@ -172,9 +173,12 @@
     
     DLog(@"Saving profile with values : %@", profile);
     [_userProfileDicatator addProfile:profile withKey:self.sessionKey];
-    [profile release];
     
-    [delegate.navController popViewControllerAnimated:YES];
+    [delegate.navController popViewControllerAnimated:NO];
+    TSLSessionViewController *sessionViewController = [[[TSLSessionViewController alloc] initWithProfile:profile
+                                                                                              sessionKey:self.sessionKey] autorelease];
+    [delegate.navController pushViewController:sessionViewController animated:YES];
+    [profile release];    
 }
 
 - (void)cancel:(id)sender {

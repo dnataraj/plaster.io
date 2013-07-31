@@ -8,6 +8,27 @@
 
 /* Begin PBXBuildFile section */
 		41076B5C179FFC4E00F28F40 /* TSLModalAlertDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 41076B5B179FFC4E00F28F40 /* TSLModalAlertDelegate.m */; };
+		410B4D4317A7AEE700E1E0E2 /* TSLPacketSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 410B4D4217A7AEE700E1E0E2 /* TSLPacketSerializer.m */; };
+		410B4D4A17A7B51600E1E0E2 /* TSLPlasterImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 410B4D4517A7B51600E1E0E2 /* TSLPlasterImage.m */; };
+		410B4D4B17A7B51600E1E0E2 /* TSLPlasterPeer.m in Sources */ = {isa = PBXBuildFile; fileRef = 410B4D4717A7B51600E1E0E2 /* TSLPlasterPeer.m */; };
+		410B4D4C17A7B51600E1E0E2 /* TSLPlasterString.m in Sources */ = {isa = PBXBuildFile; fileRef = 410B4D4917A7B51600E1E0E2 /* TSLPlasterString.m */; };
+		410B4D4F17A7BC6100E1E0E2 /* TSLEventDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 410B4D4E17A7BC6100E1E0E2 /* TSLEventDispatcher.m */; };
+		410B4D5417A7BD5900E1E0E2 /* TSLRedisController.m in Sources */ = {isa = PBXBuildFile; fileRef = 410B4D5317A7BD5900E1E0E2 /* TSLRedisController.m */; };
+		410B4D5717A7CF6900E1E0E2 /* TSLReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 410B4D5617A7CF6900E1E0E2 /* TSLReachability.m */; };
+		410B4D5817A7CF6900E1E0E2 /* TSLReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 410B4D5617A7CF6900E1E0E2 /* TSLReachability.m */; };
+		410B4D5A17A7CF9500E1E0E2 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 410B4D5917A7CF9500E1E0E2 /* SystemConfiguration.framework */; };
+		410B4D5D17A7D4AD00E1E0E2 /* TSLPlasterController.m in Sources */ = {isa = PBXBuildFile; fileRef = 410B4D5C17A7D4AD00E1E0E2 /* TSLPlasterController.m */; };
+		410B4D5E17A7D4AD00E1E0E2 /* TSLPlasterController.m in Sources */ = {isa = PBXBuildFile; fileRef = 410B4D5C17A7D4AD00E1E0E2 /* TSLPlasterController.m */; };
+		410B4D6217A7E86500E1E0E2 /* TSLSessionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 410B4D6017A7E86400E1E0E2 /* TSLSessionViewController.m */; };
+		410B4D6317A7E86500E1E0E2 /* TSLSessionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 410B4D6017A7E86400E1E0E2 /* TSLSessionViewController.m */; };
+		410B4D6417A7E86500E1E0E2 /* TSLSessionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 410B4D6117A7E86500E1E0E2 /* TSLSessionViewController.xib */; };
+		410B4D6517A7E86500E1E0E2 /* TSLSessionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 410B4D6117A7E86500E1E0E2 /* TSLSessionViewController.xib */; };
+		410B4D6817A7F26F00E1E0E2 /* 19-gear.png in Resources */ = {isa = PBXBuildFile; fileRef = 410B4D6717A7F26F00E1E0E2 /* 19-gear.png */; };
+		410B4D6917A7F26F00E1E0E2 /* 19-gear.png in Resources */ = {isa = PBXBuildFile; fileRef = 410B4D6717A7F26F00E1E0E2 /* 19-gear.png */; };
+		410B4D6D17A7F37600E1E0E2 /* TSLPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 410B4D6B17A7F37500E1E0E2 /* TSLPreferencesViewController.m */; };
+		410B4D6E17A7F37600E1E0E2 /* TSLPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 410B4D6B17A7F37500E1E0E2 /* TSLPreferencesViewController.m */; };
+		410B4D6F17A7F37600E1E0E2 /* TSLPreferencesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 410B4D6C17A7F37600E1E0E2 /* TSLPreferencesViewController.xib */; };
+		410B4D7017A7F37600E1E0E2 /* TSLPreferencesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 410B4D6C17A7F37600E1E0E2 /* TSLPreferencesViewController.xib */; };
 		417FF595179E69BB0070CE9B /* TSLProfilesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 417FF593179E69BB0070CE9B /* TSLProfilesViewController.m */; };
 		417FF596179E69BB0070CE9B /* TSLProfilesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 417FF594179E69BB0070CE9B /* TSLProfilesViewController.xib */; };
 		417FF597179E75140070CE9B /* libTSLHiredisiOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41E713C0179D3AE800F766CB /* libTSLHiredisiOS.a */; };
@@ -37,6 +58,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		410B4D3C17A7ADF100E1E0E2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4176EB6A17968B44005CF2E3 /* TSBase64.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 41B82DA9179A9DBE00CF6EE3;
+			remoteInfo = "TSLBase64-iOS";
+		};
 		4176EB6E17968B44005CF2E3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4176EB6A17968B44005CF2E3 /* TSBase64.xcodeproj */;
@@ -70,6 +98,32 @@
 /* Begin PBXFileReference section */
 		41076B5A179FFC4E00F28F40 /* TSLModalAlertDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLModalAlertDelegate.h; sourceTree = "<group>"; };
 		41076B5B179FFC4E00F28F40 /* TSLModalAlertDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLModalAlertDelegate.m; sourceTree = "<group>"; };
+		410B4D4117A7AEE700E1E0E2 /* TSLPacketSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLPacketSerializer.h; sourceTree = "<group>"; };
+		410B4D4217A7AEE700E1E0E2 /* TSLPacketSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLPacketSerializer.m; sourceTree = "<group>"; };
+		410B4D4417A7B51600E1E0E2 /* TSLPlasterImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLPlasterImage.h; sourceTree = "<group>"; };
+		410B4D4517A7B51600E1E0E2 /* TSLPlasterImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLPlasterImage.m; sourceTree = "<group>"; };
+		410B4D4617A7B51600E1E0E2 /* TSLPlasterPeer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLPlasterPeer.h; sourceTree = "<group>"; };
+		410B4D4717A7B51600E1E0E2 /* TSLPlasterPeer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLPlasterPeer.m; sourceTree = "<group>"; };
+		410B4D4817A7B51600E1E0E2 /* TSLPlasterString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLPlasterString.h; sourceTree = "<group>"; };
+		410B4D4917A7B51600E1E0E2 /* TSLPlasterString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLPlasterString.m; sourceTree = "<group>"; };
+		410B4D4D17A7BC6100E1E0E2 /* TSLEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLEventDispatcher.h; sourceTree = "<group>"; };
+		410B4D4E17A7BC6100E1E0E2 /* TSLEventDispatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLEventDispatcher.m; sourceTree = "<group>"; };
+		410B4D5017A7BD2E00E1E0E2 /* TSDataStoreProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSDataStoreProvider.h; sourceTree = "<group>"; };
+		410B4D5117A7BD2E00E1E0E2 /* TSMessagingProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSMessagingProvider.h; sourceTree = "<group>"; };
+		410B4D5217A7BD5900E1E0E2 /* TSLRedisController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLRedisController.h; sourceTree = "<group>"; };
+		410B4D5317A7BD5900E1E0E2 /* TSLRedisController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLRedisController.m; sourceTree = "<group>"; };
+		410B4D5517A7CF6900E1E0E2 /* TSLReachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLReachability.h; sourceTree = "<group>"; };
+		410B4D5617A7CF6900E1E0E2 /* TSLReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLReachability.m; sourceTree = "<group>"; };
+		410B4D5917A7CF9500E1E0E2 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		410B4D5B17A7D4AC00E1E0E2 /* TSLPlasterController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLPlasterController.h; sourceTree = "<group>"; };
+		410B4D5C17A7D4AD00E1E0E2 /* TSLPlasterController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLPlasterController.m; sourceTree = "<group>"; };
+		410B4D5F17A7E86400E1E0E2 /* TSLSessionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLSessionViewController.h; sourceTree = "<group>"; };
+		410B4D6017A7E86400E1E0E2 /* TSLSessionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLSessionViewController.m; sourceTree = "<group>"; };
+		410B4D6117A7E86500E1E0E2 /* TSLSessionViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TSLSessionViewController.xib; sourceTree = "<group>"; };
+		410B4D6717A7F26F00E1E0E2 /* 19-gear.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "19-gear.png"; sourceTree = "<group>"; };
+		410B4D6A17A7F37500E1E0E2 /* TSLPreferencesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLPreferencesViewController.h; sourceTree = "<group>"; };
+		410B4D6B17A7F37500E1E0E2 /* TSLPreferencesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLPreferencesViewController.m; sourceTree = "<group>"; };
+		410B4D6C17A7F37600E1E0E2 /* TSLPreferencesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TSLPreferencesViewController.xib; sourceTree = "<group>"; };
 		4176EB6617968AC2005CF2E3 /* async.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = async.h; sourceTree = "<group>"; };
 		4176EB6717968AC2005CF2E3 /* hiredis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hiredis.h; sourceTree = "<group>"; };
 		4176EB6817968AC2005CF2E3 /* libhiredis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libhiredis.a; sourceTree = "<group>"; };
@@ -117,6 +171,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				410B4D5A17A7CF9500E1E0E2 /* SystemConfiguration.framework in Frameworks */,
 				417FF597179E75140070CE9B /* libTSLHiredisiOS.a in Frameworks */,
 				41B82DC3179A9FBF00CF6EE3 /* libTSLBase64-iOS.a in Frameworks */,
 				41F985D617673B360031609C /* UIKit.framework in Frameworks */,
@@ -138,6 +193,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		410B4D6617A7F25900E1E0E2 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				410B4D6717A7F26F00E1E0E2 /* 19-gear.png */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		4176EB65179687CC005CF2E3 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
@@ -170,6 +233,7 @@
 		41F985C917673B360031609C = {
 			isa = PBXGroup;
 			children = (
+				410B4D5917A7CF9500E1E0E2 /* SystemConfiguration.framework */,
 				4176EB65179687CC005CF2E3 /* Libraries */,
 				41F985DB17673B360031609C /* Plaster-iOS */,
 				41F9860217673B360031609C /* Plaster-iOSTests */,
@@ -201,6 +265,25 @@
 		41F985DB17673B360031609C /* Plaster-iOS */ = {
 			isa = PBXGroup;
 			children = (
+				410B4D6617A7F25900E1E0E2 /* Resources */,
+				410B4D5B17A7D4AC00E1E0E2 /* TSLPlasterController.h */,
+				410B4D5C17A7D4AD00E1E0E2 /* TSLPlasterController.m */,
+				410B4D5517A7CF6900E1E0E2 /* TSLReachability.h */,
+				410B4D5617A7CF6900E1E0E2 /* TSLReachability.m */,
+				410B4D5217A7BD5900E1E0E2 /* TSLRedisController.h */,
+				410B4D5317A7BD5900E1E0E2 /* TSLRedisController.m */,
+				410B4D5017A7BD2E00E1E0E2 /* TSDataStoreProvider.h */,
+				410B4D5117A7BD2E00E1E0E2 /* TSMessagingProvider.h */,
+				410B4D4D17A7BC6100E1E0E2 /* TSLEventDispatcher.h */,
+				410B4D4E17A7BC6100E1E0E2 /* TSLEventDispatcher.m */,
+				410B4D4417A7B51600E1E0E2 /* TSLPlasterImage.h */,
+				410B4D4517A7B51600E1E0E2 /* TSLPlasterImage.m */,
+				410B4D4617A7B51600E1E0E2 /* TSLPlasterPeer.h */,
+				410B4D4717A7B51600E1E0E2 /* TSLPlasterPeer.m */,
+				410B4D4817A7B51600E1E0E2 /* TSLPlasterString.h */,
+				410B4D4917A7B51600E1E0E2 /* TSLPlasterString.m */,
+				410B4D4117A7AEE700E1E0E2 /* TSLPacketSerializer.h */,
+				410B4D4217A7AEE700E1E0E2 /* TSLPacketSerializer.m */,
 				417FF5A6179EA1240070CE9B /* TSLClientIdentifier.h */,
 				417FF5A7179EA1240070CE9B /* TSLClientIdentifier.m */,
 				417FF59E179E81BF0070CE9B /* TSLPlasterGlobals.h */,
@@ -222,6 +305,12 @@
 				417FF5A3179E91180070CE9B /* TSLNewSessionViewController.xib */,
 				41076B5A179FFC4E00F28F40 /* TSLModalAlertDelegate.h */,
 				41076B5B179FFC4E00F28F40 /* TSLModalAlertDelegate.m */,
+				410B4D5F17A7E86400E1E0E2 /* TSLSessionViewController.h */,
+				410B4D6017A7E86400E1E0E2 /* TSLSessionViewController.m */,
+				410B4D6117A7E86500E1E0E2 /* TSLSessionViewController.xib */,
+				410B4D6A17A7F37500E1E0E2 /* TSLPreferencesViewController.h */,
+				410B4D6B17A7F37500E1E0E2 /* TSLPreferencesViewController.m */,
+				410B4D6C17A7F37600E1E0E2 /* TSLPreferencesViewController.xib */,
 			);
 			path = "Plaster-iOS";
 			sourceTree = "<group>";
@@ -273,6 +362,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				410B4D3D17A7ADF100E1E0E2 /* PBXTargetDependency */,
 			);
 			name = "Plaster-iOS";
 			productName = "Plaster-iOS";
@@ -373,6 +463,9 @@
 				41F985F517673B360031609C /* TSViewController_iPad.xib in Resources */,
 				417FF596179E69BB0070CE9B /* TSLProfilesViewController.xib in Resources */,
 				417FF5A5179E91180070CE9B /* TSLNewSessionViewController.xib in Resources */,
+				410B4D6417A7E86500E1E0E2 /* TSLSessionViewController.xib in Resources */,
+				410B4D6817A7F26F00E1E0E2 /* 19-gear.png in Resources */,
+				410B4D6F17A7F37600E1E0E2 /* TSLPreferencesViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -381,6 +474,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				41F9860717673B360031609C /* InfoPlist.strings in Resources */,
+				410B4D6517A7E86500E1E0E2 /* TSLSessionViewController.xib in Resources */,
+				410B4D6917A7F26F00E1E0E2 /* 19-gear.png in Resources */,
+				410B4D7017A7F37600E1E0E2 /* TSLPreferencesViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -416,6 +512,16 @@
 				417FF5A4179E91180070CE9B /* TSLNewSessionViewController.m in Sources */,
 				417FF5A8179EA1240070CE9B /* TSLClientIdentifier.m in Sources */,
 				41076B5C179FFC4E00F28F40 /* TSLModalAlertDelegate.m in Sources */,
+				410B4D4317A7AEE700E1E0E2 /* TSLPacketSerializer.m in Sources */,
+				410B4D4A17A7B51600E1E0E2 /* TSLPlasterImage.m in Sources */,
+				410B4D4B17A7B51600E1E0E2 /* TSLPlasterPeer.m in Sources */,
+				410B4D4C17A7B51600E1E0E2 /* TSLPlasterString.m in Sources */,
+				410B4D4F17A7BC6100E1E0E2 /* TSLEventDispatcher.m in Sources */,
+				410B4D5417A7BD5900E1E0E2 /* TSLRedisController.m in Sources */,
+				410B4D5717A7CF6900E1E0E2 /* TSLReachability.m in Sources */,
+				410B4D5D17A7D4AD00E1E0E2 /* TSLPlasterController.m in Sources */,
+				410B4D6217A7E86500E1E0E2 /* TSLSessionViewController.m in Sources */,
+				410B4D6D17A7F37600E1E0E2 /* TSLPreferencesViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -424,12 +530,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				41F9860A17673B360031609C /* Plaster_iOSTests.m in Sources */,
+				410B4D5817A7CF6900E1E0E2 /* TSLReachability.m in Sources */,
+				410B4D5E17A7D4AD00E1E0E2 /* TSLPlasterController.m in Sources */,
+				410B4D6317A7E86500E1E0E2 /* TSLSessionViewController.m in Sources */,
+				410B4D6E17A7F37600E1E0E2 /* TSLPreferencesViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		410B4D3D17A7ADF100E1E0E2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "TSLBase64-iOS";
+			targetProxy = 410B4D3C17A7ADF100E1E0E2 /* PBXContainerItemProxy */;
+		};
 		41F9860117673B360031609C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 41F985D117673B360031609C /* Plaster-iOS */;
@@ -534,10 +649,18 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Plaster-iOS/Plaster-iOS-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"\"$(OBJROOT)/UninstalledProducts/include\"",
+					"\"$(TARGET_BUILD_DIR)/include\"",
+				);
 				INFOPLIST_FILE = "Plaster-iOS/Plaster-iOS-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
+				);
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -549,10 +672,18 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Plaster-iOS/Plaster-iOS-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"\"$(OBJROOT)/UninstalledProducts/include\"",
+					"\"$(TARGET_BUILD_DIR)/include\"",
+				);
 				INFOPLIST_FILE = "Plaster-iOS/Plaster-iOS-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
+				);
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;

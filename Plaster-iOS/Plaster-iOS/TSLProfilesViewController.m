@@ -12,6 +12,7 @@
 #import "TSLNewSessionViewController.h"
 #import "TSLModalAlertDelegate.h"
 #import "TSLPlasterGlobals.h"
+#import "TSLSessionViewController.h"
 
 @interface TSLProfilesViewController () {
     TSLUserProfileDictator *_userProfileDicatator;
@@ -154,6 +155,8 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     DLog(@"Selected row at index path : %@", indexPath);
     TSLPlasterAppDelegate *delegate = (TSLPlasterAppDelegate *)[[UIApplication sharedApplication] delegate];
+    
+    // For starting a new session and joining another session
     if (indexPath.row == ([_displayProfiles count] - 2)) {
         // Ask the user to set a valid user name and then proceed to the profile configuration view.
         NSString *profileName = [self alertForProfileName:self];
@@ -165,15 +168,25 @@
         } else {
             DLog(@"Will not load profle configuration view without a valid profile name.");
         }
-    }
-    if (self.editing) {
-        DLog(@"Pushing new session view controller onto the nav for editing existing profiles...");
+    } else {
         NSDictionary *profile = [[_userProfileDicatator plasterProfiles] objectForKey:_displaySessionKeys[indexPath.row]];
         DLog(@"Obtained stored profile : %@", profile);
-        TSLNewSessionViewController *newSessionViewController = [[TSLNewSessionViewController alloc] initWithProfile:profile
-                                                                                                          sessionKey:_displaySessionKeys[indexPath.row] editing:self.editing];
-        [delegate.navController pushViewController:newSessionViewController animated:YES];
+        // For re-configuring existing sessions in edit mode
+        if (self.editing) {
+            DLog(@"Pushing new session view controller onto the nav for editing existing profiles...");
+            TSLNewSessionViewController *newSessionViewController = [[[TSLNewSessionViewController alloc] initWithProfile:profile
+                                                                                                               sessionKey:_displaySessionKeys[indexPath.row]
+                                                                                                                  editing:self.editing] autorelease];
+            [delegate.navController pushViewController:newSessionViewController animated:YES];
+        } else {
+            // User taps a session to start it
+            DLog(@"Starting session with key : %@", _displaySessionKeys[indexPath.row]);
+            TSLSessionViewController *sessionViewController = [[[TSLSessionViewController alloc] initWithProfile:profile
+                                                                                                      sessionKey:_displaySessionKeys[indexPath.row]] autorelease];
+            [delegate.navController pushViewController:sessionViewController animated:YES];
+        }        
     }
+    
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
