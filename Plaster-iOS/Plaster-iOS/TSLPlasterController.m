@@ -270,9 +270,8 @@ static const double MB = 1024 * 1024;
     
     // if Plaster just started, ignore existing pasteboard content
     if (self.started) {
-        DLog(@"PLASTER: PLASTER OUT : Clearing stale content...");
+        DLog(@"PLASTER: PLASTER OUT : First start, not plastering out existing content.");
         self.started = NO;
-        //[_pb clearContents];
         return;
     }
     
@@ -291,7 +290,7 @@ static const double MB = 1024 * 1024;
     
     DLog(@"PLASTER: PLASTER OUT : Found something in the iOS general pasteboard!");
     
-    //[self plaster:_pb];
+    [self plaster:_pb];
 }
 
 - (void)onTimerWithNotification:(NSNotification *)notification {
@@ -336,29 +335,34 @@ static const double MB = 1024 * 1024;
 }
 
 - (void)plaster:(UIPasteboard *)pboard {
-    /*
-    NSMutableArray *readables = [NSMutableArray array];
     BOOL allowOutImages = [[_sessionProfile objectForKey:TSPlasterOutAllowImages] boolValue];
+    BOOL allowOutText = [[_sessionProfile objectForKey:TSPlasterOutAllowText] boolValue];
+    if (!allowOutText && !allowOutImages) {
+        DLog(@"PLASTER: PLASTER OUT : User has disabled outgoing plasters."); // TODO : Timer should be cancelled?
+        return;
+    }
+    id packet = nil;
+    //NSArray *types = [pboard pasteboardTypes];
     if (allowOutImages) {
         DLog(@"PLASTER: PLASTER OUT : Allowing images to be plastered out.");
-        [readables addObject:[NSImage class]];
+        packet = pboard.image;
     }
-    BOOL allowOutText = [[_sessionProfile objectForKey:TSPlasterOutAllowText] boolValue];
-    if (allowOutText) {
-        DLog(@"PLASTER: PLASTER OUT : Allowing text to be plastered out.");
-        [readables addObjectsFromArray:@[[NSAttributedString class], [NSString class]]];
+    if (!packet) {
+        if (allowOutText) {
+            DLog(@"PLASTER: PLASTER OUT : Allowing text to be plastered out.");
+            packet = pboard.string;
+        }
     }
     //NSArray *pbContents = [pboard readObjectsForClasses:readables options:nil];
-    NSarray *pbContents = pboard valu
-    DLog(@"PLASTER: Read %ld items from pasteboard.", (unsigned long)[pbContents count]);
-    if ([pbContents count] > 0) {
+    if (packet) {
         const char *jsonBytes = NULL;
+        DLog(@"PLASTER: PLASTER OUT : Read %@ type from pasteboard.", [packet class]);
         // Now we have to extract the bytes
-        id packet = [pbContents objectAtIndex:0];
+        //id packet = [pbContents objectAtIndex:0];
         if ([packet isKindOfClass:[NSString class]] || [packet isKindOfClass:[NSAttributedString class]]) {
             DLog(@"PLASTER : PLASTER OUT : Processing NSString packet and publishing...");
             jsonBytes = [TSLPacketSerializer JSONWithTextPacket:packet sender:[self alias]];
-        } else if ([packet isKindOfClass:[NSImage class]]) {
+        } else if ([packet isKindOfClass:[UIImage class]]) {
             DLog(@"PLASTER : PLASTER OUT : Processing NSImage packet and publishing...");
             jsonBytes = [TSLPacketSerializer JSONWithImagePacket:packet  sender:[self alias]];
         }
@@ -370,7 +374,7 @@ static const double MB = 1024 * 1024;
     } else {
         DLog(@"PLASTER: PLASTER OUT : Nothing retrieved from pasteboard.");
     }  
-    */
+    
 }
 
 - (void)transmitJSON:(const char *)json {
@@ -576,15 +580,6 @@ static const double MB = 1024 * 1024;
     localNotification.fireDate = nil;
     
     [[UIApplication sharedApplication] presentLocalNotificationNow:localNotification];
-    
-    /*
-    NSString *message = subtitle;
-    if (text) {
-        message = [NSString stringWithFormat:@"%@ : %@", subtitle, text];
-    }
-    DLog(@"Creating alert with message : %@", message);
-     
-    */
     
     return;
 }
