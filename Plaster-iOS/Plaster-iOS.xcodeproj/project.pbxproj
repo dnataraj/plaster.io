@@ -29,6 +29,10 @@
 		410B4D6E17A7F37600E1E0E2 /* TSLPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 410B4D6B17A7F37500E1E0E2 /* TSLPreferencesViewController.m */; };
 		410B4D6F17A7F37600E1E0E2 /* TSLPreferencesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 410B4D6C17A7F37600E1E0E2 /* TSLPreferencesViewController.xib */; };
 		410B4D7017A7F37600E1E0E2 /* TSLPreferencesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 410B4D6C17A7F37600E1E0E2 /* TSLPreferencesViewController.xib */; };
+		410B4D7417AA5B6400E1E0E2 /* TSLJoinSessionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 410B4D7217AA5B6000E1E0E2 /* TSLJoinSessionViewController.m */; };
+		410B4D7517AA5B6400E1E0E2 /* TSLJoinSessionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 410B4D7217AA5B6000E1E0E2 /* TSLJoinSessionViewController.m */; };
+		410B4D7617AA5B6400E1E0E2 /* TSLJoinSessionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 410B4D7317AA5B6200E1E0E2 /* TSLJoinSessionViewController.xib */; };
+		410B4D7717AA5B6400E1E0E2 /* TSLJoinSessionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 410B4D7317AA5B6200E1E0E2 /* TSLJoinSessionViewController.xib */; };
 		417FF595179E69BB0070CE9B /* TSLProfilesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 417FF593179E69BB0070CE9B /* TSLProfilesViewController.m */; };
 		417FF596179E69BB0070CE9B /* TSLProfilesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 417FF594179E69BB0070CE9B /* TSLProfilesViewController.xib */; };
 		417FF597179E75140070CE9B /* libTSLHiredisiOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41E713C0179D3AE800F766CB /* libTSLHiredisiOS.a */; };
@@ -124,6 +128,9 @@
 		410B4D6A17A7F37500E1E0E2 /* TSLPreferencesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLPreferencesViewController.h; sourceTree = "<group>"; };
 		410B4D6B17A7F37500E1E0E2 /* TSLPreferencesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLPreferencesViewController.m; sourceTree = "<group>"; };
 		410B4D6C17A7F37600E1E0E2 /* TSLPreferencesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TSLPreferencesViewController.xib; sourceTree = "<group>"; };
+		410B4D7117AA5B6000E1E0E2 /* TSLJoinSessionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLJoinSessionViewController.h; sourceTree = "<group>"; };
+		410B4D7217AA5B6000E1E0E2 /* TSLJoinSessionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLJoinSessionViewController.m; sourceTree = "<group>"; };
+		410B4D7317AA5B6200E1E0E2 /* TSLJoinSessionViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TSLJoinSessionViewController.xib; sourceTree = "<group>"; };
 		4176EB6617968AC2005CF2E3 /* async.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = async.h; sourceTree = "<group>"; };
 		4176EB6717968AC2005CF2E3 /* hiredis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hiredis.h; sourceTree = "<group>"; };
 		4176EB6817968AC2005CF2E3 /* libhiredis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libhiredis.a; sourceTree = "<group>"; };
@@ -311,6 +318,9 @@
 				410B4D6A17A7F37500E1E0E2 /* TSLPreferencesViewController.h */,
 				410B4D6B17A7F37500E1E0E2 /* TSLPreferencesViewController.m */,
 				410B4D6C17A7F37600E1E0E2 /* TSLPreferencesViewController.xib */,
+				410B4D7117AA5B6000E1E0E2 /* TSLJoinSessionViewController.h */,
+				410B4D7217AA5B6000E1E0E2 /* TSLJoinSessionViewController.m */,
+				410B4D7317AA5B6200E1E0E2 /* TSLJoinSessionViewController.xib */,
 			);
 			path = "Plaster-iOS";
 			sourceTree = "<group>";
@@ -466,6 +476,7 @@
 				410B4D6417A7E86500E1E0E2 /* TSLSessionViewController.xib in Resources */,
 				410B4D6817A7F26F00E1E0E2 /* 19-gear.png in Resources */,
 				410B4D6F17A7F37600E1E0E2 /* TSLPreferencesViewController.xib in Resources */,
+				410B4D7617AA5B6400E1E0E2 /* TSLJoinSessionViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -477,6 +488,7 @@
 				410B4D6517A7E86500E1E0E2 /* TSLSessionViewController.xib in Resources */,
 				410B4D6917A7F26F00E1E0E2 /* 19-gear.png in Resources */,
 				410B4D7017A7F37600E1E0E2 /* TSLPreferencesViewController.xib in Resources */,
+				410B4D7717AA5B6400E1E0E2 /* TSLJoinSessionViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -522,6 +534,7 @@
 				410B4D5D17A7D4AD00E1E0E2 /* TSLPlasterController.m in Sources */,
 				410B4D6217A7E86500E1E0E2 /* TSLSessionViewController.m in Sources */,
 				410B4D6D17A7F37600E1E0E2 /* TSLPreferencesViewController.m in Sources */,
+				410B4D7417AA5B6400E1E0E2 /* TSLJoinSessionViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -534,6 +547,7 @@
 				410B4D5E17A7D4AD00E1E0E2 /* TSLPlasterController.m in Sources */,
 				410B4D6317A7E86500E1E0E2 /* TSLSessionViewController.m in Sources */,
 				410B4D6E17A7F37600E1E0E2 /* TSLPreferencesViewController.m in Sources */,
+				410B4D7517AA5B6400E1E0E2 /* TSLJoinSessionViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

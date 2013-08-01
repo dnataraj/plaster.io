@@ -62,6 +62,31 @@
     return self;
 }
 
+- (id)initWithProfileName:(NSString *)aProfileName sessionKey:(NSString *)key editing:(BOOL)editing {
+    self = [self initWithNibName:@"TSLNewSessionViewController" bundle:nil];
+    if (self) {
+        self.editProfile = editing;
+        self.sessionKey = key;
+        self.profileName = aProfileName;
+        NSMutableDictionary *tempProfile = [NSMutableDictionary dictionary];
+        [tempProfile setObject:self.profileName forKey:TSPlasterProfileName];
+        [tempProfile setObject:@YES forKey:TSPlasterNotifyAll];
+        [tempProfile setObject:@YES forKey:TSPlasterAllowText];
+        [tempProfile setObject:@YES forKey:TSPlasterAllowImages];
+        [tempProfile setObject:@YES forKey:TSPlasterOutAllowText];
+        [tempProfile setObject:@YES forKey:TSPlasterOutAllowImages];
+        
+        // Other iOS defaults
+        [tempProfile setObject:@NO forKey:TSPlasterAllowFiles];
+        [tempProfile setObject:@NO forKey:TSPlasterOutAllowFiles];
+        [tempProfile setObject:TSPlasterModePasteboard forKey:TSPlasterMode];
+        
+        self.profile = tempProfile;
+    }
+    
+    return self;
+}
+
 - (id)init {
     return [self initWithNibName:@"TSLNewSessionViewController" bundle:nil];
 }
@@ -89,11 +114,6 @@
         self.allowOutgoingImagesSwitch.on = [[_profile objectForKey:TSPlasterOutAllowImages] boolValue];
     }
     self.profileNameLabel.text = self.profileName;
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-
 }
 
 #pragma mark UITableView data source methods

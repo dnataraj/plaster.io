@@ -30,10 +30,13 @@
 @property (copy, nonatomic) NSString *profileName;
 
 @property (copy, readonly) NSString *sessionKey;
-@property (retain, readonly) NSDictionary *profile;
+@property (strong, readonly) NSDictionary *profile;
 @property BOOL editProfile;
 
 - (id)initWithProfileName:(NSString *)profileName;
+- (id)initWithProfileName:(NSString *)aProfileName sessionKey:(NSString *)key editing:(BOOL)editing;
 - (id)initWithProfile:(NSDictionary *)profile sessionKey:(NSString *)key editing:(BOOL)editing;
+
+- (void)done:(id)sender;
 
 @end

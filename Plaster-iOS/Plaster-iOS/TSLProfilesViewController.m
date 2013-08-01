@@ -13,6 +13,7 @@
 #import "TSLModalAlertDelegate.h"
 #import "TSLPlasterGlobals.h"
 #import "TSLSessionViewController.h"
+#import "TSLJoinSessionViewController.h"
 
 @interface TSLProfilesViewController () {
     TSLPlasterProfilesDictator *_userProfileDicatator;
@@ -131,7 +132,7 @@
     //DLog(@"Returning cell for index row : %d with label : %@", indexPath.row, _displayProfiles[indexPath.row]);
     cell.textLabel.text = _displayProfiles[indexPath.row];
     cell.accessoryType = UITableViewCellAccessoryNone;
-    if (indexPath.row >= self.numberOfProfiles) {
+    if (indexPath.row >= self.numberOfProfiles) { // Happens in non-edit mode
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
     
@@ -165,6 +166,18 @@
             DLog(@"Pushing new session view controller onto the nav...");
             TSLNewSessionViewController *newSessionViewController = [[[TSLNewSessionViewController alloc] initWithProfileName:profileName] autorelease];
             [delegate.navController pushViewController:newSessionViewController animated:YES];
+        } else {
+            DLog(@"Will not load profle configuration view without a valid profile name.");
+        }
+    } else if (indexPath.row == ([_displayProfiles count] - 1)) {
+        // Ask the user to set a valid user name and then proceed to the join session view.
+        NSString *profileName = [self alertForProfileName:self];
+        DLog(@"Obtained profile name : %@", profileName);
+        if (profileName) {
+            DLog(@"Pushing join session view controller onto the nav...");
+            TSLJoinSessionViewController *joinSessionViewController = [[[TSLJoinSessionViewController alloc]
+                                                                        initWithProfileName:profileName] autorelease];
+            [delegate.navController pushViewController:joinSessionViewController animated:YES];
         } else {
             DLog(@"Will not load profle configuration view without a valid profile name.");
         }
