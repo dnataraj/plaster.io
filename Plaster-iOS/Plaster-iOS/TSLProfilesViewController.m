@@ -7,7 +7,7 @@
 //
 
 #import "TSLProfilesViewController.h"
-#import "TSLUserProfileDictator.h"
+#import "TSLPlasterProfilesDictator.h"
 #import "TSLPlasterAppDelegate.h"
 #import "TSLNewSessionViewController.h"
 #import "TSLModalAlertDelegate.h"
@@ -15,7 +15,7 @@
 #import "TSLSessionViewController.h"
 
 @interface TSLProfilesViewController () {
-    TSLUserProfileDictator *_userProfileDicatator;
+    TSLPlasterProfilesDictator *_userProfileDicatator;
     NSMutableArray *_displayProfiles;
     NSMutableArray *_displaySessionKeys;
 }
@@ -27,7 +27,7 @@
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        _userProfileDicatator = [[TSLUserProfileDictator alloc] init];
+        _userProfileDicatator = [[TSLPlasterProfilesDictator alloc] init];
         _displayProfiles = nil;
         _displaySessionKeys = nil;
     }

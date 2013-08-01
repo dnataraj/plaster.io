@@ -17,7 +17,8 @@
 @property (copy) NSDictionary *sessionProfile;
 @property (nonatomic, copy) NSString *alias;
 @property NSInteger changeCount;
-@property BOOL started, running;
+@property (atomic, getter = hasStarted) BOOL started;
+@property (atomic, getter = isRunning) BOOL running;
 
 - (id)initWithPasteboard:(UIPasteboard *)pasteboard provider:(id<TSMessagingProvider, TSDataStoreProvider>)provider;
 

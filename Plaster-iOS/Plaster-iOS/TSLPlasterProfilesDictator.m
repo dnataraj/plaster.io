@@ -6,10 +6,10 @@
 //  Copyright (c) 2013 Trilobyte Systems ApS. All rights reserved.
 //
 
-#import "TSLUserProfileDictator.h"
+#import "TSLPlasterProfilesDictator.h"
 #import "TSLPlasterGlobals.h"
 
-@implementation TSLUserProfileDictator {
+@implementation TSLPlasterProfilesDictator {
     NSUserDefaults *_userDefaults;
 }
 
@@ -41,6 +41,19 @@
     NSMutableDictionary *updatedProfiles = [NSMutableDictionary dictionaryWithDictionary:[self plasterProfiles]];
     [updatedProfiles removeObjectForKey:sessionKey];
     [self setPlasterProfiles:updatedProfiles];
+}
+
+- (void)saveCurrentSessionWithKey:(NSString *)key {
+    [_userDefaults setObject:key forKey:TSCurrentSessionKey];
+    return;
+}
+
+- (NSString *)currentSessionKey {
+    return [_userDefaults objectForKey:TSCurrentSessionKey];
+}
+
+- (NSString *)stringForKey:(NSString *)key {
+    return [_userDefaults stringForKey:key];
 }
 
 - (void)dealloc {

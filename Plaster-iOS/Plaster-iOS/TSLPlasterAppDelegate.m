@@ -15,8 +15,10 @@
 #import "TSLPlasterController.h"
 #import "TSLRedisController.h"
 #import "TSLModalAlertDelegate.h"
+#import "TSLPlasterProfilesDictator.h"
 
-@implementation TSLPlasterAppDelegate
+@implementation TSLPlasterAppDelegate {
+}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
@@ -47,6 +49,20 @@
     
     self.window.rootViewController = self.tabBarController;
     [self.window makeKeyAndVisible];
+    
+    // Clean up previous session if needed, but only if there is no current session
+    TSLPlasterProfilesDictator *plasterProfilesDictator = [[TSLPlasterProfilesDictator alloc] init];
+    NSString *lastSessionKey = [plasterProfilesDictator currentSessionKey];
+    [self.plasterController setSessionKey:lastSessionKey];
+    if (lastSessionKey) {
+        // Clean up any stale sessions in case there was a dirty exit previously
+        NSArray *staleSessions = @[lastSessionKey];
+        [self.plasterController setAlias:[[UIDevice currentDevice] name]];
+        DLog(@"AD: Verifying disconnect from sessions : %@", staleSessions);
+        [self.plasterController disconnectFromSessions:staleSessions];
+    }
+    [plasterProfilesDictator release];
+    
     return YES;
 }
 
@@ -126,6 +142,10 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    DLog(@"Application will terminate. Stopping any running plaster sessions.");
+    if (self.plasterController.running) {
+        [self.plasterController stop];
+    }
 }
 
 - (void)dealloc {

@@ -32,7 +32,7 @@
 		417FF595179E69BB0070CE9B /* TSLProfilesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 417FF593179E69BB0070CE9B /* TSLProfilesViewController.m */; };
 		417FF596179E69BB0070CE9B /* TSLProfilesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 417FF594179E69BB0070CE9B /* TSLProfilesViewController.xib */; };
 		417FF597179E75140070CE9B /* libTSLHiredisiOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41E713C0179D3AE800F766CB /* libTSLHiredisiOS.a */; };
-		417FF59A179E7EC10070CE9B /* TSLUserProfileDictator.m in Sources */ = {isa = PBXBuildFile; fileRef = 417FF599179E7EC00070CE9B /* TSLUserProfileDictator.m */; };
+		417FF59A179E7EC10070CE9B /* TSLPlasterProfilesDictator.m in Sources */ = {isa = PBXBuildFile; fileRef = 417FF599179E7EC00070CE9B /* TSLPlasterProfilesDictator.m */; };
 		417FF5A0179E81CB0070CE9B /* TSLPlasterGlobals.m in Sources */ = {isa = PBXBuildFile; fileRef = 417FF59F179E81CB0070CE9B /* TSLPlasterGlobals.m */; };
 		417FF5A4179E91180070CE9B /* TSLNewSessionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 417FF5A2179E91170070CE9B /* TSLNewSessionViewController.m */; };
 		417FF5A5179E91180070CE9B /* TSLNewSessionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 417FF5A3179E91180070CE9B /* TSLNewSessionViewController.xib */; };
@@ -131,8 +131,8 @@
 		417FF592179E69BB0070CE9B /* TSLProfilesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLProfilesViewController.h; sourceTree = "<group>"; };
 		417FF593179E69BB0070CE9B /* TSLProfilesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLProfilesViewController.m; sourceTree = "<group>"; };
 		417FF594179E69BB0070CE9B /* TSLProfilesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TSLProfilesViewController.xib; sourceTree = "<group>"; };
-		417FF598179E7EC00070CE9B /* TSLUserProfileDictator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLUserProfileDictator.h; sourceTree = "<group>"; };
-		417FF599179E7EC00070CE9B /* TSLUserProfileDictator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLUserProfileDictator.m; sourceTree = "<group>"; };
+		417FF598179E7EC00070CE9B /* TSLPlasterProfilesDictator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLPlasterProfilesDictator.h; sourceTree = "<group>"; };
+		417FF599179E7EC00070CE9B /* TSLPlasterProfilesDictator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLPlasterProfilesDictator.m; sourceTree = "<group>"; };
 		417FF59E179E81BF0070CE9B /* TSLPlasterGlobals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLPlasterGlobals.h; sourceTree = "<group>"; };
 		417FF59F179E81CB0070CE9B /* TSLPlasterGlobals.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLPlasterGlobals.m; sourceTree = "<group>"; };
 		417FF5A1179E91170070CE9B /* TSLNewSessionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLNewSessionViewController.h; sourceTree = "<group>"; };
@@ -298,8 +298,8 @@
 				417FF592179E69BB0070CE9B /* TSLProfilesViewController.h */,
 				417FF593179E69BB0070CE9B /* TSLProfilesViewController.m */,
 				417FF594179E69BB0070CE9B /* TSLProfilesViewController.xib */,
-				417FF598179E7EC00070CE9B /* TSLUserProfileDictator.h */,
-				417FF599179E7EC00070CE9B /* TSLUserProfileDictator.m */,
+				417FF598179E7EC00070CE9B /* TSLPlasterProfilesDictator.h */,
+				417FF599179E7EC00070CE9B /* TSLPlasterProfilesDictator.m */,
 				417FF5A1179E91170070CE9B /* TSLNewSessionViewController.h */,
 				417FF5A2179E91170070CE9B /* TSLNewSessionViewController.m */,
 				417FF5A3179E91180070CE9B /* TSLNewSessionViewController.xib */,
@@ -507,7 +507,7 @@
 				41F985E617673B360031609C /* TSLPlasterAppDelegate.m in Sources */,
 				41F985EF17673B360031609C /* TSViewController.m in Sources */,
 				417FF595179E69BB0070CE9B /* TSLProfilesViewController.m in Sources */,
-				417FF59A179E7EC10070CE9B /* TSLUserProfileDictator.m in Sources */,
+				417FF59A179E7EC10070CE9B /* TSLPlasterProfilesDictator.m in Sources */,
 				417FF5A0179E81CB0070CE9B /* TSLPlasterGlobals.m in Sources */,
 				417FF5A4179E91180070CE9B /* TSLNewSessionViewController.m in Sources */,
 				417FF5A8179EA1240070CE9B /* TSLClientIdentifier.m in Sources */,

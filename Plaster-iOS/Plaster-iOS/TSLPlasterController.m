@@ -399,6 +399,7 @@ static const double MB = 1024 * 1024;
         if (payload) {
             //[payload retain];
             BOOL allowFileType = [[_sessionProfile objectForKey:TSPlasterAllowFiles] boolValue];
+            #pragma unused (allowFileType)
             BOOL allowTextType = [[_sessionProfile objectForKey:TSPlasterAllowText] boolValue];
             BOOL allowImageType = [[_sessionProfile objectForKey:TSPlasterAllowImages] boolValue];
             
@@ -420,6 +421,9 @@ static const double MB = 1024 * 1024;
                     packet = [[TSLPlasterImage alloc] initWithImage:[payload objectForKey:TSPlasterPacketImage]];
                 }
             } else if ([type isEqualToString:TSPlasterTypeNotification]) {
+                DLog(@"PLASTER: HANDLE IN : Plaster iOS clients do not support file transfer notifications.");
+                return;
+                /*
                 if (!allowFileType) {
                     DLog(@"PLASTER: HANDLE IN : This session does not support incoming file-type plasters.");
                 } else {
@@ -427,6 +431,7 @@ static const double MB = 1024 * 1024;
                     DLog(@"PLASTER: HANDLE IN : Processing notification packet...");
                     packet = [[TSLPlasterString alloc] initWithString:[payload objectForKey:TSPlasterPacketText]];
                 }
+                */
             }
             
             if (!packet) {

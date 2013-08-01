@@ -11,11 +11,11 @@
 #import "TSLClientIdentifier.h"
 #import "TSLPlasterAppDelegate.h"
 #import "TSLPlasterGlobals.h"
-#import "TSLUserProfileDictator.h"
+#import "TSLPlasterProfilesDictator.h"
 #import "TSLSessionViewController.h"
 
 @interface TSLNewSessionViewController () {
-    TSLUserProfileDictator *_userProfileDicatator;    
+    TSLPlasterProfilesDictator *_userProfileDicatator;    
     NSArray *_rowsInSection;
     NSArray *_sectionHeaders;
 }
@@ -31,7 +31,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
-        _userProfileDicatator = [[TSLUserProfileDictator alloc] init];
+        _userProfileDicatator = [[TSLPlasterProfilesDictator alloc] init];
         DLog(@"Initializing rows and section headers...");
         _rowsInSection = [@[@1, @1, @2, @2] retain];
         _sectionHeaders = [@[@"Profile", @"Notifications", @"Incoming Plasters", @"Outgoing Plasters"] retain];
@@ -170,6 +170,11 @@
     [profile setObject:[NSNumber numberWithBool:self.allowIncomingImagesSwitch.on] forKey:TSPlasterAllowImages];
     [profile setObject:[NSNumber numberWithBool:self.allowOutgoingTextSwitch.on] forKey:TSPlasterOutAllowText];
     [profile setObject:[NSNumber numberWithBool:self.allowOutgoingImagesSwitch.on] forKey:TSPlasterOutAllowImages];
+    
+    // Other iOS defaults
+    [profile setObject:@NO forKey:TSPlasterAllowFiles];
+    [profile setObject:@NO forKey:TSPlasterOutAllowFiles];
+    [profile setObject:TSPlasterModePasteboard forKey:TSPlasterMode];
     
     DLog(@"Saving profile with values : %@", profile);
     [_userProfileDicatator addProfile:profile withKey:self.sessionKey];

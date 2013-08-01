@@ -8,11 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
-@interface TSLUserProfileDictator : NSObject
+@interface TSLPlasterProfilesDictator : NSObject
 
 - (NSDictionary *)plasterProfiles;
 - (void)setPlasterProfiles:(NSDictionary *)profiles;
 - (void)removeProfileWithKey:(NSString *)sessionKey;
 - (void)addProfile:(NSDictionary *)profile withKey:(NSString *)key;
+- (void)saveCurrentSessionWithKey:(NSString *)key;
+- (NSString *)currentSessionKey;
+- (NSString *)stringForKey:(NSString *)key;
 
 @end
