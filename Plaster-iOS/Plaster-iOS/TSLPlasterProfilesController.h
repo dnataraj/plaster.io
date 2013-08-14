@@ -8,10 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
-@interface TSLPlasterProfilesDictator : NSObject
+@interface TSLPlasterProfilesController : NSObject
 
-- (NSDictionary *)plasterProfiles;
-- (void)setPlasterProfiles:(NSDictionary *)profiles;
+@property (readonly) NSDictionary *profiles;
+
+//- (NSDictionary *)plasterProfiles;
+//- (void)setPlasterProfiles:(NSDictionary *)profiles;
 - (void)removeProfileWithKey:(NSString *)sessionKey;
 - (void)addProfile:(NSDictionary *)profile withKey:(NSString *)key;
 - (void)saveCurrentSessionWithKey:(NSString *)key;

@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-extern const NSString *PLASTER_IMAGE_UTI;
+extern NSString *const PLASTER_IMAGE_UTI;
 
 @interface TSLPlasterImage : NSObject
 

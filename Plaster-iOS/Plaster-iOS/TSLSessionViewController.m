@@ -11,10 +11,10 @@
 #import "TSLPlasterController.h"  
 #import "TSLRedisController.h"
 #import "TSLPlasterAppDelegate.h"
-#import "TSLPlasterProfilesDictator.h"
+#import "TSLPlasterProfilesController.h"
 
 @interface TSLSessionViewController () {
-    TSLPlasterProfilesDictator *_plasterProfilesDictator;
+    TSLPlasterProfilesController *_plasterProfilesDictator;
 }
 
 @end
@@ -25,7 +25,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
-        _plasterProfilesDictator = [[TSLPlasterProfilesDictator alloc] init];
+        _plasterProfilesDictator = [[TSLPlasterProfilesController alloc] init];
     }
     return self;
 }
@@ -49,13 +49,14 @@
     self.profileNameLabel.text = [self.profile objectForKey:TSPlasterProfileName];
     self.sessionKeyTextView.text = self.sessionKey;
     
+    /*
     if ([delegate.plasterController isRunning] && [delegate.plasterController.sessionKey isEqualToString:self.sessionKey]) {
         self.sessionStartSwitch.on = YES;
         self.on = YES;
     } else {
         self.sessionStartSwitch.on = NO;
         self.on = NO;
-    }
+    }*/
     
     [self.sessionKeyTextView becomeFirstResponder];
     self.sessionKeyTextView.selectedRange = NSMakeRange(0, [self.sessionKey length]);
@@ -79,6 +80,7 @@
     TSLPlasterAppDelegate *delegate = (TSLPlasterAppDelegate *)[[UIApplication sharedApplication] delegate];
     self.on = ((UISwitch *)sender).on;
     
+    /*
     __block TSLPlasterController *__plasterController = delegate.plasterController;
     
     // if plaster was already running, stop it
@@ -129,7 +131,7 @@
             }
         }
     }
-    
+    */
     return;
 }
 

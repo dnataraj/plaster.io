@@ -15,16 +15,40 @@
 #import "TSLPlasterController.h"
 #import "TSLRedisController.h"
 #import "TSLModalAlertDelegate.h"
-#import "TSLPlasterProfilesDictator.h"
+#import "TSLPlasterProfilesController.h"
+#import "TSLPlasterProfile.h"
+#import "TSLActivityAlert.h"
 
-@implementation TSLPlasterAppDelegate {
+@interface TSLPlasterAppDelegate () {
+    TSLPlasterProfilesController *_plasterProfilesController;
+    TSLProfilesViewController *_profilesViewController;
 }
+
+@end
+
+@implementation TSLPlasterAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
+
+    [TSLActivityAlert presentWithText: [NSString stringWithFormat:@"Starting..."]];
     
-    self.redisController = [[[TSLRedisController alloc] initWithIPAddress:@"176.9.2.188" port:6379] autorelease];
-    self.plasterController = [[TSLPlasterController alloc] initWithPasteboard:[UIPasteboard generalPasteboard] provider:_redisController];
+    _plasterProfilesController = [[TSLPlasterProfilesController alloc] init];
+    
+    // Clean up previous session if needed, but only if there is no current session
+    NSString *lastSessionKey = [_plasterProfilesController currentSessionKey];
+    TSLRedisController *provider = [[[TSLRedisController alloc] initWithIPAddress:@"176.9.2.188" port:6379] autorelease];
+    TSLPlasterController *plasterController = [[[TSLPlasterController alloc] initWithPasteboard:[UIPasteboard generalPasteboard]
+                                                                                       provider:provider] autorelease];
+    [plasterController setSessionKey:lastSessionKey];
+    if (lastSessionKey) {
+        // Clean up any stale sessions in case there was a dirty exit previously
+        NSArray *staleSessions = @[lastSessionKey];
+        [plasterController setAlias:[[UIDevice currentDevice] name]];
+        DLog(@"Verifying disconnect from sessions : %@", staleSessions);
+        NSDictionary *options = @{@"controller" : plasterController, @"sessions" : staleSessions};
+        [self performSelector:@selector(initializePlaster:) withObject:options afterDelay:0];
+    }
     
     // Override point for customization after application launch.
     /*
@@ -34,11 +58,11 @@
         self.viewController = [[[TSViewController alloc] initWithNibName:@"TSViewController_iPad" bundle:nil] autorelease];
     }
     */
-     
+    
     // The navigation controller will handle plaster session views.
-    UIViewController *profilesViewController = [[[TSLProfilesViewController alloc] initWithNibName:@"TSLProfilesViewController"
-                                                                                            bundle:nil] autorelease];
-    self.navController = [[UINavigationController alloc] initWithRootViewController:profilesViewController];
+    _profilesViewController = [[TSLProfilesViewController alloc] initWithNibName:@"TSLProfilesViewController"
+                                                                                            bundle:nil];
+    self.navController = [[UINavigationController alloc] initWithRootViewController:_profilesViewController];
 
     UIViewController *preferencesViewController = [[[TSLPreferencesViewController alloc] initWithNibName:@"TSLPreferencesViewController"
                                                                                                   bundle:nil] autorelease];
@@ -48,36 +72,27 @@
     self.tabBarController.viewControllers = @[self.navController, preferencesViewController];
     
     self.window.rootViewController = self.tabBarController;
+    
     [self.window makeKeyAndVisible];
-    
-    // Clean up previous session if needed, but only if there is no current session
-    TSLPlasterProfilesDictator *plasterProfilesDictator = [[TSLPlasterProfilesDictator alloc] init];
-    NSString *lastSessionKey = [plasterProfilesDictator currentSessionKey];
-    [self.plasterController setSessionKey:lastSessionKey];
-    if (lastSessionKey) {
-        // Clean up any stale sessions in case there was a dirty exit previously
-        NSArray *staleSessions = @[lastSessionKey];
-        [self.plasterController setAlias:[[UIDevice currentDevice] name]];
-        DLog(@"AD: Verifying disconnect from sessions : %@", staleSessions);
-        [self.plasterController disconnectFromSessions:staleSessions];
-    }
-    [plasterProfilesDictator release];
-    
     return YES;
 }
 
 - (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
     DLog(@"Recieved local notification : %@", notification.alertBody);
     
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Plaster" message:notification.alertBody delegate:nil
-                                              cancelButtonTitle:@"Cancel" otherButtonTitles:@"Okay", nil];
-    alertView.alertViewStyle = UIAlertViewStyleDefault;
-    
-    TSLModalAlertDelegate *delegate = [TSLModalAlertDelegate delegateWithAlert:alertView];
-    NSUInteger result;
-    if ((result = [delegate show])) {
-        DLog(@"Alert for plaster returned with : %d", result);
+    if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Plaster" message:notification.alertBody delegate:nil
+                                                  cancelButtonTitle:@"Cancel" otherButtonTitles:@"Okay", nil];
+        alertView.alertViewStyle = UIAlertViewStyleDefault;
+        
+        TSLModalAlertDelegate *delegate = [TSLModalAlertDelegate delegateWithAlert:alertView];
+        NSUInteger result;
+        if ((result = [delegate show])) {
+            DLog(@"Alert for plaster returned with : %d", result);
+        }        
     }
+    
+    [_profilesViewController.profilesTableView reloadData];
 
     return;
 }
@@ -88,48 +103,6 @@
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
-    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
-    // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-    
-    /*
-    UIViewController *visibleVC = self.navController.visibleViewController;
-    if (![visibleVC isKindOfClass:[TSLSessionViewController class]]) {
-        DLog(@"User was not starting a plaster session.");
-        return;
-    }
-    
-    __block TSLSessionViewController *__sessionVC = (TSLSessionViewController *)visibleVC;
-    if ([__sessionVC isOn]) {
-        [self.plasterController setSessionKey:[__sessionVC sessionKey]];
-        [self.plasterController setSessionProfile:[__sessionVC profile]];
-        [self.plasterController setAlias:[[UIDevice currentDevice] name]];
-        
-        __block TSLPlasterController *__plasterController = self.plasterController;
-        
-        __block UIBackgroundTaskIdentifier plasterBgTask = [application beginBackgroundTaskWithExpirationHandler:^{
-            DLog(@"Plaster background monitor was stiatched. Cleaning up...");
-            [__plasterController stop];
-            __plasterController = nil;
-            __sessionVC.on = NO;
-            DLog(@"Stopping background task...");
-            [application endBackgroundTask:plasterBgTask];
-            plasterBgTask = UIBackgroundTaskInvalid;
-        }];
-        
-        if (plasterBgTask == UIBackgroundTaskInvalid) {
-            DLog(@"iOS Kernel refuses to create plaster background monitor. Stiatched.");
-            return;
-        }
-        
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [self.plasterController start];            
-        });
-        
-    } else {
-        DLog(@"Plaster session, not on. No background work.");
-    }
-    */
-    
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
@@ -137,20 +110,25 @@
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
+    DLog(@"WHOA! DIDBECOMEACTIVE!");
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     DLog(@"Application will terminate. Stopping any running plaster sessions.");
-    if (self.plasterController.running) {
-        [self.plasterController stop];
-    }
+}
+
+- (void)initializePlaster:(NSDictionary *)options {
+    [(TSLPlasterController *)options[@"controller"] disconnectFromSessions:@[@"sessions"]];
+    [TSLActivityAlert dismiss];
 }
 
 - (void)dealloc {
     [_window release];
     [_viewController release];
+    [_profilesViewController release];
+    [_plasterProfileDictator release];
     [super dealloc];
 }
 

@@ -24,7 +24,7 @@
 
 - (void)onTimer;
 - (void)onTimerWithNotification:(NSNotification *)notification;
-- (void)start;
+- (NSUInteger)start;
 - (void)stop;
 - (NSArray *)connectedPeers;
 

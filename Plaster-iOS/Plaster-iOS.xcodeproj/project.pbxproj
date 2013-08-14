@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4105491117BBA2DF00A6727D /* TSLActivityAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 4105491017BBA2DF00A6727D /* TSLActivityAlert.m */; };
 		41076B5C179FFC4E00F28F40 /* TSLModalAlertDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 41076B5B179FFC4E00F28F40 /* TSLModalAlertDelegate.m */; };
 		410B4D4317A7AEE700E1E0E2 /* TSLPacketSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 410B4D4217A7AEE700E1E0E2 /* TSLPacketSerializer.m */; };
 		410B4D4A17A7B51600E1E0E2 /* TSLPlasterImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 410B4D4517A7B51600E1E0E2 /* TSLPlasterImage.m */; };
@@ -33,10 +34,12 @@
 		410B4D7517AA5B6400E1E0E2 /* TSLJoinSessionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 410B4D7217AA5B6000E1E0E2 /* TSLJoinSessionViewController.m */; };
 		410B4D7617AA5B6400E1E0E2 /* TSLJoinSessionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 410B4D7317AA5B6200E1E0E2 /* TSLJoinSessionViewController.xib */; };
 		410B4D7717AA5B6400E1E0E2 /* TSLJoinSessionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 410B4D7317AA5B6200E1E0E2 /* TSLJoinSessionViewController.xib */; };
+		410D127C17AF98510073EF7B /* TSLProfileViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 410D127B17AF98510073EF7B /* TSLProfileViewCell.m */; };
+		410D128117AFBC140073EF7B /* TSLPlasterProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 410D128017AFBC140073EF7B /* TSLPlasterProfile.m */; };
 		417FF595179E69BB0070CE9B /* TSLProfilesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 417FF593179E69BB0070CE9B /* TSLProfilesViewController.m */; };
 		417FF596179E69BB0070CE9B /* TSLProfilesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 417FF594179E69BB0070CE9B /* TSLProfilesViewController.xib */; };
 		417FF597179E75140070CE9B /* libTSLHiredisiOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41E713C0179D3AE800F766CB /* libTSLHiredisiOS.a */; };
-		417FF59A179E7EC10070CE9B /* TSLPlasterProfilesDictator.m in Sources */ = {isa = PBXBuildFile; fileRef = 417FF599179E7EC00070CE9B /* TSLPlasterProfilesDictator.m */; };
+		417FF59A179E7EC10070CE9B /* TSLPlasterProfilesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 417FF599179E7EC00070CE9B /* TSLPlasterProfilesController.m */; };
 		417FF5A0179E81CB0070CE9B /* TSLPlasterGlobals.m in Sources */ = {isa = PBXBuildFile; fileRef = 417FF59F179E81CB0070CE9B /* TSLPlasterGlobals.m */; };
 		417FF5A4179E91180070CE9B /* TSLNewSessionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 417FF5A2179E91170070CE9B /* TSLNewSessionViewController.m */; };
 		417FF5A5179E91180070CE9B /* TSLNewSessionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 417FF5A3179E91180070CE9B /* TSLNewSessionViewController.xib */; };
@@ -100,6 +103,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4105490F17BBA2DF00A6727D /* TSLActivityAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLActivityAlert.h; sourceTree = "<group>"; };
+		4105491017BBA2DF00A6727D /* TSLActivityAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLActivityAlert.m; sourceTree = "<group>"; };
 		41076B5A179FFC4E00F28F40 /* TSLModalAlertDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLModalAlertDelegate.h; sourceTree = "<group>"; };
 		41076B5B179FFC4E00F28F40 /* TSLModalAlertDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLModalAlertDelegate.m; sourceTree = "<group>"; };
 		410B4D4117A7AEE700E1E0E2 /* TSLPacketSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLPacketSerializer.h; sourceTree = "<group>"; };
@@ -131,6 +136,10 @@
 		410B4D7117AA5B6000E1E0E2 /* TSLJoinSessionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLJoinSessionViewController.h; sourceTree = "<group>"; };
 		410B4D7217AA5B6000E1E0E2 /* TSLJoinSessionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLJoinSessionViewController.m; sourceTree = "<group>"; };
 		410B4D7317AA5B6200E1E0E2 /* TSLJoinSessionViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TSLJoinSessionViewController.xib; sourceTree = "<group>"; };
+		410D127A17AF98510073EF7B /* TSLProfileViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLProfileViewCell.h; sourceTree = "<group>"; };
+		410D127B17AF98510073EF7B /* TSLProfileViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLProfileViewCell.m; sourceTree = "<group>"; };
+		410D127F17AFBC130073EF7B /* TSLPlasterProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLPlasterProfile.h; sourceTree = "<group>"; };
+		410D128017AFBC140073EF7B /* TSLPlasterProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLPlasterProfile.m; sourceTree = "<group>"; };
 		4176EB6617968AC2005CF2E3 /* async.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = async.h; sourceTree = "<group>"; };
 		4176EB6717968AC2005CF2E3 /* hiredis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hiredis.h; sourceTree = "<group>"; };
 		4176EB6817968AC2005CF2E3 /* libhiredis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libhiredis.a; sourceTree = "<group>"; };
@@ -138,8 +147,8 @@
 		417FF592179E69BB0070CE9B /* TSLProfilesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLProfilesViewController.h; sourceTree = "<group>"; };
 		417FF593179E69BB0070CE9B /* TSLProfilesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLProfilesViewController.m; sourceTree = "<group>"; };
 		417FF594179E69BB0070CE9B /* TSLProfilesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TSLProfilesViewController.xib; sourceTree = "<group>"; };
-		417FF598179E7EC00070CE9B /* TSLPlasterProfilesDictator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLPlasterProfilesDictator.h; sourceTree = "<group>"; };
-		417FF599179E7EC00070CE9B /* TSLPlasterProfilesDictator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLPlasterProfilesDictator.m; sourceTree = "<group>"; };
+		417FF598179E7EC00070CE9B /* TSLPlasterProfilesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLPlasterProfilesController.h; sourceTree = "<group>"; };
+		417FF599179E7EC00070CE9B /* TSLPlasterProfilesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLPlasterProfilesController.m; sourceTree = "<group>"; };
 		417FF59E179E81BF0070CE9B /* TSLPlasterGlobals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLPlasterGlobals.h; sourceTree = "<group>"; };
 		417FF59F179E81CB0070CE9B /* TSLPlasterGlobals.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLPlasterGlobals.m; sourceTree = "<group>"; };
 		417FF5A1179E91170070CE9B /* TSLNewSessionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLNewSessionViewController.h; sourceTree = "<group>"; };
@@ -272,6 +281,8 @@
 		41F985DB17673B360031609C /* Plaster-iOS */ = {
 			isa = PBXGroup;
 			children = (
+				4105490F17BBA2DF00A6727D /* TSLActivityAlert.h */,
+				4105491017BBA2DF00A6727D /* TSLActivityAlert.m */,
 				410B4D6617A7F25900E1E0E2 /* Resources */,
 				410B4D5B17A7D4AC00E1E0E2 /* TSLPlasterController.h */,
 				410B4D5C17A7D4AD00E1E0E2 /* TSLPlasterController.m */,
@@ -305,8 +316,8 @@
 				417FF592179E69BB0070CE9B /* TSLProfilesViewController.h */,
 				417FF593179E69BB0070CE9B /* TSLProfilesViewController.m */,
 				417FF594179E69BB0070CE9B /* TSLProfilesViewController.xib */,
-				417FF598179E7EC00070CE9B /* TSLPlasterProfilesDictator.h */,
-				417FF599179E7EC00070CE9B /* TSLPlasterProfilesDictator.m */,
+				417FF598179E7EC00070CE9B /* TSLPlasterProfilesController.h */,
+				417FF599179E7EC00070CE9B /* TSLPlasterProfilesController.m */,
 				417FF5A1179E91170070CE9B /* TSLNewSessionViewController.h */,
 				417FF5A2179E91170070CE9B /* TSLNewSessionViewController.m */,
 				417FF5A3179E91180070CE9B /* TSLNewSessionViewController.xib */,
@@ -321,6 +332,10 @@
 				410B4D7117AA5B6000E1E0E2 /* TSLJoinSessionViewController.h */,
 				410B4D7217AA5B6000E1E0E2 /* TSLJoinSessionViewController.m */,
 				410B4D7317AA5B6200E1E0E2 /* TSLJoinSessionViewController.xib */,
+				410D127A17AF98510073EF7B /* TSLProfileViewCell.h */,
+				410D127B17AF98510073EF7B /* TSLProfileViewCell.m */,
+				410D127F17AFBC130073EF7B /* TSLPlasterProfile.h */,
+				410D128017AFBC140073EF7B /* TSLPlasterProfile.m */,
 			);
 			path = "Plaster-iOS";
 			sourceTree = "<group>";
@@ -519,7 +534,7 @@
 				41F985E617673B360031609C /* TSLPlasterAppDelegate.m in Sources */,
 				41F985EF17673B360031609C /* TSViewController.m in Sources */,
 				417FF595179E69BB0070CE9B /* TSLProfilesViewController.m in Sources */,
-				417FF59A179E7EC10070CE9B /* TSLPlasterProfilesDictator.m in Sources */,
+				417FF59A179E7EC10070CE9B /* TSLPlasterProfilesController.m in Sources */,
 				417FF5A0179E81CB0070CE9B /* TSLPlasterGlobals.m in Sources */,
 				417FF5A4179E91180070CE9B /* TSLNewSessionViewController.m in Sources */,
 				417FF5A8179EA1240070CE9B /* TSLClientIdentifier.m in Sources */,
@@ -535,6 +550,9 @@
 				410B4D6217A7E86500E1E0E2 /* TSLSessionViewController.m in Sources */,
 				410B4D6D17A7F37600E1E0E2 /* TSLPreferencesViewController.m in Sources */,
 				410B4D7417AA5B6400E1E0E2 /* TSLJoinSessionViewController.m in Sources */,
+				410D127C17AF98510073EF7B /* TSLProfileViewCell.m in Sources */,
+				410D128117AFBC140073EF7B /* TSLPlasterProfile.m in Sources */,
+				4105491117BBA2DF00A6727D /* TSLActivityAlert.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

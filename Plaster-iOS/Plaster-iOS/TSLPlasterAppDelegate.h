@@ -7,10 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-@class TSLPlasterController;
-@class TSLRedisController;
-
-@class TSViewController;
+@class TSLPlasterController, TSLRedisController, TSViewController, TSLPlasterProfilesController;
 
 @interface TSLPlasterAppDelegate : UIResponder <UIApplicationDelegate>
 
@@ -20,7 +17,6 @@
 @property (strong, nonatomic) UINavigationController *navController;
 @property (strong, nonatomic, retain) TSViewController *viewController;
 
-@property (strong, nonatomic) TSLPlasterController *plasterController;
-@property (strong, nonatomic) TSLRedisController *redisController;
+@property (strong) TSLPlasterProfilesController *plasterProfileDictator;
 
 @end

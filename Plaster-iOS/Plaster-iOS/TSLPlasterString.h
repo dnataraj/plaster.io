@@ -8,14 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
-extern const NSString *PLASTER_STRING_UTI;
-
+extern NSString *const PLASTER_STRING_UTI;
+ 
 @interface TSLPlasterString : NSObject
 
 @property (copy) NSString *string;
 
 - (id)initWithString:(NSString *)aString;
 - (NSData *)dataUsingEncoding:(NSStringEncoding)encoding;
+- (BOOL)getCString:(char *)buffer maxLength:(NSUInteger)maxBufferCount encoding:(NSStringEncoding)encoding;
 - (BOOL)hasPrefix:(NSString *)aString;
 - (NSString *)substringFromIndex:(NSUInteger)anIndex;
 

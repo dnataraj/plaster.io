@@ -10,10 +10,8 @@
 
 @interface TSLProfilesViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
-@property (retain, nonatomic) IBOutlet UITableView *sessionTableView;
+@property (retain, nonatomic) IBOutlet UITableView *profilesTableView;
 
 @property (atomic) NSUInteger numberOfProfiles;
-
-- (void)startSession:(id)sender;
 
 @end

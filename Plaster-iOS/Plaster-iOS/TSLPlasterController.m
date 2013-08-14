@@ -82,7 +82,7 @@ static const double MB = 1024 * 1024;
     return self;
 }
 
-- (void)bootWithPeers:(NSUInteger)maxPeers {
+- (NSUInteger)bootWithPeers:(NSUInteger)maxPeers {
     NSUInteger result = EXIT_FAILURE;
     DLog(@"PLASTER: BOOT : Booting plaster with client ID : [%@], and session ID [%@]", self.clientID, self.sessionKey);
     NSString *clientIdentifier = [NSString stringWithFormat:@"%@_%@", self.clientID, self.alias];
@@ -92,13 +92,21 @@ static const double MB = 1024 * 1024;
     DLog(@"PLASTER: BOOT : Publishing HELLO to broadcast channel : %@", broadcastChannel);
     NSString *hello = [NSString stringWithFormat:@"HELLO:%@", clientIdentifier];
     result = [_provider publishObject:hello channel:broadcastChannel options:nil];
-    NSAssert(result == EXIT_SUCCESS, @"PLASTER: FATAL : Unable to publish to broadcast channel %@", broadcastChannel);
+    if (result != EXIT_SUCCESS) {
+        DLog(@"PLASTER: FATAL : Unable to publish to broadcast channel %@", broadcastChannel);
+        return result;
+    }
+    //NSAssert(result == EXIT_SUCCESS, @"PLASTER: FATAL : Unable to publish to broadcast channel %@", broadcastChannel);
         
     // Subscribe to the plaster broadcast channel to listen to broadcasts from new participants
     DLog(@"PLASTER: BOOT : Subscribing to broadcast channel to accept new peers.");
     result = [_provider subscribeToChannel:broadcastChannel
                            options:[self handlerOptionsForHandler:NSStringFromSelector(@selector(handlePeerAttachAndDetachWithData:))]];
-    NSAssert(result == EXIT_SUCCESS, @"PLASTER: FATAL : Unable to subscribe to broadcast channel %@", broadcastChannel);
+    if (result != EXIT_SUCCESS) {
+        DLog(@"PLASTER: FATAL : Unable to publish to broadcast channel %@", broadcastChannel);
+        return result;
+    }
+    //NSAssert(result == EXIT_SUCCESS, @"PLASTER: FATAL : Unable to subscribe to broadcast channel %@", broadcastChannel);
     
         
     // Get the list of participants already in the current session
@@ -107,7 +115,11 @@ static const double MB = 1024 * 1024;
     if (!peers) {
         DLog(@"PLASTER: BOOT : First participant for session id [%@], registering...", self.sessionKey);
         result = [_provider setStringValue:clientIdentifier forKey:peersKey];
-        NSAssert(result == EXIT_SUCCESS, @"PLASTER: FATAL : Unable to register as first participant with key %@", peersKey);
+        if (result != EXIT_SUCCESS) {
+            DLog(@"PLASTER: FATAL : Unable to register as first participant with key %@", peersKey);
+            return result;
+        }
+        //NSAssert(result == EXIT_SUCCESS, @"PLASTER: FATAL : Unable to register as first participant with key %@", peersKey);
     } else {
         DLog(@"PLASTER: BOOT : Found peers : [%@]", peers);
         NSArray *peerList = [peers componentsSeparatedByString:@":"];
@@ -121,7 +133,11 @@ static const double MB = 1024 * 1024;
         NSString *updatedPeers = [peers stringByAppendingFormat:@":%@", clientIdentifier];
         DLog(@"PLASTER: BOOT : Updating peer list with value [%@]", updatedPeers);
         result = [_provider setStringValue:updatedPeers forKey:peersKey];
-        NSAssert(result == EXIT_SUCCESS, @"PLASTER: FATAL : Unable to add to peers key %@", peersKey);
+        if (result != EXIT_SUCCESS) {
+            DLog(@"PLASTER: FATAL : Unable to add to peers key %@", peersKey);
+            return result;
+        }
+        //NSAssert(result == EXIT_SUCCESS, @"PLASTER: FATAL : Unable to add to peers key %@", peersKey);
     }
         
     // Subscribe to peers
@@ -134,26 +150,38 @@ static const double MB = 1024 * 1024;
         // TODO: What if subscribing to channel fails?
         result = [_provider subscribeToChannel:peerIDs
                                options:[self handlerOptionsForHandler:NSStringFromSelector(@selector(handlePlasterInWithData:))]];
-        NSAssert(result == EXIT_SUCCESS, @"PLASTER: FATAL : Unable to subscribe to plaster peers  : %@", peerIDs);
+        if (result != EXIT_SUCCESS) {
+            DLog(@"PLASTER: FATAL : Unable to subscribe to plaster peers  : %@", peerIDs);
+            return result;
+        }
+        //NSAssert(result == EXIT_SUCCESS, @"PLASTER: FATAL : Unable to subscribe to plaster peers  : %@", peerIDs);
         [peerIDs release];
     }
 
     DLog(@"PLASTER: BOOT : Done.");
+    
+    return result;
 }
 
 - (NSDictionary *)handlerOptionsForHandler:(NSString *)handler {
     return [NSDictionary dictionaryWithObjects:@[handler, _handlerTable] forKeys:@[@"HANDLER_NAME", @"HANDLER_TABLE"]];
 }
 
-- (void)start {
+- (NSUInteger)start {
     NSAssert(_sessionKey != nil, @"PLASTER: FATAL : Will not start without a valid session key");
     /*
      Start a plaster session, OR join an existing one.
      */
     DLog(@"PLASTER: START : Starting...");
+    NSUInteger result = [self bootWithPeers:10];
+    if (result != EXIT_SUCCESS) {
+        DLog(@"PLASTER : FATAL : Unable to boot plaster systems. Attemptying to stop.");
+        [self stop];
+        return result;
+    }
+    
     self.started = YES;
     self.running = YES;
-    [self bootWithPeers:10];
     
     /*
     DLog(@"PLASTER: START : Registing controller for UIPasteboardChangedNotification notification.");
@@ -163,7 +191,9 @@ static const double MB = 1024 * 1024;
     
     DLog(@"PLASTER: START : Starting pasteboard monitoring every 100ms");
     [self scheduleMonitorWithID:self.clientID andTimeInterval:0.100];
-    DLog(@"PLASTER: START : Done.");    
+    DLog(@"PLASTER: START : Done.");
+    
+    return EXIT_SUCCESS;
 }
 
 - (void)stop {
@@ -196,7 +226,9 @@ static const double MB = 1024 * 1024;
     NSString *peers = [_provider stringValueForKey:peersKey];
     if (!peers) {
         // Something went wrong - you are supposed to be in a session...
-        DLog(@"PLASTER: STOP : Unable to stop plaster session!");
+        DLog(@"PLASTER: STOP : Unable to find this client in a session!");
+        self.started = NO;
+        self.running = NO;
         return;
     }
     DLog(@"PLASTER: STOP : Found peers : [%@]", peers);
@@ -282,6 +314,11 @@ static const double MB = 1024 * 1024;
     [self setChangeCount:newChangeCount];
     
     //BOOL isPeerPaste = [_pb canReadItemWithDataConformingToTypes:@[PLASTER_STRING_UTI, PLASTER_IMAGE_UTI]];
+    DLog(@"Checking for plaster UTI's : %@", @[PLASTER_STRING_UTI, PLASTER_IMAGE_UTI]);
+    NSArray *items = _pb.items;
+    for (NSDictionary *item in items) {
+        DLog(@"Item in pasteboard : %@", item);
+    }
     BOOL isPeerPaste = [_pb containsPasteboardTypes:@[PLASTER_STRING_UTI, PLASTER_IMAGE_UTI]];
     if (isPeerPaste) {
         DLog(@"PLASTER: PLASTER OUT : Packet is from a peer, discarding publish..");
@@ -422,7 +459,10 @@ static const double MB = 1024 * 1024;
                     DLog(@"PLASTER: HANDLE IN : This session does not support incoming image-type plasters.");
                 } else {
                     DLog(@"PLASTER: HANDLE IN : Processing image packet...");
-                    packet = [[TSLPlasterImage alloc] initWithImage:[payload objectForKey:TSPlasterPacketImage]];
+                    UIImage *image = [payload objectForKey:TSPlasterPacketImage];
+                    if (image) {
+                        packet = [[TSLPlasterImage alloc] initWithImage:image];
+                    }
                 }
             } else if ([type isEqualToString:TSPlasterTypeNotification]) {
                 DLog(@"PLASTER: HANDLE IN : Plaster iOS clients do not support file transfer notifications.");
@@ -467,10 +507,16 @@ static const double MB = 1024 * 1024;
                 }
 
                 
+                NSString *plasterType = nil;
                 if ([type isEqualToString:TSPlasterTypeText]) {
-                    pb.string = [(TSLPlasterString *)packet string];
+                    [pb setValue:[(TSLPlasterString *)packet string] forPasteboardType:PLASTER_STRING_UTI];
+                    [pb addItems:@[@{@"public.utf8-plain-text": [(TSLPlasterString *)packet string]}]];
+                    plasterType = @"plain text";
                 } else if ([type isEqualToString:TSPlasterTypeImage]) {
-                    pb.image = [(TSLPlasterImage *)packet image];
+                    //UIImage *image = [(TSLPlasterImage *)packet image];
+                    [pb setValue:PLASTER_IMAGE_UTI forPasteboardType:PLASTER_IMAGE_UTI];
+                    [pb addItems:@[@{@"public.tiff": [(TSLPlasterImage *)packet image]}]];
+                    plasterType = @"an image";
                 }
                 BOOL ok = YES; //[pb writeObjects:@[packet]];
                 if (ok) {
@@ -479,7 +525,8 @@ static const double MB = 1024 * 1024;
                     BOOL notify = [[_sessionProfile objectForKey:TSPlasterNotifyAll] boolValue];
                     if (notify) {
                         NSString *pasteInfo = [NSString stringWithFormat:@"[%@]", sender];
-                        [self sendNotificationWithSubtitle:@"You have recieved a new plaster from :" informativeText:pasteInfo];
+                        NSString *subtitle = [NSString stringWithFormat:@"You have recieved %@ from :", plasterType];
+                        [self sendNotificationWithSubtitle:subtitle informativeText:pasteInfo context:nil];
                     }
                 }
             } else if ([mode isEqualToString:TSPlasterModeFile]) {
@@ -533,7 +580,7 @@ static const double MB = 1024 * 1024;
                 BOOL notify = [[_sessionProfile objectForKey:TSPlasterNotifyAll] boolValue];
                 if (notify) {
                     NSString *subtitle = [NSString stringWithFormat:@"'%@' has joined session [%@]", [plpeer peerAlias], [_sessionProfile objectForKey:TSPlasterProfileName]];
-                    [self sendNotificationWithSubtitle:subtitle informativeText:nil];
+                    [self sendNotificationWithSubtitle:subtitle informativeText:nil context:@{@"event": @"hello"}];
                 }
             }
             [plpeer release];            
@@ -556,7 +603,7 @@ static const double MB = 1024 * 1024;
                 BOOL notify = [[_sessionProfile objectForKey:TSPlasterNotifyAll] boolValue];
                 if (notify) {
                     NSString *subtitle = [NSString stringWithFormat:@"'%@' has left session [%@]", [plpeer peerAlias], [_sessionProfile objectForKey:TSPlasterProfileName]];
-                    [self sendNotificationWithSubtitle:subtitle informativeText:nil];
+                    [self sendNotificationWithSubtitle:subtitle informativeText:nil context:@{@"event": @"goodbye"}];
                 }
             }
             [plpeer release];
@@ -568,13 +615,16 @@ static const double MB = 1024 * 1024;
 
 #pragma mark Notification Methods
 
-- (void)sendNotificationWithSubtitle:(NSString *)subtitle informativeText:(NSString *)text {
+- (void)sendNotificationWithSubtitle:(NSString *)subtitle informativeText:(NSString *)text context:(NSDictionary *)context {
     UILocalNotification *localNotification = [[UILocalNotification alloc] init];
     localNotification.alertAction = @"OK";
     if (text) {
         localNotification.alertBody = [NSString stringWithFormat:@"%@ : %@", subtitle, text];
     } else {
         localNotification.alertBody = subtitle;
+    }
+    if (context) {
+        localNotification.userInfo = context;
     }
     
     localNotification.fireDate = nil;

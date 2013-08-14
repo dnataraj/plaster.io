@@ -8,7 +8,7 @@
 
 #import "TSLPlasterString.h"
 
-NSString *PLASTER_STRING_UTI = @"com.trilobytesystems.plaster.ios.string.uti";
+NSString *const PLASTER_STRING_UTI = @"com.trilobytesystems.plaster.ios.string.uti";
 
 @implementation TSLPlasterString
 
@@ -23,6 +23,10 @@ NSString *PLASTER_STRING_UTI = @"com.trilobytesystems.plaster.ios.string.uti";
 
 - (NSData *)dataUsingEncoding:(NSStringEncoding)encoding {
     return [self.string dataUsingEncoding:encoding];
+}
+
+- (BOOL)getCString:(char *)buffer maxLength:(NSUInteger)maxBufferCount encoding:(NSStringEncoding)encoding {
+    return [self.string getCString:buffer maxLength:maxBufferCount encoding:encoding];
 }
 
 - (BOOL)hasPrefix:(NSString *)aString {

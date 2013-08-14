@@ -7,18 +7,25 @@
 //
 
 #import "TSLProfilesViewController.h"
-#import "TSLPlasterProfilesDictator.h"
 #import "TSLPlasterAppDelegate.h"
 #import "TSLNewSessionViewController.h"
 #import "TSLModalAlertDelegate.h"
 #import "TSLPlasterGlobals.h"
 #import "TSLSessionViewController.h"
 #import "TSLJoinSessionViewController.h"
+#import "TSLProfileViewCell.h"
+#import "TSLPlasterProfilesController.h"
+#import "TSLPlasterProfile.h"
+#import "TSLPlasterController.h"
+
+#define DegreesToRadians(x) (M_PI * x / 180.0)
 
 @interface TSLProfilesViewController () {
-    TSLPlasterProfilesDictator *_userProfileDicatator;
+    TSLPlasterProfilesController *_plasterProfilesController;
     NSMutableArray *_displayProfiles;
     NSMutableArray *_displaySessionKeys;
+    //__block UIBackgroundTaskIdentifier __plasterBgTask;
+    UIButton *_sessionDetailsButton;
 }
 
 @end
@@ -28,9 +35,15 @@
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        _userProfileDicatator = [[TSLPlasterProfilesDictator alloc] init];
+        _plasterProfilesController = [[TSLPlasterProfilesController alloc] init];
         _displayProfiles = nil;
         _displaySessionKeys = nil;
+        //__plasterBgTask = UIBackgroundTaskInvalid;
+        _sessionDetailsButton = [[UIButton buttonWithType:UIButtonTypeDetailDisclosure] retain];
+        CGAffineTransform rotationTransform = CGAffineTransformIdentity;
+        rotationTransform = CGAffineTransformRotate(rotationTransform, DegreesToRadians(90));
+        _sessionDetailsButton.transform = rotationTransform;
+        
     }
     return self;
 }
@@ -40,6 +53,9 @@
     // Do any additional setup after loading the view from its nib.
     self.title = @"Profiles";
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    
+    // Register our custom tableview cell class
+    //r[self.profilesTableView registerClass:[TSLProfileViewCell class] forCellReuseIdentifier:@"TSLProfileViewCell"];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -50,7 +66,7 @@
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated {
     if (editing != self.editing) {
         [super setEditing:editing animated:animated];
-        [self.sessionTableView setEditing:editing animated:animated];
+        [self.profilesTableView setEditing:editing animated:animated];
         
         NSMutableArray *indices = [[NSMutableArray alloc] init];
         for (int i=0; i < self.numberOfProfiles; i++) {
@@ -59,18 +75,18 @@
         NSArray *lastIndex = @[[NSIndexPath indexPathForRow:self.numberOfProfiles inSection:0], [NSIndexPath indexPathForRow:(self.numberOfProfiles + 1) inSection:0]];
         if (editing == YES) {
             for (int i = 0; i < self.numberOfProfiles; i++) {
-                UITableViewCell *cell = [self.sessionTableView cellForRowAtIndexPath:indices[i]];
+                UITableViewCell *cell = [self.profilesTableView cellForRowAtIndexPath:indices[i]];
                 DLog(@"Setting accessory type for cell in Edit mode...");
                 [cell setEditingAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
             }
-            [self.sessionTableView deleteRowsAtIndexPaths:lastIndex withRowAnimation:UITableViewRowAnimationLeft];
+            [self.profilesTableView deleteRowsAtIndexPaths:lastIndex withRowAnimation:UITableViewRowAnimationLeft];
         } else {
             for (int i = 0; i < self.numberOfProfiles; i++) {
-                UITableViewCell *cell = [self.sessionTableView cellForRowAtIndexPath:indices[i]];
+                UITableViewCell *cell = [self.profilesTableView cellForRowAtIndexPath:indices[i]];
                 [cell setEditingAccessoryType:UITableViewCellAccessoryNone];
             }
             
-            [self.sessionTableView insertRowsAtIndexPaths:lastIndex withRowAnimation:UITableViewRowAnimationLeft];
+            [self.profilesTableView insertRowsAtIndexPaths:lastIndex withRowAnimation:UITableViewRowAnimationLeft];
         }
         
     }
@@ -90,12 +106,13 @@
     _displaySessionKeys = nil;
     _displaySessionKeys = [[NSMutableArray alloc] init];
     
-    NSDictionary *profiles = [_userProfileDicatator plasterProfiles];
+    // Obtain TSLPlasterProfile list
+    NSDictionary *profiles = [_plasterProfilesController profiles];
     for (NSString *key in [profiles keyEnumerator]) {
-        NSDictionary *profileConfiguration = [profiles objectForKey:key];
-        DLog(@"Found profile : %@", profileConfiguration);
+        TSLPlasterProfile *plasterProfile = [profiles objectForKey:key];
+        DLog(@"Found profile : %@", plasterProfile);
         
-        [_displayProfiles addObject:[profileConfiguration objectForKey:TSPlasterProfileName]];
+        [_displayProfiles addObject:[plasterProfile.profile objectForKey:TSPlasterProfileName]];
         [_displaySessionKeys addObject:key];
     }
     
@@ -104,14 +121,33 @@
     DLog(@"Found session keys : %@", _displaySessionKeys);
     
     [_displayProfiles addObjectsFromArray:@[@"New Plaster session", @"Join a session..."]];
-    [self.sessionTableView reloadData];
+    [self.profilesTableView reloadData];
 }
 
 #pragma mark Action methods
 
-- (void)startSession:(id)sender {
-    NSLog(@"TSL: Session View Controller : Start session.");
+- (void)startPlasterWithProfile:(TSLPlasterProfile *)profile  {
+    // "auto-save" current session key for post-crash cleanup (if any)
+    [_plasterProfilesController saveCurrentSessionWithKey:profile.sessionKey];
+    if ([profile controlPlaster:TSLPlasterStart] != EXIT_SUCCESS) {
+        DLog(@"Starting plaster failed. Alerting user.");
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Network Error" message:@"Plaster is unable to start."
+                                                       delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+    }
+
+    return;
 }
+
+- (void)stopPlasterWithProfile:(TSLPlasterProfile *)profile  {
+    // "auto-save" current session key for post-crash cleanup (if any)
+    [_plasterProfilesController saveCurrentSessionWithKey:profile.sessionKey];
+    [profile controlPlaster:TSLPlasterStop];
+    
+    return;
+}
+
 
 #pragma mark UITableView data source methods
 
@@ -124,17 +160,38 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
-    if (!cell) {
-        NSLog(@"TSL: Session View Controller : Initializing cell at index path : %@", indexPath);
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"] autorelease];
-    }
-    //DLog(@"Returning cell for index row : %d with label : %@", indexPath.row, _displayProfiles[indexPath.row]);
-    cell.textLabel.text = _displayProfiles[indexPath.row];
-    cell.accessoryType = UITableViewCellAccessoryNone;
-    if (indexPath.row >= self.numberOfProfiles) { // Happens in non-edit mode
+    UITableViewCell *cell = nil;
+    if (indexPath.row < self.numberOfProfiles) {
+        TSLPlasterProfile *plasterProfile = [_plasterProfilesController.profiles objectForKey:_displaySessionKeys[indexPath.row]];
+        
+        cell = [tableView dequeueReusableCellWithIdentifier:@"TSLProfileViewCell"];
+        if (!cell) {
+            DLog(@"Initializing cell at index path : %@", indexPath);
+            cell = [[[TSLProfileViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"TSLProfileViewCell"] autorelease];
+            cell.detailTextLabel.textColor = [UIColor lightGrayColor];
+        }
+        
+        NSLog(@"Obtained cell type : %@", cell);
+        if ([plasterProfile state] == TSLPlasterRunning) {
+            //cell.accessoryView = nil;
+            cell.accessoryType = UITableViewCellAccessoryCheckmark;
+            cell.detailTextLabel.text = [NSString stringWithFormat:@"[Running with %ld peers...]", (unsigned long)[[plasterProfile peers] count]];
+        } else {
+            //cell.accessoryView = nil;
+            cell.accessoryType = UITableViewCellAccessoryNone;
+            cell.detailTextLabel.text = @"[Stopped]";
+        }
+    } else {
+        cell = [tableView dequeueReusableCellWithIdentifier:@"NewJoinCell"];
+        if (!cell) {
+            NSLog(@"TSL: Session View Controller : Initializing cell at index path : %@", indexPath);
+            cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"NewJoinCell"] autorelease];
+        }
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
+    
+    cell.textLabel.text = _displayProfiles[indexPath.row];
+    //DLog(@"Returning cell for index row : %d with label : %@", indexPath.row, _displayProfiles[indexPath.row]);
     
     return cell;
 }
@@ -145,7 +202,7 @@
     DLog(@"Attempting to delete row with index path : %@", indexPath);
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         [_displayProfiles removeObjectAtIndex:indexPath.row];
-        [_userProfileDicatator removeProfileWithKey:_displaySessionKeys[indexPath.row]];
+        [_plasterProfilesController removeProfileWithKey:_displaySessionKeys[indexPath.row]];
         [_displaySessionKeys removeObjectAtIndex:indexPath.row];
         self.numberOfProfiles = self.numberOfProfiles - 1;
         DLog(@"Number of profiles is now : %d", self.numberOfProfiles);
@@ -182,24 +239,42 @@
             DLog(@"Will not load profle configuration view without a valid profile name.");
         }
     } else {
-        NSDictionary *profile = [[_userProfileDicatator plasterProfiles] objectForKey:_displaySessionKeys[indexPath.row]];
-        DLog(@"Obtained stored profile : %@", profile);
+        TSLPlasterProfile *plasterProfile = [[_plasterProfilesController profiles] objectForKey:_displaySessionKeys[indexPath.row]];
+        DLog(@"Obtained stored profile : %@", plasterProfile);
         // For re-configuring existing sessions in edit mode
         if (self.editing) {
             DLog(@"Pushing new session view controller onto the nav for editing existing profiles...");
-            TSLNewSessionViewController *newSessionViewController = [[[TSLNewSessionViewController alloc] initWithProfile:profile
+            TSLNewSessionViewController *newSessionViewController = [[[TSLNewSessionViewController alloc] initWithProfile:plasterProfile.profile
                                                                                                                sessionKey:_displaySessionKeys[indexPath.row]
                                                                                                                   editing:self.editing] autorelease];
             [delegate.navController pushViewController:newSessionViewController animated:YES];
         } else {
-            // User taps a session to start it
-            DLog(@"Starting session with key : %@", _displaySessionKeys[indexPath.row]);
-            TSLSessionViewController *sessionViewController = [[[TSLSessionViewController alloc] initWithProfile:profile
+            TSLProfileViewCell *cell = (TSLProfileViewCell *)[self.profilesTableView cellForRowAtIndexPath:indexPath];
+            // User taps a session to start/stop it
+            if ([plasterProfile state] == TSLPlasterRunning) {
+                DLog(@"User is stopping a running session...");
+                [self stopPlasterWithProfile:plasterProfile];
+                cell.detailTextLabel.text = @"[Stopped]";
+                [cell.plasterStartingIndicator stopAnimating];
+                cell.accessoryView = nil;
+                cell.accessoryType = UITableViewCellAccessoryNone;
+            } else {
+                DLog(@"Starting session with key : %@ and cell : %@", plasterProfile.sessionKey, cell);
+                [self startPlasterWithProfile:plasterProfile];
+                cell.detailTextLabel.text = [[NSString stringWithFormat:@"%ld peers connected.",
+                                             (unsigned long)[[plasterProfile peers] count]] retain];
+                [cell.plasterStartingIndicator stopAnimating];
+                cell.accessoryView = nil;
+                cell.accessoryView = _sessionDetailsButton;
+            }
+
+            /*
+            TSLSessionViewController *sessionViewController = [[[TSLSessionViewController alloc] initWithProfile:plasterProfile.profile
                                                                                                       sessionKey:_displaySessionKeys[indexPath.row]] autorelease];
             [delegate.navController pushViewController:sessionViewController animated:YES];
+            */
         }        
     }
-    
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
@@ -221,9 +296,10 @@
 }
 
 - (void)dealloc {
-    [_sessionTableView release];
+    [_profilesTableView release];
     [_displayProfiles release];
     [_displaySessionKeys release];
+    [_sessionDetailsButton release];
     [super dealloc];
 }
 

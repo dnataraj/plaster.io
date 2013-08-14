@@ -11,16 +11,16 @@
 #import "TSLClientIdentifier.h"
 #import "TSLPlasterAppDelegate.h"
 #import "TSLPlasterGlobals.h"
-#import "TSLPlasterProfilesDictator.h"
+#import "TSLPlasterProfilesController.h"
 #import "TSLSessionViewController.h"
 
 @interface TSLNewSessionViewController () {
-    TSLPlasterProfilesDictator *_userProfileDicatator;    
+    TSLPlasterProfilesController *_userProfileDicatator;    
     NSArray *_rowsInSection;
     NSArray *_sectionHeaders;
 }
 
-@property (retain, readwrite) NSDictionary *profile;
+@property (strong, readwrite) NSDictionary *profile;
 @property (copy, readwrite) NSString *sessionKey;
 
 @end
@@ -31,7 +31,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
-        _userProfileDicatator = [[TSLPlasterProfilesDictator alloc] init];
+        _userProfileDicatator = [[TSLPlasterProfilesController alloc] init];
         DLog(@"Initializing rows and section headers...");
         _rowsInSection = [@[@1, @1, @2, @2] retain];
         _sectionHeaders = [@[@"Profile", @"Notifications", @"Incoming Plasters", @"Outgoing Plasters"] retain];

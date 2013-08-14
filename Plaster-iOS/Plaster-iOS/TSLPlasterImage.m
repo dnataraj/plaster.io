@@ -8,7 +8,7 @@
 
 #import "TSLPlasterImage.h"
 
-NSString *PLASTER_IMAGE_UTI = @"com.trilobytesystems.plaster.ios.image.uti";
+NSString *const PLASTER_IMAGE_UTI = @"com.trilobytesystems.plaster.ios.image.uti";
 
 @implementation TSLPlasterImage
 
