@@ -17,6 +17,6 @@
 @property (strong, nonatomic) UINavigationController *navController;
 @property (strong, nonatomic, retain) TSViewController *viewController;
 
-@property (strong) TSLPlasterProfilesController *plasterProfileDictator;
+@property (strong) TSLPlasterProfilesController *plasterProfilesController;
 
 @end

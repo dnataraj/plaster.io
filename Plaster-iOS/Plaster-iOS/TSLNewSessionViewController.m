@@ -12,10 +12,8 @@
 #import "TSLPlasterAppDelegate.h"
 #import "TSLPlasterGlobals.h"
 #import "TSLPlasterProfilesController.h"
-#import "TSLSessionViewController.h"
 
 @interface TSLNewSessionViewController () {
-    TSLPlasterProfilesController *_userProfileDicatator;    
     NSArray *_rowsInSection;
     NSArray *_sectionHeaders;
 }
@@ -31,7 +29,6 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
-        _userProfileDicatator = [[TSLPlasterProfilesController alloc] init];
         DLog(@"Initializing rows and section headers...");
         _rowsInSection = [@[@1, @1, @2, @2] retain];
         _sectionHeaders = [@[@"Profile", @"Notifications", @"Incoming Plasters", @"Outgoing Plasters"] retain];
@@ -197,18 +194,19 @@
     [profile setObject:TSPlasterModePasteboard forKey:TSPlasterMode];
     
     DLog(@"Saving profile with values : %@", profile);
-    [_userProfileDicatator addProfile:profile withKey:self.sessionKey];
+    [delegate.plasterProfilesController addProfile:profile withKey:self.sessionKey];
+    [profile release];
     
-    [delegate.navController popViewControllerAnimated:NO];
-    TSLSessionViewController *sessionViewController = [[[TSLSessionViewController alloc] initWithProfile:profile
-                                                                                              sessionKey:self.sessionKey] autorelease];
-    [delegate.navController pushViewController:sessionViewController animated:YES];
-    [profile release];    
+    [delegate.navController popViewControllerAnimated:YES];
+    //TSLSessionViewController *sessionViewController = [[[TSLSessionViewController alloc] initWithProfile:profile
+    //                                                                                          sessionKey:self.sessionKey] autorelease];
+    //[delegate.navController pushViewController:sessionViewController animated:YES];
+    
 }
 
 - (void)cancel:(id)sender {
     DLog(@"Cancelling new profile configuration.");
-    TSLPlasterAppDelegate *delegate = (TSLPlasterAppDelegate *)[[UIApplication sharedApplication] delegate];
+    TSLPlasterAppDelegate *delegate = (TSLPlasterAppDelegate *)[[UIApplication sharedApplication] delegate];    
     [delegate.navController popViewControllerAnimated:YES];
 }
 

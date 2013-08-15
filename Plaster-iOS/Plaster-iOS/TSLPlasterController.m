@@ -525,7 +525,7 @@ static const double MB = 1024 * 1024;
                     BOOL notify = [[_sessionProfile objectForKey:TSPlasterNotifyAll] boolValue];
                     if (notify) {
                         NSString *pasteInfo = [NSString stringWithFormat:@"[%@]", sender];
-                        NSString *subtitle = [NSString stringWithFormat:@"You have recieved %@ from :", plasterType];
+                        NSString *subtitle = [NSString stringWithFormat:@"You have recieved %@ from", plasterType];
                         [self sendNotificationWithSubtitle:subtitle informativeText:pasteInfo context:nil];
                     }
                 }

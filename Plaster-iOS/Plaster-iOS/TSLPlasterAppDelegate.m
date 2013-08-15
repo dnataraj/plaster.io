@@ -11,7 +11,7 @@
 #import "TSViewController.h"
 #import "TSLProfilesViewController.h"
 #import "TSLPreferencesViewController.h"
-#import "TSLSessionViewController.h"
+
 #import "TSLPlasterController.h"
 #import "TSLRedisController.h"
 #import "TSLModalAlertDelegate.h"
@@ -31,8 +31,6 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
 
-    [TSLActivityAlert presentWithText: [NSString stringWithFormat:@"Starting..."]];
-    
     _plasterProfilesController = [[TSLPlasterProfilesController alloc] init];
     
     // Clean up previous session if needed, but only if there is no current session
@@ -40,8 +38,11 @@
     TSLRedisController *provider = [[[TSLRedisController alloc] initWithIPAddress:@"176.9.2.188" port:6379] autorelease];
     TSLPlasterController *plasterController = [[[TSLPlasterController alloc] initWithPasteboard:[UIPasteboard generalPasteboard]
                                                                                        provider:provider] autorelease];
+    DLog(@"Obtained last session key : %@", lastSessionKey);
+    
     [plasterController setSessionKey:lastSessionKey];
     if (lastSessionKey) {
+        [TSLActivityAlert presentWithText: [NSString stringWithFormat:@"Starting..."]];
         // Clean up any stale sessions in case there was a dirty exit previously
         NSArray *staleSessions = @[lastSessionKey];
         [plasterController setAlias:[[UIDevice currentDevice] name]];
@@ -128,7 +129,7 @@
     [_window release];
     [_viewController release];
     [_profilesViewController release];
-    [_plasterProfileDictator release];
+    [_plasterProfilesController release];
     [super dealloc];
 }
 

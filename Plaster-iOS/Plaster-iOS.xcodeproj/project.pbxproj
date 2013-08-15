@@ -20,10 +20,6 @@
 		410B4D5A17A7CF9500E1E0E2 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 410B4D5917A7CF9500E1E0E2 /* SystemConfiguration.framework */; };
 		410B4D5D17A7D4AD00E1E0E2 /* TSLPlasterController.m in Sources */ = {isa = PBXBuildFile; fileRef = 410B4D5C17A7D4AD00E1E0E2 /* TSLPlasterController.m */; };
 		410B4D5E17A7D4AD00E1E0E2 /* TSLPlasterController.m in Sources */ = {isa = PBXBuildFile; fileRef = 410B4D5C17A7D4AD00E1E0E2 /* TSLPlasterController.m */; };
-		410B4D6217A7E86500E1E0E2 /* TSLSessionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 410B4D6017A7E86400E1E0E2 /* TSLSessionViewController.m */; };
-		410B4D6317A7E86500E1E0E2 /* TSLSessionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 410B4D6017A7E86400E1E0E2 /* TSLSessionViewController.m */; };
-		410B4D6417A7E86500E1E0E2 /* TSLSessionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 410B4D6117A7E86500E1E0E2 /* TSLSessionViewController.xib */; };
-		410B4D6517A7E86500E1E0E2 /* TSLSessionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 410B4D6117A7E86500E1E0E2 /* TSLSessionViewController.xib */; };
 		410B4D6817A7F26F00E1E0E2 /* 19-gear.png in Resources */ = {isa = PBXBuildFile; fileRef = 410B4D6717A7F26F00E1E0E2 /* 19-gear.png */; };
 		410B4D6917A7F26F00E1E0E2 /* 19-gear.png in Resources */ = {isa = PBXBuildFile; fileRef = 410B4D6717A7F26F00E1E0E2 /* 19-gear.png */; };
 		410B4D6D17A7F37600E1E0E2 /* TSLPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 410B4D6B17A7F37500E1E0E2 /* TSLPreferencesViewController.m */; };
@@ -105,6 +101,7 @@
 /* Begin PBXFileReference section */
 		4105490F17BBA2DF00A6727D /* TSLActivityAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLActivityAlert.h; sourceTree = "<group>"; };
 		4105491017BBA2DF00A6727D /* TSLActivityAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLActivityAlert.m; sourceTree = "<group>"; };
+		4105494717BBB89000A6727D /* Plaster-iOS copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Plaster-iOS copy-Info.plist"; path = "/Users/dnataraj/dev/plaster.io/Plaster-iOS/Plaster-iOS copy-Info.plist"; sourceTree = "<absolute>"; };
 		41076B5A179FFC4E00F28F40 /* TSLModalAlertDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLModalAlertDelegate.h; sourceTree = "<group>"; };
 		41076B5B179FFC4E00F28F40 /* TSLModalAlertDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLModalAlertDelegate.m; sourceTree = "<group>"; };
 		410B4D4117A7AEE700E1E0E2 /* TSLPacketSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLPacketSerializer.h; sourceTree = "<group>"; };
@@ -126,9 +123,6 @@
 		410B4D5917A7CF9500E1E0E2 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		410B4D5B17A7D4AC00E1E0E2 /* TSLPlasterController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLPlasterController.h; sourceTree = "<group>"; };
 		410B4D5C17A7D4AD00E1E0E2 /* TSLPlasterController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLPlasterController.m; sourceTree = "<group>"; };
-		410B4D5F17A7E86400E1E0E2 /* TSLSessionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLSessionViewController.h; sourceTree = "<group>"; };
-		410B4D6017A7E86400E1E0E2 /* TSLSessionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLSessionViewController.m; sourceTree = "<group>"; };
-		410B4D6117A7E86500E1E0E2 /* TSLSessionViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TSLSessionViewController.xib; sourceTree = "<group>"; };
 		410B4D6717A7F26F00E1E0E2 /* 19-gear.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "19-gear.png"; sourceTree = "<group>"; };
 		410B4D6A17A7F37500E1E0E2 /* TSLPreferencesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLPreferencesViewController.h; sourceTree = "<group>"; };
 		410B4D6B17A7F37500E1E0E2 /* TSLPreferencesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLPreferencesViewController.m; sourceTree = "<group>"; };
@@ -255,6 +249,7 @@
 				41F9860217673B360031609C /* Plaster-iOSTests */,
 				41F985D417673B360031609C /* Frameworks */,
 				41F985D317673B360031609C /* Products */,
+				4105494717BBB89000A6727D /* Plaster-iOS copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -323,9 +318,6 @@
 				417FF5A3179E91180070CE9B /* TSLNewSessionViewController.xib */,
 				41076B5A179FFC4E00F28F40 /* TSLModalAlertDelegate.h */,
 				41076B5B179FFC4E00F28F40 /* TSLModalAlertDelegate.m */,
-				410B4D5F17A7E86400E1E0E2 /* TSLSessionViewController.h */,
-				410B4D6017A7E86400E1E0E2 /* TSLSessionViewController.m */,
-				410B4D6117A7E86500E1E0E2 /* TSLSessionViewController.xib */,
 				410B4D6A17A7F37500E1E0E2 /* TSLPreferencesViewController.h */,
 				410B4D6B17A7F37500E1E0E2 /* TSLPreferencesViewController.m */,
 				410B4D6C17A7F37600E1E0E2 /* TSLPreferencesViewController.xib */,
@@ -488,7 +480,6 @@
 				41F985F517673B360031609C /* TSViewController_iPad.xib in Resources */,
 				417FF596179E69BB0070CE9B /* TSLProfilesViewController.xib in Resources */,
 				417FF5A5179E91180070CE9B /* TSLNewSessionViewController.xib in Resources */,
-				410B4D6417A7E86500E1E0E2 /* TSLSessionViewController.xib in Resources */,
 				410B4D6817A7F26F00E1E0E2 /* 19-gear.png in Resources */,
 				410B4D6F17A7F37600E1E0E2 /* TSLPreferencesViewController.xib in Resources */,
 				410B4D7617AA5B6400E1E0E2 /* TSLJoinSessionViewController.xib in Resources */,
@@ -500,7 +491,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				41F9860717673B360031609C /* InfoPlist.strings in Resources */,
-				410B4D6517A7E86500E1E0E2 /* TSLSessionViewController.xib in Resources */,
 				410B4D6917A7F26F00E1E0E2 /* 19-gear.png in Resources */,
 				410B4D7017A7F37600E1E0E2 /* TSLPreferencesViewController.xib in Resources */,
 				410B4D7717AA5B6400E1E0E2 /* TSLJoinSessionViewController.xib in Resources */,
@@ -547,7 +537,6 @@
 				410B4D5417A7BD5900E1E0E2 /* TSLRedisController.m in Sources */,
 				410B4D5717A7CF6900E1E0E2 /* TSLReachability.m in Sources */,
 				410B4D5D17A7D4AD00E1E0E2 /* TSLPlasterController.m in Sources */,
-				410B4D6217A7E86500E1E0E2 /* TSLSessionViewController.m in Sources */,
 				410B4D6D17A7F37600E1E0E2 /* TSLPreferencesViewController.m in Sources */,
 				410B4D7417AA5B6400E1E0E2 /* TSLJoinSessionViewController.m in Sources */,
 				410D127C17AF98510073EF7B /* TSLProfileViewCell.m in Sources */,
@@ -563,7 +552,6 @@
 				41F9860A17673B360031609C /* Plaster_iOSTests.m in Sources */,
 				410B4D5817A7CF6900E1E0E2 /* TSLReachability.m in Sources */,
 				410B4D5E17A7D4AD00E1E0E2 /* TSLPlasterController.m in Sources */,
-				410B4D6317A7E86500E1E0E2 /* TSLSessionViewController.m in Sources */,
 				410B4D6E17A7F37600E1E0E2 /* TSLPreferencesViewController.m in Sources */,
 				410B4D7517AA5B6400E1E0E2 /* TSLJoinSessionViewController.m in Sources */,
 			);
